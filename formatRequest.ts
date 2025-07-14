@@ -103,12 +103,18 @@ function validateOpenAIToolCalls(messages: any[]): any[] {
 export function mapModel(anthropicModel: string, provider: Provider = 'openrouter'): string {
   const config = PROVIDER_CONFIGS[provider];
   
-  // Check if it's already a valid OpenAI-compatible model
-  if (provider === 'openai-compatible' && config.commonModels && config.commonModels.includes(anthropicModel)) {
+  // Check if it's already a valid model for this provider
+  if (config.commonModels && config.commonModels.includes(anthropicModel)) {
     return anthropicModel;
   }
   
   // Map Claude model names to provider-specific models
+  // Try exact mapping first
+  if (config.modelMappings[anthropicModel]) {
+    return config.modelMappings[anthropicModel];
+  }
+  
+  // Then try partial matching for model families
   for (const [claudeType, providerModel] of Object.entries(config.modelMappings)) {
     if (anthropicModel.includes(claudeType)) {
       return providerModel;

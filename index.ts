@@ -8,12 +8,41 @@ import { privacyHtml } from './privacyHtml';
 import { Provider, PROVIDER_CONFIGS } from './types';
 
 function selectProvider(env: Env): { provider: Provider; baseUrl: string } {
-  // Priority: OpenAI-compatible (if configured) > OpenRouter (default)
+  // Check specific provider configurations first
+  if (env.DEEPSEEK_BASE_URL) {
+    return { provider: 'deepseek', baseUrl: env.DEEPSEEK_BASE_URL };
+  }
+  if (env.OPENAI_BASE_URL) {
+    return { provider: 'openai', baseUrl: env.OPENAI_BASE_URL };
+  }
+  if (env.KIMI_BASE_URL) {
+    return { provider: 'kimi', baseUrl: env.KIMI_BASE_URL };
+  }
+  if (env.SILICONFLOW_BASE_URL) {
+    return { provider: 'siliconflow', baseUrl: env.SILICONFLOW_BASE_URL };
+  }
+  if (env.ANYROUTER_BASE_URL) {
+    return { provider: 'anyrouter', baseUrl: env.ANYROUTER_BASE_URL };
+  }
+  
+  // Auto-detect provider from generic OPENAI_COMPATIBLE_BASE_URL
   if (env.OPENAI_COMPATIBLE_BASE_URL) {
-    return {
-      provider: 'openai-compatible',
-      baseUrl: env.OPENAI_COMPATIBLE_BASE_URL
-    };
+    const baseUrl = env.OPENAI_COMPATIBLE_BASE_URL;
+    
+    if (baseUrl.includes('deepseek.com')) {
+      return { provider: 'deepseek', baseUrl };
+    } else if (baseUrl.includes('openai.com')) {
+      return { provider: 'openai', baseUrl };
+    } else if (baseUrl.includes('moonshot.cn')) {
+      return { provider: 'kimi', baseUrl };
+    } else if (baseUrl.includes('siliconflow.cn')) {
+      return { provider: 'siliconflow', baseUrl };
+    } else if (baseUrl.includes('anyrouter.top')) {
+      return { provider: 'anyrouter', baseUrl };
+    }
+    
+    // Default to deepseek if can't detect
+    return { provider: 'deepseek', baseUrl };
   }
   
   // Default to OpenRouter
