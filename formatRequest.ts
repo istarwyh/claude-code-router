@@ -118,9 +118,17 @@ export function mapModel(anthropicModel: string, provider: Provider = 'openroute
     return modelMappings[anthropicModel];
   }
   
-  // Then try partial matching for model families
+  // Then try family-based matching with more specific logic
+  // Only match if the model name starts with the family name followed by a delimiter
   for (const [claudeType, providerModel] of Object.entries(modelMappings)) {
-    if (anthropicModel.includes(claudeType)) {
+    // Check for exact match first (already handled above, but kept for clarity)
+    if (anthropicModel === claudeType) {
+      return providerModel;
+    }
+    
+    // Check if model starts with family name followed by a delimiter (-, _, space, or end)
+    const familyPattern = new RegExp(`^${claudeType}(?:[-_\\s]|$)`, 'i');
+    if (familyPattern.test(anthropicModel)) {
       return providerModel;
     }
   }

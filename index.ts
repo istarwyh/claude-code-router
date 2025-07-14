@@ -55,10 +55,16 @@ function selectProvider(env: Env, apiKey?: string): { provider: Provider; baseUr
       return { provider: 'kimi', baseUrl };
     } else if (baseUrl.includes('siliconflow.cn')) {
       return { provider: 'siliconflow', baseUrl };
+    } else if (baseUrl.includes('anyrouter.top')) {
+      return { provider: 'anyrouter', baseUrl };
     }
     
-    // 如果无法识别，默认使用deepseek配置
-    return { provider: 'deepseek', baseUrl };
+    // 如果无法识别provider，抛出错误而不是默认fallback
+    throw new Error(
+      `Could not auto-detect provider from OPENAI_COMPATIBLE_BASE_URL: ${baseUrl}. ` +
+      `Please use a provider-specific environment variable instead: ` +
+      `DEEPSEEK_BASE_URL, OPENAI_BASE_URL, KIMI_BASE_URL, SILICONFLOW_BASE_URL, or ANYROUTER_BASE_URL.`
+    );
   }
   
   // AnyRouter通过共享实例提供服务，使用默认URL
