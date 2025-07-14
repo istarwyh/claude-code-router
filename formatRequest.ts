@@ -1,4 +1,5 @@
-import { Provider, PROVIDER_CONFIGS } from './types';
+import { Provider, PROVIDER_CONFIGS, ModelMapping } from './types';
+import { Env } from './env';
 
 interface MessageCreateParamsBase {
   model: string;
@@ -100,16 +101,25 @@ function validateOpenAIToolCalls(messages: any[]): any[] {
   return validatedMessages;
 }
 
-export function mapModel(anthropicModel: string, provider: Provider = 'openrouter'): string {
+export function mapModel(anthropicModel: string, provider: Provider = 'openrouter', env?: Env): string {
   const config = PROVIDER_CONFIGS[provider];
   
-  // Check if it's already a valid OpenAI-compatible model
-  if (provider === 'openai-compatible' && config.commonModels && config.commonModels.includes(anthropicModel)) {
+  // 获取模型映射配置
+  const modelMappings = config.modelMappings;
+  
+  // Check if it's already a valid model for this provider
+  if (config.commonModels && config.commonModels.includes(anthropicModel)) {
     return anthropicModel;
   }
   
   // Map Claude model names to provider-specific models
-  for (const [claudeType, providerModel] of Object.entries(config.modelMappings)) {
+  // Try exact mapping first
+  if (modelMappings[anthropicModel]) {
+    return modelMappings[anthropicModel];
+  }
+  
+  // Then try partial matching for model families
+  for (const [claudeType, providerModel] of Object.entries(modelMappings)) {
     if (anthropicModel.includes(claudeType)) {
       return providerModel;
     }
@@ -119,7 +129,7 @@ export function mapModel(anthropicModel: string, provider: Provider = 'openroute
   return anthropicModel;
 }
 
-export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, provider: Provider = 'openrouter'): any {
+export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, provider: Provider = 'openrouter', env?: Env): any {
   const { model, messages, system = [], temperature, tools, stream } = body;
 
   const openAIMessages = Array.isArray(messages)
@@ -223,7 +233,7 @@ export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, provider:
       }];
 
   const data: any = {
-    model: mapModel(model, provider),
+    model: mapModel(model, provider, env),
     messages: [...systemMessages, ...openAIMessages],
     temperature,
     stream,

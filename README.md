@@ -1,4 +1,4 @@
-# y-router
+# Claude-Code-Router
 
 A Cloudflare Worker that acts as a **proxy service**, translating between Anthropic's Claude API and OpenAI-compatible APIs, enabling you to use Claude Code with OpenRouter, OpenAI, DeepSeek, and other OpenAI-style providers through a single proxy endpoint.
 
@@ -15,7 +15,7 @@ npm install -g @anthropic-ai/claude-code
 
 ```bash
 # For quick testing, you can use our shared instance. For daily use, deploy your own instance for better reliability.
-export ANTHROPIC_BASE_URL="https://cc.yovy.app"
+export ANTHROPIC_BASE_URL="https://cc.xiaohui.cool"
 export ANTHROPIC_API_KEY="your-openrouter-api-key"
 ```
 
@@ -25,7 +25,7 @@ source ~/.bashrc
 claude
 ```
 
-That's it! Claude Code will now use OpenRouter's models through y-router.
+That's it! Claude Code will now use OpenRouter's models through Claude-Code-Router.
 
 ## GitHub Actions Usage
 
@@ -36,7 +36,7 @@ env:
   ANTHROPIC_BASE_URL: ${{ secrets.ANTHROPIC_BASE_URL }}
 ```
 
-Set `ANTHROPIC_BASE_URL` to `https://cc.yovy.app` in your repository secrets.
+Set `ANTHROPIC_BASE_URL` to `https://cc.xiaohui.cool` in your repository secrets.
 
 Example workflows:
 - [Interactive Claude Code](.github/workflows/claude.yml) - Responds to @claude mentions
@@ -44,7 +44,7 @@ Example workflows:
 
 ## What it does
 
-y-router acts as a **transparent proxy service** that:
+Claude-Code-Router acts as a **transparent proxy service** that:
 - Accepts requests in Anthropic's API format (`/v1/messages`)
 - Converts them to OpenAI's chat completions format
 - Forwards to the configured backend (OpenRouter, OpenAI, DeepSeek, or any OpenAI-compatible API)
@@ -56,8 +56,8 @@ y-router acts as a **transparent proxy service** that:
 ## Perfect for Claude Code + Multiple Providers
 
 This proxy allows you to use [Claude Code](https://claude.ai/code) with various model providers by:
-1. Deploying y-router with your preferred backend (OpenRouter, OpenAI, DeepSeek, etc.)
-2. Pointing Claude Code to your y-router deployment
+1. Deploying Claude-Code-Router with your preferred backend (OpenRouter, OpenAI, DeepSeek, etc.)
+2. Pointing Claude Code to your Claude-Code-Router deployment
 3. Using your backend provider's API key
 4. Accessing models through Claude Code's interface transparently
 
@@ -66,7 +66,7 @@ This proxy allows you to use [Claude Code](https://claude.ai/code) with various 
 1. **Clone and deploy:**
    ```bash
    git clone <repo>
-   cd y-router
+   cd claude-code-router
    npm install -g wrangler
    wrangler deploy
    ```
@@ -85,8 +85,8 @@ This proxy allows you to use [Claude Code](https://claude.ai/code) with various 
 ## Environment Variables
 
 - `OPENROUTER_BASE_URL` (optional): Base URL for OpenRouter API. Defaults to `https://openrouter.ai/api/v1`
-- `OPENAI_COMPATIBLE_BASE_URL` (optional): Base URL for any OpenAI-compatible API. When set, routes requests to this endpoint instead of OpenRouter. Examples:
-  - DeepSeek: `https://api.deepseek.com`
+- `OPENAI_COMPATIBLE_BASE_URL` (optional): Base URL for any OpenAI-compatible API. When set, routes requests to this endpoint instead of OpenRouter. Defaults to `https://api.deepseek.com` when using OpenAI-compatible mode. Examples:
+  - DeepSeek: `https://api.deepseek.com` (default)
   - OpenAI: `https://api.openai.com/v1` 
   - Other providers: Set to their OpenAI-compatible endpoint
 
@@ -94,11 +94,11 @@ This proxy allows you to use [Claude Code](https://claude.ai/code) with various 
 
 ## Using with OpenAI-Compatible APIs
 
-y-router supports any OpenAI-compatible API as an alternative backend to OpenRouter. This is configured at **deployment time** by the service administrator.
+Claude-Code-Router supports any OpenAI-compatible API as an alternative backend to OpenRouter. This is configured at **deployment time** by the service administrator.
 
 ### For Service Administrators (Deployment Configuration)
 
-To deploy y-router with an OpenAI-compatible backend:
+To deploy Claude-Code-Router with an OpenAI-compatible backend:
 
 1. **Get API key** from your chosen provider (DeepSeek, OpenAI, etc.)
 
@@ -106,9 +106,18 @@ To deploy y-router with an OpenAI-compatible backend:
    ```bash
    # Configure the proxy to use an OpenAI-compatible API as backend
    # Examples:
+   
+   # For DeepSeek (default models already configured):
    wrangler secret put OPENAI_COMPATIBLE_BASE_URL  # DeepSeek: https://api.deepseek.com
-   # wrangler secret put OPENAI_COMPATIBLE_BASE_URL  # OpenAI: https://api.openai.com/v1
-   # wrangler secret put OPENAI_COMPATIBLE_BASE_URL  # Other: https://your-provider.com/v1
+   
+   # For OpenAI (need custom model mappings):
+   wrangler secret put OPENAI_COMPATIBLE_BASE_URL  # OpenAI: https://api.openai.com/v1
+   wrangler secret put OPENAI_COMPATIBLE_MODEL_MAPPINGS  # {"haiku":"gpt-4o-mini","sonnet":"gpt-4o","opus":"gpt-4o"}
+   
+   # For other providers:
+   wrangler secret put OPENAI_COMPATIBLE_BASE_URL  # Other: https://your-provider.com/v1
+   wrangler secret put OPENAI_COMPATIBLE_MODEL_MAPPINGS  # Custom mappings as needed
+   
    wrangler deploy
    ```
 
@@ -118,16 +127,17 @@ Users interact with the proxy service the same way regardless of backend:
 
 ```bash
 # Point Claude Code to your deployed proxy
-export ANTHROPIC_BASE_URL="https://your-deployed-domain.com"  # or https://cc.yovy.app
+export ANTHROPIC_BASE_URL="https://your-deployed-domain.com"  # or https://cc.xiaohui.cool
 export ANTHROPIC_API_KEY="your-backend-api-key"  # OpenRouter, DeepSeek, OpenAI, or other provider key
 ```
 
 ### Common OpenAI-Compatible Providers
 
-**DeepSeek Example:**
+**DeepSeek Example (Default Configuration):**
 - **Available Models**: `deepseek-chat`, `deepseek-reasoner`
-- **Base URL**: `https://api.deepseek.com`
-- **Claude model mapping**: haiku/sonnet/opus → `gpt-4o-mini`/`gpt-4o`/`gpt-4o`
+- **Base URL**: `https://api.deepseek.com` (default when using OpenAI-compatible mode)
+- **Claude model mapping**: haiku/sonnet → `deepseek-chat`, opus → `deepseek-reasoner`
+- **Configuration**: Only need to set `OPENAI_COMPATIBLE_BASE_URL`
 
 **OpenAI Example:**
 - **Available Models**: `gpt-4o`, `gpt-4o-mini`, `gpt-3.5-turbo`
@@ -141,7 +151,7 @@ export ANTHROPIC_API_KEY="your-backend-api-key"  # OpenRouter, DeepSeek, OpenAI,
 Send requests to `/v1/messages` using Anthropic's format:
 
 ```bash
-curl -X POST https://cc.yovy.app/v1/messages \
+curl -X POST https://cc.xiaohui.cool/v1/messages \
   -H "Content-Type: application/json" \
   -H "x-api-key: your-openrouter-key" \
   -d '{
@@ -160,7 +170,7 @@ npm run deploy # Deploy to Cloudflare Workers
 
 ## Thanks
 
-Special thanks to these projects that inspired y-router:
+Special thanks to these projects that inspired Claude-Code-Router:
 - [claude-code-router](https://github.com/musistudio/claude-code-router)
 - [claude-code-proxy](https://github.com/kiyo-e/claude-code-proxy)
 
@@ -168,11 +178,11 @@ Special thanks to these projects that inspired y-router:
 
 **Important Legal Notice:**
 
-- **Third-party Tool**: y-router is an independent, unofficial tool and is not affiliated with, endorsed by, or supported by Anthropic PBC, OpenAI, or OpenRouter
+- **Third-party Tool**: Claude-Code-Router is an independent, unofficial tool and is not affiliated with, endorsed by, or supported by Anthropic PBC, OpenAI, or OpenRouter
 - **Service Terms**: Users are responsible for ensuring compliance with the Terms of Service of all involved parties (Anthropic, OpenRouter, and any other API providers)
 - **API Key Responsibility**: Users must use their own valid API keys and are solely responsible for any usage, costs, or violations associated with those keys
 - **No Warranty**: This software is provided "as is" without any warranties. The authors are not responsible for any damages, service interruptions, or legal issues arising from its use
-- **Data Privacy**: While y-router does not intentionally store user data, users should review the privacy policies of all connected services
+- **Data Privacy**: While Claude-Code-Router does not intentionally store user data, users should review the privacy policies of all connected services
 - **Compliance**: Users are responsible for ensuring their use complies with applicable laws and regulations in their jurisdiction
 - **Commercial Use**: Any commercial use should be carefully evaluated against relevant terms of service and licensing requirements
 
