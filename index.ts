@@ -21,25 +21,20 @@ function selectProvider(env: Env): { provider: Provider; baseUrl: string } {
   if (env.SILICONFLOW_BASE_URL) {
     return { provider: 'siliconflow', baseUrl: env.SILICONFLOW_BASE_URL };
   }
-  if (env.ANYROUTER_BASE_URL) {
-    return { provider: 'anyrouter', baseUrl: env.ANYROUTER_BASE_URL };
-  }
-  
+
   // Auto-detect provider from generic OPENAI_COMPATIBLE_BASE_URL
   if (env.OPENAI_COMPATIBLE_BASE_URL) {
-    const baseUrl = env.OPENAI_COMPATIBLE_BASE_URL;
+    const baseUrl = env.OPENAI_COMPATIBLE_BASE_URL.toLowerCase();
     
-    if (baseUrl.includes('deepseek.com')) {
+    if (baseUrl.includes('deepseek')) {
       return { provider: 'deepseek', baseUrl };
-    } else if (baseUrl.includes('openai.com')) {
+    } else if (baseUrl.includes('openai')) {
       return { provider: 'openai', baseUrl };
-    } else if (baseUrl.includes('moonshot.cn')) {
+    } else if (baseUrl.includes('moonshot')) {
       return { provider: 'kimi', baseUrl };
-    } else if (baseUrl.includes('siliconflow.cn')) {
+    } else if (baseUrl.includes('siliconflow')) {
       return { provider: 'siliconflow', baseUrl };
-    } else if (baseUrl.includes('anyrouter.top')) {
-      return { provider: 'anyrouter', baseUrl };
-    }
+    } 
     // Default to deepseek if can't detect
     return { provider: 'deepseek', baseUrl };
   }

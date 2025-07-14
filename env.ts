@@ -1,6 +1,5 @@
 export interface Env {
   OPENROUTER_BASE_URL?: string;
-  ANYROUTER_BASE_URL?: string;
   
   // Provider-specific base URLs
   DEEPSEEK_BASE_URL?: string;

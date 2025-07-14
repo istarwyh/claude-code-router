@@ -1,4 +1,4 @@
-export type Provider = 'openrouter' | 'deepseek' | 'openai' | 'kimi' | 'siliconflow' | 'anyrouter';
+export type Provider = 'openrouter' | 'deepseek' | 'openai' | 'kimi' | 'siliconflow' ;
 
 export interface ModelMapping {
   [key: string]: string;
@@ -65,17 +65,5 @@ export const PROVIDER_CONFIGS = {
       'opus': 'deepseek-ai/deepseek-reasoner',
     } as ModelMapping,
     commonModels: ['deepseek-ai/deepseek-chat', 'deepseek-ai/deepseek-reasoner'],
-  },
-  anyrouter: {
-    defaultBaseUrl: 'https://api.anyrouter.top/v1',
-    modelMappings: {
-      'claude-3-5-haiku-20241022': 'claude-3-5-haiku-20241022',
-      'claude-3-5-sonnet-20241022': 'claude-3-5-sonnet-20241022',
-      'claude-3-opus-20240229': 'claude-3-opus-20240229',
-      'haiku': 'claude-3-5-haiku-20241022',
-      'sonnet': 'claude-3-5-sonnet-20241022', 
-      'opus': 'claude-3-opus-20240229',
-    } as ModelMapping,
-    commonModels: ['claude-3-5-sonnet-20241022', 'claude-3-5-haiku-20241022', 'claude-3-opus-20240229'],
   },
 } as const;
