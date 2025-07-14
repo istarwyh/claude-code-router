@@ -8,6 +8,148 @@ export const indexHtml = `<!DOCTYPE html>
     <title>Claude-Code-Router - Universal Claude API Proxy</title>
     <link rel="shortcut icon" type="image/svg+xml" href="${faviconDataUrl}">
     <style>
+        /* Sidebar Styles */
+        .sidebar-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition-normal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .sidebar-toggle:hover {
+            background: var(--color-primary-dark);
+            transform: scale(1.1);
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: var(--color-bg-primary);
+            box-shadow: var(--shadow-xl);
+            transition: right 0.3s ease-out;
+            z-index: 999;
+            overflow-y: auto;
+            border-left: 1px solid var(--color-border-light);
+        }
+
+        .sidebar.open {
+            right: 0;
+        }
+
+        .sidebar-header {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+            color: var(--color-text-inverse);
+            padding: var(--space-6);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .sidebar-close {
+            position: absolute;
+            top: var(--space-4);
+            right: var(--space-4);
+            background: none;
+            border: none;
+            color: var(--color-text-inverse);
+            font-size: 24px;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: var(--transition-normal);
+        }
+
+        .sidebar-close:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .sidebar-content {
+            padding: var(--space-6);
+        }
+
+        .sidebar-section {
+            margin-bottom: var(--space-8);
+        }
+
+        .sidebar-section h3 {
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-4);
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            border-bottom: 2px solid var(--color-primary);
+            padding-bottom: var(--space-2);
+        }
+
+        .sidebar-section h4 {
+            color: var(--color-text-secondary);
+            margin: var(--space-4) 0 var(--space-2) 0;
+            font-size: var(--font-size-base);
+            font-weight: 600;
+        }
+
+        .sidebar .code-block {
+            font-size: var(--font-size-xs);
+            margin: var(--space-2) 0;
+            background: var(--color-bg-tertiary);
+            color: var(--color-text-primary);
+            border: 1px solid var(--color-border-light);
+        }
+
+        .sidebar .note {
+            margin: var(--space-3) 0;
+            padding: var(--space-3);
+            font-size: var(--font-size-sm);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition-normal);
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                right: -100%;
+            }
+
+            .sidebar-toggle {
+                top: 10px;
+                right: 10px;
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+            }
+        }
+
         :root {
             /* Design Tokens - Colors */
             --color-primary: #2563eb;
@@ -780,6 +922,48 @@ export const indexHtml = `<!DOCTYPE html>
     </style>
 </head>
 <body>
+    <!-- Sidebar Toggle Button -->
+    <button class="sidebar-toggle" onclick="toggleSidebar()" title="Quick Configuration Guide">
+        ⚙️
+    </button>
+
+    <!-- Overlay -->
+    <div class="overlay" onclick="closeSidebar()"></div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>🚀 Quick Setup Guide</h3>
+            <button class="sidebar-close" onclick="closeSidebar()">&times;</button>
+        </div>
+        
+        <div class="sidebar-content">
+            <div class="sidebar-section">
+                <h3>🌙 Kimi (Moonshot AI) Setup</h3>
+                <h4>1. Get Your API Key</h4>
+                <p>Visit <a href="https://platform.moonshot.cn" target="_blank" style="color: var(--color-primary);">platform.moonshot.cn</a> to get your API key</p>
+                
+                <h4>2. Quick Shell Alias</h4>
+                <p>Add this to your shell config for easy Kimi usage:</p>
+                <div class="code-block">alias kimi="ANTHROPIC_AUTH_TOKEN=sk-xxx ANTHROPIC_BASE_URL=https://api.moonshot.cn/anthropic claude"</div>
+                <div class="note">Replace the API key with your actual key from Moonshot AI</div>
+                
+                <h4>3. Just Use command 'kimi' </h4>
+            
+            </div>
+
+            <div class="sidebar-section">
+                <h3>💡 Pro Tips</h3>
+                <ul style="padding-left: var(--space-5); color: var(--color-text-secondary);">
+                    <li>Always use quotes around your API key</li>
+                    <li>Add aliases to ~/.bashrc or ~/.zshrc for persistence</li>
+                    <li>Use different aliases for different providers</li>
+                    <li>Test with "claude --help" before coding</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <!-- Hero Section -->
         <div class="hero">
@@ -998,5 +1182,75 @@ export const indexHtml = `<!DOCTYPE html>
             </div>
         </div>
     </div>
+
+    <!-- JavaScript for Sidebar -->
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.overlay');
+            
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+            
+            // Prevent body scroll when sidebar is open
+            document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.overlay');
+            
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+            
+            // Restore body scroll
+            document.body.style.overflow = '';
+        }
+
+        // Close sidebar on escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeSidebar();
+            }
+        });
+
+        // Close sidebar on outside click (overlay handles this)
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggleButton = document.querySelector('.sidebar-toggle');
+            
+            if (!sidebar.contains(event.target) && !toggleButton.contains(event.target)) {
+                closeSidebar();
+            }
+        });
+
+        // Smooth scroll for provider badges
+        document.querySelectorAll('.badge').forEach(badge => {
+            badge.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ 
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                    // Add highlight effect
+                    targetElement.style.animation = 'highlight 2s ease-out';
+                    setTimeout(() => {
+                        targetElement.style.animation = '';
+                    }, 2000);
+                }
+            });
+        });
+
+        // Add keyboard shortcut for sidebar (Ctrl+Shift+K)
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey && event.shiftKey && event.key === 'K') {
+                event.preventDefault();
+                toggleSidebar();
+            }
+        });
+    </script>
 </body>
 </html>`;
