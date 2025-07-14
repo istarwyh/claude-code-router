@@ -1,4 +1,10 @@
-import { Provider, PROVIDER_CONFIGS, ModelMapping } from './types';
+import { Provider, PROVIDER_CONFIGS } from './types';
+
+interface ProviderConfig {
+  defaultBaseUrl: string;
+  modelMappings: Record<string, string>;
+  commonModels?: readonly string[];
+}
 import { Env } from './env';
 
 interface MessageCreateParamsBase {
@@ -101,11 +107,8 @@ function validateOpenAIToolCalls(messages: any[]): any[] {
   return validatedMessages;
 }
 
-export function mapModel(anthropicModel: string, provider: Provider = 'openrouter', env?: Env): string {
-  const config = PROVIDER_CONFIGS[provider];
-  
-  // 获取模型映射配置
-  const modelMappings = config.modelMappings;
+export function mapModel(anthropicModel: string, provider: Provider = 'openrouter'): string {
+  const config = PROVIDER_CONFIGS[provider] as ProviderConfig;
   
   // Check if it's already a valid model for this provider
   if (config.commonModels && config.commonModels.includes(anthropicModel)) {
@@ -114,21 +117,13 @@ export function mapModel(anthropicModel: string, provider: Provider = 'openroute
   
   // Map Claude model names to provider-specific models
   // Try exact mapping first
-  if (modelMappings[anthropicModel]) {
-    return modelMappings[anthropicModel];
+  if (config.modelMappings[anthropicModel]) {
+    return config.modelMappings[anthropicModel];
   }
   
-  // Then try family-based matching with more specific logic
-  // Only match if the model name starts with the family name followed by a delimiter
-  for (const [claudeType, providerModel] of Object.entries(modelMappings)) {
-    // Check for exact match first (already handled above, but kept for clarity)
-    if (anthropicModel === claudeType) {
-      return providerModel;
-    }
-    
-    // Check if model starts with family name followed by a delimiter (-, _, space, or end)
-    const familyPattern = new RegExp(`^${claudeType}(?:[-_\\s]|$)`, 'i');
-    if (familyPattern.test(anthropicModel)) {
+  // Then try partial matching for model families
+  for (const [claudeType, providerModel] of Object.entries(config.modelMappings)) {
+    if (anthropicModel.includes(claudeType)) {
       return providerModel;
     }
   }
@@ -241,7 +236,7 @@ export function formatAnthropicToOpenAI(body: MessageCreateParamsBase, provider:
       }];
 
   const data: any = {
-    model: mapModel(model, provider, env),
+    model: mapModel(model, provider),
     messages: [...systemMessages, ...openAIMessages],
     temperature,
     stream,

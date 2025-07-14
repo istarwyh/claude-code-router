@@ -7,43 +7,25 @@ import { termsHtml } from './termsHtml';
 import { privacyHtml } from './privacyHtml';
 import { Provider, PROVIDER_CONFIGS } from './types';
 
-function selectProvider(env: Env, apiKey?: string): { provider: Provider; baseUrl: string } {
-  // 检查各个具体的provider配置
-  
-  // DeepSeek
+function selectProvider(env: Env): { provider: Provider; baseUrl: string } {
+  // Check specific provider configurations first
   if (env.DEEPSEEK_BASE_URL) {
-    return {
-      provider: 'deepseek',
-      baseUrl: env.DEEPSEEK_BASE_URL
-    };
+    return { provider: 'deepseek', baseUrl: env.DEEPSEEK_BASE_URL };
   }
-  
-  // OpenAI
   if (env.OPENAI_BASE_URL) {
-    return {
-      provider: 'openai',
-      baseUrl: env.OPENAI_BASE_URL
-    };
+    return { provider: 'openai', baseUrl: env.OPENAI_BASE_URL };
   }
-  
-  // Kimi (Moonshot)
   if (env.KIMI_BASE_URL) {
-    return {
-      provider: 'kimi',
-      baseUrl: env.KIMI_BASE_URL
-    };
+    return { provider: 'kimi', baseUrl: env.KIMI_BASE_URL };
   }
-  
-  // SiliconFlow
   if (env.SILICONFLOW_BASE_URL) {
-    return {
-      provider: 'siliconflow',
-      baseUrl: env.SILICONFLOW_BASE_URL
-    };
+    return { provider: 'siliconflow', baseUrl: env.SILICONFLOW_BASE_URL };
+  }
+  if (env.ANYROUTER_BASE_URL) {
+    return { provider: 'anyrouter', baseUrl: env.ANYROUTER_BASE_URL };
   }
   
-  // 为了向后兼容，继续支持通用的OPENAI_COMPATIBLE_BASE_URL
-  // 根据URL自动检测provider类型
+  // Auto-detect provider from generic OPENAI_COMPATIBLE_BASE_URL
   if (env.OPENAI_COMPATIBLE_BASE_URL) {
     const baseUrl = env.OPENAI_COMPATIBLE_BASE_URL;
     
@@ -58,29 +40,8 @@ function selectProvider(env: Env, apiKey?: string): { provider: Provider; baseUr
     } else if (baseUrl.includes('anyrouter.top')) {
       return { provider: 'anyrouter', baseUrl };
     }
-    
-    // 如果无法识别provider，抛出错误而不是默认fallback
-    throw new Error(
-      `Could not auto-detect provider from OPENAI_COMPATIBLE_BASE_URL: ${baseUrl}. ` +
-      `Please use a provider-specific environment variable instead: ` +
-      `DEEPSEEK_BASE_URL, OPENAI_BASE_URL, KIMI_BASE_URL, SILICONFLOW_BASE_URL, or ANYROUTER_BASE_URL.`
-    );
-  }
-  
-  // AnyRouter通过共享实例提供服务，使用默认URL
-  if (env.ANYROUTER_BASE_URL) {
-    return {
-      provider: 'anyrouter',
-      baseUrl: env.ANYROUTER_BASE_URL
-    };
-  }
-  
-  // 检测AnyRouter API Key模式 (如果API key以特定格式开头)
-  if (apiKey && (apiKey.startsWith('ar-') || apiKey.includes('anyrouter'))) {
-    return {
-      provider: 'anyrouter',
-      baseUrl: PROVIDER_CONFIGS.anyrouter.defaultBaseUrl
-    };
+    // Default to deepseek if can't detect
+    return { provider: 'deepseek', baseUrl };
   }
   
   // Default to OpenRouter
@@ -116,10 +77,10 @@ export default {
       const anthropicRequest = await request.json();
       const bearerToken = request.headers.get("x-api-key");
 
-      // Select provider and base URL based on environment configuration and API key
-      const { provider, baseUrl } = selectProvider(env, bearerToken || undefined);
+      // Select provider and base URL based on environment configuration
+      const { provider, baseUrl } = selectProvider(env);
 
-      const openaiRequest = formatAnthropicToOpenAI(anthropicRequest, provider, env);
+      const openaiRequest = formatAnthropicToOpenAI(anthropicRequest, provider);
       const openaiResponse = await fetch(`${baseUrl}/chat/completions`, {
         method: "POST",
         headers: {
