@@ -22,7 +22,6 @@ export const getStartedComponent = `
 
     <div class="section-header">
         <h2>🚀 如何用上 CC</h2>
-        <p class="section-subtitle">快速开始使用 Claude Code Router，连接你喜欢的 AI 模型</p>
     </div>
 
     ${providersComponent}

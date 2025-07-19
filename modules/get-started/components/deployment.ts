@@ -1,48 +1,170 @@
 export const deploymentComponent = `
 <!-- Self-Deployment -->
 <div class="deployment">
-    <h2>🔒 Deploy Your Own Instance</h2>
-    <p class="deployment-subtitle">For maximum data security and to access all AI providers beyond OpenRouter</p>
-    
-    <div class="deployment-reason">
-        <h3>🤔 Why Self-Deploy?</h3>
-        <div class="reason-grid">
-            <div class="reason-item">
-                <h4>🌐 Access All Providers</h4>
-                <p>cc.xiaohui.cool only supports DeepSeek. Self-deploy to use OpenRouter, OpenAI and more.</p>
-            </div>
-            <div class="reason-item">
-                <h4>🔐 Data Security</h4>
-                <p>Your API keys and requests never pass through third-party servers when you control the infrastructure.</p>
-            </div>
-            <div class="reason-item">
-                <h4>⚙️ Full Control</h4>
-                <p>Configure any provider, custom model mappings, and deployment settings according to your needs.</p>
-            </div>
-            <div class="reason-item">
-                <h4>📊 Zero Logs</h4>
-                <p>No request logging or data retention when you deploy your own instance to Cloudflare Workers.</p>
-            </div>
+    <div class="deployment-header">
+        <h2>🚀 Deploy Your Own</h2>
+        <div class="deployment-benefits">
+            <span class="benefit-tag">🔐 Private</span>
+            <span class="benefit-tag">⚡ Secure </span>
+            <span class="benefit-tag">🌐 Full Control</span>
+            <span class="benefit-tag">📊 Zero Logs</span>
         </div>
     </div>
     
-    <div class="deployment-steps">
-        <div class="deployment-step">
-            <h3>1. Clone & Install</h3>
-            <div class="code-block">git clone https://github.com/istarwyh/claude-code-router<br>cd claude-code-router<br>npm install</div>
+    <div class="deployment-grid">
+        <!-- Quick Deploy Card -->
+        <div class="deploy-card primary">
+            <div class="card-header">
+                <span class="card-icon">⚡</span>
+                <h3>Quick Deploy</h3>
+                <span class="time-badge">~3 min</span>
+            </div>
+            <div class="deploy-steps">
+                <div class="step-item">
+                    <span class="step-icon">📥</span>
+                    <div class="step-content">
+                        <div class="step-title">Clone & Setup</div>
+                        <div class="code-snippet">
+                            <code>git clone https://github.com/istarwyh/claude-code-router && cd claude-code-router && npm install</code>
+                            <button class="copy-btn" onclick="copyToClipboard('git clone https://github.com/istarwyh/claude-code-router && cd claude-code-router && npm install')">📋</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <span class="step-icon">🔑</span>
+                    <div class="step-content">
+                        <div class="step-title">Configure Secrets</div>
+                        <div class="provider-configs">
+                            <div class="config-option" onclick="toggleConfigDetails('deepseek')">
+                                <span class="provider-icon deepseek">DS</span>
+                                <span>DeepSeek</span>
+                                <span class="expand-icon">▶</span>
+                            </div>
+                            <div class="config-details" id="deepseek-config">
+                                <div class="code-snippet">
+                                    <code>wrangler secret put OPENAI_COMPATIBLE_BASE_URL</code>
+                                    <button class="copy-btn" onclick="copyToClipboard('wrangler secret put OPENAI_COMPATIBLE_BASE_URL')">📋</button>
+                                </div>
+                                <div class="config-note">Enter: https://api.deepseek.com</div>
+                            </div>
+                            <div class="config-option" onclick="toggleConfigDetails('openai')">
+                                <span class="provider-icon openai">AI</span>
+                                <span>OpenAI</span>
+                                <span class="expand-icon">▶</span>
+                            </div>
+                            <div class="config-details" id="openai-config">
+                                <div class="code-snippet">
+                                    <code>wrangler secret put OPENAI_COMPATIBLE_BASE_URL</code>
+                                    <button class="copy-btn" onclick="copyToClipboard('wrangler secret put OPENAI_COMPATIBLE_BASE_URL')">📋</button>
+                                </div>
+                                <div class="config-note">Enter: https://api.openai.com/v1</div>
+                            </div>
+                            <div class="config-option" onclick="toggleConfigDetails('openrouter')">
+                                <span class="provider-icon openrouter">OR</span>
+                                <span>OpenRouter</span>
+                                <span class="expand-icon">▶</span>
+                            </div>
+                            <div class="config-details" id="openrouter-config">
+                                <div class="code-snippet">
+                                    <code>wrangler secret put OPENROUTER_BASE_URL</code>
+                                    <button class="copy-btn" onclick="copyToClipboard('wrangler secret put OPENROUTER_BASE_URL')">📋</button>
+                                </div>
+                                <div class="config-note">Enter: https://openrouter.ai/api/v1</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <span class="step-icon">🚀</span>
+                    <div class="step-content">
+                        <div class="step-title">Deploy</div>
+                        <div class="code-snippet">
+                            <code>npm run deploy</code>
+                            <button class="copy-btn" onclick="copyToClipboard('npm run deploy')">📋</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div class="deployment-step">
-            <h3>2. Configure Provider (Secure Method)</h3>
-            <p><strong>Recommended:</strong> Use Wrangler secrets for secure configuration:</p>
-            <div class="code-block"># For DeepSeek<br>wrangler secret put OPENAI_COMPATIBLE_BASE_URL<br># Enter: https://api.deepseek.com<br><br># For OpenAI<br>wrangler secret put OPENAI_BASE_URL<br># Enter: https://api.openai.com/v1<br><br># For Kimi (Moonshot AI)<br># Enter: https://api.moonshot.cn/v1<br><br># For SiliconFlow<br># Enter: https://api.siliconflow.cn/v1<br><br># Or for OpenRouter<br># Enter: https://openrouter.ai/api/v1</div>
-            <div class="note">Using secrets ensures your API endpoints are encrypted and not visible in your code repository.</div>
+        
+        <!-- Why Deploy Card -->
+        <div class="deploy-card secondary">
+            <div class="card-header">
+                <span class="card-icon">🛡️</span>
+                <h3>Why Deploy?</h3>
+            </div>
+            <div class="benefits-list">
+                <div class="benefit-item">
+                    <span class="benefit-icon">🌐</span>
+                    <div>
+                        <div class="benefit-title">All Providers</div>
+                        <div class="benefit-desc">Access OpenAI, DeepSeek, Kimi, and more</div>
+                    </div>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-icon">🔐</span>
+                    <div>
+                        <div class="benefit-title">Private & Secure</div>
+                        <div class="benefit-desc">Your keys never touch third-party servers</div>
+                    </div>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-icon">⚙️</span>
+                    <div>
+                        <div class="benefit-title">Full Control</div>
+                        <div class="benefit-desc">Custom configs, model mappings</div>
+                    </div>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-icon">📊</span>
+                    <div>
+                        <div class="benefit-title">Zero Logs</div>
+                        <div class="benefit-desc">No data retention or tracking</div>
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
+</div>
 
-        <div class="deployment-step">
-            <h3>3. Deploy to Cloudflare</h3>
-            <div class="code-block">npm run deploy</div>
-            <div class="note">Your custom domain will be provided after deployment. Update your ANTHROPIC_BASE_URL accordingly.</div>
+<script>
+// 切换配置详情显示
+function toggleConfigDetails(providerId) {
+    const details = document.getElementById(providerId + '-config');
+    const expandIcon = event.currentTarget.querySelector('.expand-icon');
+    
+    if (details.style.display === 'none' || !details.style.display) {
+        details.style.display = 'block';
+        expandIcon.textContent = '▼';
+        expandIcon.style.transform = 'rotate(90deg)';
+    } else {
+        details.style.display = 'none';
+        expandIcon.textContent = '▶';
+        expandIcon.style.transform = 'rotate(0deg)';
+    }
+}
+</script>
+
+<!-- Contact Section -->
+<div class="contact-section">
+    <div class="contact-header">
+        <h3>💬 Need Help?</h3>
+        <p>Get in touch if you have any questions or issues</p>
+    </div>
+    <div class="contact-methods">
+        <div class="contact-item">
+            <span class="contact-icon">📧</span>
+            <div class="contact-info">
+                <div class="contact-label">Email</div>
+                <a href="mailto:talk@xiaohui.cool" class="contact-link">talk@xiaohui.cool</a>
+            </div>
+        </div>
+        <div class="contact-item">
+            <span class="contact-icon">💬</span>
+            <div class="contact-info">
+                <div class="contact-label">WeChat</div>
+                <span class="contact-value">istarwyh</span>
+            </div>
         </div>
     </div>
 </div>
@@ -56,8 +178,6 @@ export const deploymentComponent = `
         <a href="/terms">Terms</a>
         <a href="/privacy">Privacy</a>
     </div>
-    <div class="footer-copyright">
-        Made with ❤️ for the Claude Code community
-    </div>
+
 </div>
 `;
