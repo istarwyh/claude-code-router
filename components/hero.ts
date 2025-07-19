@@ -15,3 +15,24 @@ export const heroComponent = `
     </div>
 </div>
 `;
+
+export const getStartedComponent = `
+<section class="content-section" id="get-started">
+    <div class="hero">
+        <div class="hero-content">
+            <h1>Claude-Code-Router</h1>
+            <p class="hero-subtitle">Universal Claude API Proxy for Multiple AI Providers</p>
+            <div class="hero-badges">
+                <span class="badge badge-primary">OpenAI Compatible</span>
+                <span class="badge badge-secondary">Multi-Provider</span>
+                <span class="badge badge-accent">Self-Hosted</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-header">
+        <h2>🚀 如何用上 CC</h2>
+        <p class="section-subtitle">快速开始使用 Claude Code Router，连接你喜欢的 AI 模型</p>
+    </div>
+</section>
+`;

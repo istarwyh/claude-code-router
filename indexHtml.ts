@@ -4,10 +4,10 @@ import { allScripts } from './scripts';
 import {
   createHead,
   sidebarComponent,
-  heroComponent,
-  providersComponent,
-  setupComponent,
-  deploymentComponent
+  navigationComponent,
+  getStartedComponent,
+  bestPracticesComponent,
+  implementationComponent
 } from './components';
 
 export const indexHtml = `<!DOCTYPE html>
@@ -18,12 +18,12 @@ ${allStyles}
 </style>
 <body>
 ${sidebarComponent}
+${navigationComponent}
 
 <div class="container">
-${heroComponent}
-${providersComponent}
-${setupComponent}
-${deploymentComponent}
+${getStartedComponent}
+${bestPracticesComponent}
+${implementationComponent}
 </div>
 
 <script>

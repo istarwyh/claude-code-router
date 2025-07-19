@@ -1,15 +1,15 @@
 import { createHead } from './head';
 import { sidebarComponent } from './sidebar';
-import { heroComponent } from './hero';
-import { providersComponent } from './providers';
-import { setupComponent } from './setup';
-import { deploymentComponent } from './deployment';
+import { navigationComponent } from './navigation';
+import { getStartedComponent } from './getStarted';
+import { bestPracticesComponent } from './bestPractices';
+import { implementationComponent } from './implementation';
 
 export {
   createHead,
   sidebarComponent,
-  heroComponent,
-  providersComponent,
-  setupComponent,
-  deploymentComponent
+  navigationComponent,
+  getStartedComponent,
+  bestPracticesComponent,
+  implementationComponent
 };
