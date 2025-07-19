@@ -69,13 +69,13 @@ export const providers: Provider[] = [
     isDirectlyUsable: true,
     proxyUrl: 'https://api.siliconflow.cn/',
     originalUrl: 'https://api.siliconflow.cn/v1',
-    aliasCommand: 'alias kimi-siliconflow="ANTHROPIC_BASE_URL=https://api.siliconflow.cn/ ANTHROPIC_API_KEY=sk-t..........pnyvuskoppq ANTHROPIC_MODEL=Pro/moonshotai/Kimi-K2-Instruct claude"',
+    aliasCommand: 'alias siliconflow="ANTHROPIC_BASE_URL=https://api.siliconflow.cn/ ANTHROPIC_API_KEY=sk-your-siliconflow-key ANTHROPIC_MODEL=Pro/moonshotai/Kimi-K2-Instruct claude"',
     apiKeyUrl: 'https://siliconflow.cn',
     features: ['Chinese platform', 'Multiple models', 'Domestic & international'],
     specialConfig: {
       envVars: {
         'ANTHROPIC_BASE_URL': 'https://api.siliconflow.cn/',
-        'ANTHROPIC_API_KEY': 'sk-t..........pnyvuskoppq',
+        'ANTHROPIC_API_KEY': 'sk-your-siliconflow-key',
         'ANTHROPIC_MODEL': 'Pro/moonshotai/Kimi-K2-Instruct'
       },
       notes: 'Uses special environment variable format'
