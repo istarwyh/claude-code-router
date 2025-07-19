@@ -1067,4 +1067,253 @@ export const componentStyles = `
         padding: var(--space-8) var(--space-4);
     }
 }
+
+/* Practice Item Enhanced Styles */
+.practice-item.practice-advanced {
+  border: 2px solid var(--accent-color);
+  background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.05), rgba(var(--accent-rgb), 0.02));
+}
+
+.practice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.practice-header h4 {
+  margin: 0;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.practice-badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-advanced {
+  background: #dc3545;
+  color: white;
+}
+
+.badge-automation {
+  background: #28a745;
+  color: white;
+}
+
+.badge-permissions {
+  background: #ffc107;
+  color: #212529;
+}
+
+.practice-description {
+  margin: 1rem 0;
+  line-height: 1.6;
+}
+
+.practice-description p {
+  margin: 0.5rem 0;
+  color: var(--text-secondary);
+}
+
+.practice-description p:first-child {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.practice-warning-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-top: 0.75rem;
+}
+
+.warning-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.practice-details {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.command-container {
+  margin-top: 1rem;
+}
+
+.command-block {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.command-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-secondary);
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.command-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+}
+
+.copy-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copy-btn:hover {
+  background: var(--accent-color);
+  color: white;
+  transform: scale(1.1);
+}
+
+.copy-btn:active {
+  transform: scale(0.95);
+}
+
+.command-block code {
+  display: block;
+  padding: 0.75rem;
+  background: none;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.9rem;
+  color: var(--accent-color);
+  font-weight: 500;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.shortcut-container {
+  margin-top: 1rem;
+}
+
+.shortcut-block {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+}
+
+.shortcut-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  min-width: 60px;
+}
+
+.shortcut-keys {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.shortcut-keys kbd {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  font-family: monospace;
+  font-weight: 500;
+  color: var(--text-primary);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.shortcut-desc {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-left: auto;
+}
+
+/* Removed scenario and warning styles - simplified design */
+
+/* Responsive adjustments for practice items */
+@media (max-width: 768px) {
+  .practice-header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .practice-badges {
+    justify-content: flex-start;
+  }
+  
+  .command-block code {
+    font-size: 0.8rem;
+    padding: 0.5rem;
+  }
+  
+  .shortcut-block {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .shortcut-desc {
+    margin-left: 0;
+    margin-top: 0.25rem;
+  }
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .practice-warning {
+    background: linear-gradient(135deg, #2d2a1f, #3d3a2f);
+    border-color: #4d4a3f;
+    color: #f4d03f;
+  }
+  
+  .practice-warning code {
+    background: rgba(244, 208, 63, 0.1);
+    color: #f4d03f;
+  }
+  
+  .command-block {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+  }
+}
+
 `;

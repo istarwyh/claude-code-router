@@ -27,6 +27,60 @@ function initNavigation() {
   });
 }
 
+// Copy command function
+function copyCommand(button) {
+  const commandBlock = button.closest('.command-block');
+  const command = commandBlock.dataset.command;
+  
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(command).then(() => {
+      showCopySuccess(button);
+    }).catch(() => {
+      fallbackCopyTextToClipboard(command, button);
+    });
+  } else {
+    fallbackCopyTextToClipboard(command, button);
+  }
+}
+
+// Show copy success feedback
+function showCopySuccess(button) {
+  const originalText = button.innerHTML;
+  button.innerHTML = '✓';
+  button.style.color = '#28a745';
+  
+  setTimeout(() => {
+    button.innerHTML = originalText;
+    button.style.color = '';
+  }, 2000);
+}
+
+// Fallback copy function for older browsers
+function fallbackCopyTextToClipboard(text, button) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  textArea.style.position = 'fixed';
+  textArea.style.left = '-999999px';
+  textArea.style.top = '-999999px';
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  
+  try {
+    const successful = document.execCommand('copy');
+    if (successful) {
+      showCopySuccess(button);
+    }
+  } catch (err) {
+    console.error('Failed to copy command:', err);
+  }
+  
+  document.body.removeChild(textArea);
+}
+
+// Make functions globally available
+window.copyCommand = copyCommand;
+
 // Initialize navigation when DOM is loaded
 document.addEventListener('DOMContentLoaded', initNavigation);
 `;

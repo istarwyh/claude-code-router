@@ -88,6 +88,51 @@ export const bestPracticesComponent = `
         <p>让 AI 处理重复性工作</p>
       </div>
       <div class="practice-items">
+        <div class="practice-item practice-advanced">
+          <div class="practice-header">
+            <h4>自动运行模式控制</h4>
+            <div class="practice-badges">
+              <span class="badge badge-advanced">高级</span>
+              <span class="badge badge-automation">自动化</span>
+            </div>
+          </div>
+          
+          <div class="practice-description">
+            <p>跳过权限确认，启用全自动化操作模式。</p>
+            <p class="practice-warning-inline">
+              <span class="warning-icon">⚠️</span>
+              高风险操作，建议配合 Git 等版本控制系统使用
+            </p>
+          </div>
+          
+          <div class="practice-details">
+            <div class="command-container">
+              <div class="command-block" data-command="claude --dangerously-skip-permissions">
+                <div class="command-header">
+                  <span class="command-label">Command</span>
+                  <button class="copy-btn" onclick="copyCommand(this)" title="复制命令">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                  </button>
+                </div>
+                <code>claude --dangerously-skip-permissions</code>
+              </div>
+              
+              <div class="shortcut-container">
+                <div class="shortcut-block">
+                  <span class="shortcut-label">Shortcut</span>
+                  <div class="shortcut-keys">
+                    <kbd>Shift</kbd> + <kbd>Tab</kbd>
+                  </div>
+                  <span class="shortcut-desc">切换回人工确认模式</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
         <div class="practice-item">
           <h4>代码生成模板</h4>
           <p>标准化的代码结构和模式</p>
