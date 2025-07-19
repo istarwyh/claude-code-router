@@ -1,14 +1,8 @@
 import { faviconDataUrl } from './faviconServer';
-import { allStyles } from './styles';
-import { allScripts } from './scripts';
-import {
-  createHead,
-  sidebarComponent,
-  navigationComponent,
-  getStartedComponent,
-  bestPracticesComponent,
-  implementationComponent
-} from './components';
+import { createHead, sidebarComponent, navigationComponent, allStyles, allScripts } from './shared';
+import { getStartedModule } from './modules/get-started';
+import { bestPracticesModule } from './modules/best-practices';
+import { implementationModule } from './modules/implementation';
 
 export const indexHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -21,9 +15,9 @@ ${sidebarComponent}
 ${navigationComponent}
 
 <div class="container">
-${getStartedComponent}
-${bestPracticesComponent}
-${implementationComponent}
+${getStartedModule}
+${bestPracticesModule}
+${implementationModule}
 </div>
 
 <script>
