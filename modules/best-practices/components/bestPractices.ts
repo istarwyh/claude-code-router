@@ -12,6 +12,129 @@ export const bestPracticesComponent = `
         <p>优化你的 Claude Code 工作环境</p>
       </div>
       <div class="practice-items">
+        <div class="practice-item practice-beginner">
+          <div class="practice-header">
+            <h4>斜杠命令速查表</h4>
+            <div class="practice-badges">
+              <span class="badge badge-beginner">初级</span>
+              <span class="badge badge-config">配置</span>
+            </div>
+          </div>
+          
+          <div class="practice-description">
+            <p>掌握 Claude Code 内置命令，快速执行常用操作。</p>
+          </div>
+          
+          <div class="practice-details">
+            <div class="command-groups">
+              <div class="command-group">
+                <h5>🔧 系统管理</h5>
+                <div class="command-list">
+                  <div class="command-item">
+                    <code>/config</code>
+                    <span>查看/修改配置</span>
+                  </div>
+                  <div class="command-item">
+                    <code>/doctor</code>
+                    <span>健康状况检查</span>
+                  </div>
+                  <div class="command-item">
+                    <code>/status</code>
+                    <span>账户和系统状态</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="command-group">
+                <h5>💬 会话控制</h5>
+                <div class="command-list">
+                  <div class="command-item">
+                    <code>/clear</code>
+                    <span>清除对话历史</span>
+                  </div>
+                  <div class="command-item">
+                    <code>/compact</code>
+                    <span>压缩对话内容</span>
+                  </div>
+                  <div class="command-item">
+                    <code>/cost</code>
+                    <span>令牌使用统计</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="command-group">
+                <h5>📁 项目管理</h5>
+                <div class="command-list">
+                  <div class="command-item">
+                    <code>/init</code>
+                    <span>初始化项目配置</span>
+                  </div>
+                  <div class="command-item">
+                    <code>/memory</code>
+                    <span>编辑记忆文件</span>
+                  </div>
+                  <div class="command-item">
+                    <code>/review</code>
+                    <span>请求代码审查</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="command-group">
+                <h5>🔐 账户操作</h5>
+                <div class="command-list">
+                  <div class="command-item">
+                    <code>/login</code>
+                    <span>切换 Anthropic 账户</span>
+                  </div>
+                  <div class="command-item">
+                    <code>/logout</code>
+                    <span>登出当前账户</span>
+                  </div>
+                  <div class="command-item">
+                    <code>/model</code>
+                    <span>选择 AI 模型</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="command-group">
+                <h5>🛠️ 其他工具</h5>
+                <div class="command-list">
+                  <div class="command-item">
+                    <code>/bug</code>
+                    <span>报告错误给 Anthropic</span>
+                  </div>
+                  <div class="command-item">
+                    <code>/help</code>
+                    <span>获取使用帮助</span>
+                  </div>
+                  <div class="command-item">
+                    <code>/vim</code>
+                    <span>进入 vim 模式</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="practice-tips">
+              <h5>💡 使用技巧</h5>
+              <ul>
+                <li>项目启动时使用 <code>/init</code> 初始化配置</li>
+                <li>遇到问题时使用 <code>/doctor</code> 快速诊断</li>
+                <li>长对话时使用 <code>/compact</code> 优化性能</li>
+                <li>开发完成后使用 <code>/review</code> 进行代码审查</li>
+              </ul>
+            </div>
+            
+            <div class="practice-warning">
+              <span class="warning-icon">⚠️</span>
+              <span><code>/bug</code> 命令会将对话发送给 Anthropic，请注意隐私信息</span>
+            </div>
+          </div>
+        </div>
+        
         <div class="practice-item">
           <h4>CLAUDE.md 项目记忆库</h4>
           <p>自动注入上下文，减少重复说明</p>

@@ -27,6 +27,19 @@ export const designTokens = `
     --color-border-medium: #cbd5e1;
     --color-border-dark: #94a3b8;
     
+    /* Best Practices Page Specific Colors */
+    --bp-page-bg: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    --bp-text-primary: #0f172a;
+    --bp-text-secondary: #475569;
+    --bp-bg-primary: #ffffff;
+    --bp-bg-secondary: #f8fafc;
+    --bp-bg-hover: #f1f5f9;
+    --bp-border-color: #e2e8f0;
+    --bp-border-hover: #cbd5e1;
+    --bp-accent: #06b6d4;
+    --bp-primary: #2563eb;
+    --bp-secondary: #6366f1;
+    
     /* Typography */
     --font-family-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     --font-family-mono: 'JetBrains Mono', 'SF Mono', Monaco, Inconsolata, 'Roboto Mono', Consolas, 'Courier New', monospace;

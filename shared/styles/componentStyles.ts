@@ -37,12 +37,12 @@ export const componentStyles = `
 
 .nav-tab:hover {
   color: var(--text-primary);
-  background: var(--bg-secondary);
+  background: var(--bg-hover);
 }
 
 .nav-tab.active {
-  color: var(--accent-color);
-  border-bottom-color: var(--accent-color);
+  color: var(--primary);
+  border-bottom-color: var(--primary);
   background: var(--bg-secondary);
 }
 
@@ -60,6 +60,60 @@ export const componentStyles = `
   padding: 2rem 0;
 }
 
+/* Full Width Layout for Best Practices */
+#best-practices {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 80px; /* Navigation height */
+  bottom: 0;
+  margin: 0;
+  padding: 2rem;
+  background: var(--bp-page-bg);
+  overflow-y: auto;
+  z-index: 10;
+  color: var(--bp-text-primary);
+}
+
+#best-practices .section-header {
+  max-width: 1400px;
+  margin: 0 auto 3rem auto;
+  padding: 0 1rem;
+}
+
+#best-practices .practices-grid {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+#best-practices .practices-footer {
+  max-width: 1400px;
+  margin: 2rem auto 0 auto;
+  padding: 0 1rem;
+}
+
+/* Responsive adjustments for full width layout */
+@media (max-width: 1200px) {
+  #best-practices {
+    padding: 1.5rem;
+  }
+  
+  #best-practices .section-header,
+  #best-practices .practices-grid,
+  #best-practices .practices-footer {
+    max-width: 100%;
+    padding: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  #best-practices {
+    padding: 1rem;
+    top: 70px; /* Smaller nav height on mobile */
+  }
+}
+
 .section-header {
   text-align: center;
   margin-bottom: 3rem;
@@ -68,7 +122,7 @@ export const componentStyles = `
 .section-header h2 {
   font-size: 2.5rem;
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
+  background: linear-gradient(135deg, var(--primary), var(--color-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -90,6 +144,31 @@ export const componentStyles = `
   margin-bottom: 3rem;
 }
 
+/* Enhanced grid layout for full width best practices */
+#best-practices .practices-grid {
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2.5rem;
+}
+
+@media (min-width: 1400px) {
+  #best-practices .practices-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1800px) {
+  #best-practices .practices-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  #best-practices .practices-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
 .practice-category {
   background: var(--bg-secondary);
   border-radius: 12px;
@@ -99,9 +178,9 @@ export const componentStyles = `
 }
 
 .practice-category:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  border-color: var(--accent-color);
+  border-color: var(--border-hover);
 }
 
 .category-header {
@@ -142,7 +221,7 @@ export const componentStyles = `
 }
 
 .practice-item:hover {
-  border-color: var(--accent-color);
+  border-color: var(--color-accent);
   background: var(--bg-hover);
 }
 
@@ -161,7 +240,7 @@ export const componentStyles = `
 
 .practice-status {
   display: inline-block;
-  background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
+  background: linear-gradient(135deg, var(--color-accent), var(--color-secondary));
   color: white;
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
@@ -201,7 +280,7 @@ export const componentStyles = `
 .impl-category:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  border-color: var(--accent-color);
+  border-color: var(--color-accent);
 }
 
 .impl-items {
@@ -219,7 +298,7 @@ export const componentStyles = `
 }
 
 .impl-item:hover {
-  border-color: var(--accent-color);
+  border-color: var(--color-accent);
   background: var(--bg-hover);
 }
 
@@ -238,7 +317,7 @@ export const componentStyles = `
 
 .tech-badge {
   display: inline-block;
-  background: var(--accent-color);
+  background: var(--color-accent);
   color: white;
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
@@ -289,7 +368,7 @@ export const componentStyles = `
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background: var(--accent-color);
+  background: var(--color-accent);
   color: white;
   text-decoration: none;
   border-radius: 8px;
@@ -298,7 +377,7 @@ export const componentStyles = `
 }
 
 .impl-link:hover {
-  background: var(--secondary-color);
+  background: var(--color-secondary);
   transform: translateY(-2px);
 }
 
@@ -318,7 +397,7 @@ export const componentStyles = `
   }
   
   .nav-tab.active {
-    border-left-color: var(--accent-color);
+    border-left-color: var(--color-accent);
     border-bottom-color: transparent;
   }
   
@@ -769,7 +848,7 @@ export const componentStyles = `
 }
 
 .copy-btn {
-  background: var(--accent-color);
+  background: var(--color-accent);
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -826,7 +905,7 @@ export const componentStyles = `
   position: fixed;
   top: 2rem;
   right: 2rem;
-  background: var(--accent-color);
+  background: var(--color-accent);
   color: white;
   padding: 1rem 1.5rem;
   border-radius: 8px;
@@ -878,7 +957,7 @@ export const componentStyles = `
 }
 
 .compact-provider-card:hover {
-  border-color: var(--accent-color);
+  border-color: var(--color-accent);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -1045,7 +1124,7 @@ export const componentStyles = `
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: var(--accent-color);
+  background: var(--color-accent);
   color: white;
   padding: 0.75rem 1.25rem;
   border-radius: 6px;
@@ -1161,7 +1240,7 @@ export const componentStyles = `
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: var(--accent-color);
+  background: var(--color-accent);
   color: white;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -1967,7 +2046,7 @@ export const componentStyles = `
 
 /* Practice Item Enhanced Styles */
 .practice-item.practice-advanced {
-  border: 2px solid var(--accent-color);
+  border: 2px solid var(--color-accent);
   background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.05), rgba(var(--accent-rgb), 0.02));
 }
 
@@ -2096,7 +2175,7 @@ export const componentStyles = `
 }
 
 .copy-btn:hover {
-  background: var(--accent-color);
+  background: var(--color-accent);
   color: white;
   transform: scale(1.1);
 }
@@ -2111,7 +2190,7 @@ export const componentStyles = `
   background: none;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 0.9rem;
-  color: var(--accent-color);
+  color: var(--color-accent);
   font-weight: 500;
   line-height: 1.4;
   margin: 0;
@@ -2211,6 +2290,214 @@ export const componentStyles = `
     background: var(--bg-secondary);
     border-color: var(--border-color);
   }
+}
+
+/* Slash Commands Quick Reference Styles */
+.command-groups {
+  display: grid;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.command-group {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.command-group h5 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.command-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.command-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.command-item:hover {
+  background: var(--bg-hover);
+  border-color: var(--color-accent);
+}
+
+.command-item code {
+  background: none;
+  color: var(--color-accent);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0;
+  border-radius: 0;
+}
+
+.command-item span {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  text-align: right;
+  flex: 1;
+  margin-left: 1rem;
+}
+
+.practice-tips {
+  background: var(--bg-accent);
+  border: 1px solid var(--border-accent);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.practice-tips h5 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.practice-tips ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.practice-tips li {
+  margin-bottom: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.practice-tips code {
+  background: var(--bg-primary);
+  color: var(--color-accent);
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  font-size: 0.8rem;
+}
+
+.practice-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  border-radius: 6px;
+  padding: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.practice-warning .warning-icon {
+  color: #ffc107;
+  font-size: 1rem;
+}
+
+.practice-warning code {
+  background: rgba(255, 193, 7, 0.2);
+  color: var(--text-primary);
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  font-size: 0.8rem;
+}
+
+/* Responsive Design for Command Groups */
+@media (min-width: 768px) {
+  .command-groups {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .command-groups {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .command-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .command-item span {
+    text-align: left;
+    margin-left: 0;
+  }
+}
+
+/* Best Practices Page Specific Styles */
+#best-practices .section-header h2 {
+  background: linear-gradient(135deg, var(--bp-primary), var(--bp-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+#best-practices .practice-category {
+  background: var(--bp-bg-secondary);
+  border: 1px solid var(--bp-border-color);
+}
+
+#best-practices .practice-category:hover {
+  border-color: var(--bp-border-hover);
+}
+
+#best-practices .practice-item:hover {
+  background: var(--bp-bg-hover);
+  border-color: var(--bp-accent);
+}
+
+#best-practices .command-group {
+  background: var(--bp-bg-secondary);
+  border: 1px solid var(--bp-border-color);
+}
+
+#best-practices .command-item {
+  background: var(--bp-bg-primary);
+  border: 1px solid var(--bp-border-color);
+}
+
+#best-practices .command-item:hover {
+  background: var(--bp-bg-hover);
+  border-color: var(--bp-accent);
+}
+
+#best-practices .command-item code {
+  color: var(--bp-accent);
+}
+
+#best-practices .practice-tips {
+  background: rgba(37, 99, 235, 0.05);
+  border: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+#best-practices .practice-tips code {
+  background: var(--bp-bg-primary);
+  color: var(--bp-accent);
+}
+
+#best-practices .category-header h3 {
+  color: var(--bp-text-primary);
+}
+
+#best-practices .section-subtitle {
+  color: var(--bp-text-secondary);
 }
 
 `;
