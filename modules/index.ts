@@ -1,7 +1,7 @@
 // 主模块聚合器
 export { getStartedModule } from './get-started';
 export { bestPracticesModule } from './best-practices';
-export { implementationModule } from './implementation';
+export { implementationModule } from './how-to-implement';
 
 // 模块配置
 export const moduleConfig = {
@@ -17,7 +17,7 @@ export const moduleConfig = {
     description: '基于 Anthropic 官方最佳实践的深度指南',
     order: 2
   },
-  'implementation': {
+  'how-to-implement': {
     title: '如何实现 CC',
     icon: '🔧', 
     description: '深入了解 Claude Code Router 的技术架构与实现原理',

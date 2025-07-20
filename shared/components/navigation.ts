@@ -10,7 +10,7 @@ export const navigationComponent = `
         <span class="nav-icon">⚡</span>
         <span class="nav-text">如何用好 CC</span>
       </button>
-      <button class="nav-tab" data-section="implementation">
+      <button class="nav-tab" data-section="how-to-implement">
         <span class="nav-icon">🔧</span>
         <span class="nav-text">如何实现 CC</span>
       </button>

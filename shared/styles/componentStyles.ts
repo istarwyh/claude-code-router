@@ -43,7 +43,7 @@ export const componentStyles = `
 .nav-tab.active {
   color: var(--primary);
   border-bottom-color: var(--primary);
-  background: var(--bg-secondary);
+  background: var(--bg-hover);
 }
 
 .nav-icon {
