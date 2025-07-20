@@ -1,5 +1,6 @@
 export const implementationModule = `
 <!-- How to Implement Claude Code - 实现指南 -->
+<section class="content-section" id="how-to-implement" style="display: none;">
 <div class="implementation-guide">
     <div class="guide-header">
         <h1>🏗️ 如何实现 Claude Code</h1>
@@ -599,4 +600,5 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 </script>
+</section>
 `;
