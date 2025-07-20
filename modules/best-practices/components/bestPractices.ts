@@ -77,6 +77,14 @@ export const bestPracticesComponent = `
                     <code>/review</code>
                     <span>请求代码审查</span>
                   </div>
+                  <div class="command-item">
+                    <code>/review</code>
+                    <span>review 最近打开的 PR</span>
+                  </div>
+                  <div class="command-item">
+                    <code>/pr-comments</code>
+                    <span>获取最近打开 PR 的评论</span>
+                  </div>
                 </div>
               </div>
               
@@ -113,6 +121,10 @@ export const bestPracticesComponent = `
                     <code>/vim</code>
                     <span>进入 vim 模式</span>
                   </div>
+                  <div class="command-item">
+                    <code>/mcp</code>
+                    <span>管理已安装的 MCP</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -125,11 +137,6 @@ export const bestPracticesComponent = `
                 <li>长对话时使用 <code>/compact</code> 优化性能</li>
                 <li>开发完成后使用 <code>/review</code> 进行代码审查</li>
               </ul>
-            </div>
-            
-            <div class="practice-warning">
-              <span class="warning-icon">⚠️</span>
-              <span><code>/bug</code> 命令会将对话发送给 Anthropic，请注意隐私信息</span>
             </div>
           </div>
         </div>

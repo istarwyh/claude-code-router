@@ -2343,7 +2343,8 @@ export const componentStyles = `
 /* Slash Commands Quick Reference Styles */
 .command-groups {
   display: grid;
-  gap: 1.5rem;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1rem;
   margin-bottom: 1.5rem;
 }
 
@@ -2351,7 +2352,8 @@ export const componentStyles = `
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  padding: 1rem;
+  padding: 0.75rem;
+  min-width: 220px;
 }
 
 .command-group h5 {
@@ -2374,11 +2376,13 @@ export const componentStyles = `
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem;
+  padding: 0.4rem 0.6rem;
   background: var(--bg-primary);
   border: 1px solid var(--border-color);
   border-radius: 4px;
   transition: all 0.2s ease;
+  min-height: 2.2rem;
+  gap: 0.5rem;
 }
 
 .command-item:hover {
@@ -2393,14 +2397,19 @@ export const componentStyles = `
   font-size: 0.85rem;
   padding: 0;
   border-radius: 0;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .command-item span {
   color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   text-align: right;
   flex: 1;
-  margin-left: 1rem;
+  margin-left: 0.75rem;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .practice-tips {
@@ -2464,15 +2473,31 @@ export const componentStyles = `
 }
 
 /* Responsive Design for Command Groups */
-@media (min-width: 768px) {
+@media (max-width: 767px) {
   .command-groups {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(1, 1fr);
+    gap: 0.75rem;
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 768px) and (max-width: 1023px) {
+  .command-groups {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1399px) {
   .command-groups {
     grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .command-groups {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
   }
 }
 
