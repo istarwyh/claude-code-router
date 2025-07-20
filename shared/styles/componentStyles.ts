@@ -342,11 +342,15 @@ export const componentStyles = `
 }
 
 .code-block {
-  background: var(--bg-primary);
+  background: var(--color-bg-secondary);
   border-radius: 8px;
   padding: 1.5rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--color-border-light);
   overflow-x: auto;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--color-text-primary);
 }
 
 .code-block pre {
@@ -354,7 +358,7 @@ export const componentStyles = `
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 0.9rem;
   line-height: 1.5;
-  color: var(--text-primary);
+  color: var(--color-text-primary);
 }
 
 .footer-links {

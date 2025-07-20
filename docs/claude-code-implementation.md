@@ -1,6 +1,6 @@
 # 如何实现 Claude Code
 
-基于 [shareAI-lab/analysis_claude_code](https://github.com/shareAI-lab/analysis_claude_code) 的完整实现指南
+基于 [shareAI-lab/analysis_claude_code](https://github.com/shareAI-lab/analysis_claude_code) 的Claude Code 实现指南
 
 ## 🎯 系统架构全景
 
@@ -85,43 +85,6 @@ Claude Code 采用分层架构设计，从用户交互到系统底层分为四�
 ```
 
 ## 🛠️ 实现步骤
-
-### 1️⃣ 项目初始化
-
-基于 analysis_claude_code 创建项目结构：
-
-```bash
-npm init -y
-npm install -D typescript @types/node
-npm install -D ts-node nodemon
-npm install -D @anthropic-ai/sdk
-npm install -D marked highlight.js
-```
-
-项目目录结构：
-```
-src/
-├── core/
-│   ├── AgentLoop.ts          # 主循环引擎
-│   ├── MessageQueue.ts       # 消息队列
-│   └── StreamGenerator.ts    # 流式响应生成
-├── tools/
-│   ├── ToolEngine.ts         # 工具引擎
-│   ├── Scheduler.ts          # 并发调度器
-│   └── PermissionGateway.ts  # 权限网关
-├── storage/
-│   ├── MemoryManager.ts      # 存储管理器
-│   ├── Compressor.ts         # 消息压缩器
-│   └── PersistentStorage.ts  # 持久化存储
-├── interfaces/
-│   ├── CLI.ts               # 命令行接口
-│   ├── VSCode.ts            # VSCode扩展
-│   └── Web.ts               # Web界面
-└── utils/
-    ├── Security.ts           # 安全工具
-    ├── Validation.ts         # 验证工具
-    └── Logger.ts             # 日志系统
-```
 
 ### 2️⃣ 核心架构实现
 
@@ -255,61 +218,6 @@ export class ToolEngine {
     }
 }
 ```
-
-## 🚀 快速部署
-
-### 步骤1: 克隆项目
-```bash
-git clone https://github.com/shareAI-lab/open-claude-code.git
-cd open-claude-code
-```
-
-### 步骤2: 安装依赖
-```bash
-npm install
-```
-
-### 步骤3: 配置环境
-```bash
-cp .env.example .env
-# 编辑 .env 文件，配置 API 密钥
-```
-
-### 步骤4: 启动开发
-```bash
-npm run dev
-```
-
-## 📋 最佳实践
-
-### 🎯 模块化设计
-将系统拆分为独立的模块，每个模块负责特定的功能：
-- **AgentLoop**: 核心调度
-- **ToolEngine**: 工具管理
-- **Security**: 安全验证
-- **Storage**: 存储管理
-
-### 🔐 安全第一
-在每个层级都实现安全验证机制：
-- 输入验证
-- 权限检查
-- 资源限制
-- 输出过滤
-
-### ⚡ 性能优化
-通过异步处理和智能缓存提升性能：
-- 异步执行
-- 并发控制
-- 内存压缩
-- 缓存策略
-
-### 🧪 测试驱动
-为每个模块编写全面的测试用例：
-- 单元测试
-- 集成测试
-- 安全测试
-- 性能测试
-
 ## 🔧 高级特性
 
 ### 流式响应系统
@@ -420,34 +328,6 @@ class ConfigManager {
         return this.mergeWithDefaults(validated);
     }
 }
-```
-
-## 📈 部署与运维
-
-### Docker部署
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
-EXPOSE 3000
-CMD ["npm", "start"]
-```
-
-### 环境配置
-```bash
-# 开发环境
-npm run dev
-
-# 生产环境
-npm run build
-npm run start
-
-# 测试环境
-npm run test
-npm run test:watch
 ```
 
 ### 监控配置

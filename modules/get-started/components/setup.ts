@@ -9,7 +9,7 @@ export const setupComponent = `
             <div class="step-content">
                 <h3>Install Claude Code</h3>
                 <p>Get the official Claude Code CLI tool from Anthropic.</p>
-                <div class="code-block">npm install -g @anthropic-ai/claude-code</div>
+                <div class="code-block"><pre><code>npm install -g @anthropic-ai/claude-code</code></pre></div>
                 <div class="note">Or download from <a href="https://claude.ai/code" target="_blank" style="color: var(--color-primary-dark); text-decoration: none;">claude.ai/code</a></div>
             </div>
         </div>
@@ -32,15 +32,17 @@ export const setupComponent = `
                 <div class="config-tabs">
                     <div class="config-tab">
                         <strong>For OpenRouter:</strong>
-                        <div class="code-block">export ANTHROPIC_BASE_URL="https://cc.xiaohui.cool"<br>export ANTHROPIC_API_KEY="your-openrouter-api-key"</div>
+                        <div class="code-block"><pre><code>export ANTHROPIC_BASE_URL="https://cc.xiaohui.cool"
+export ANTHROPIC_API_KEY="your-openrouter-api-key"</code></pre></div>
                     </div>
                     <div class="config-tab">
                         <strong>For AnyRouter:</strong>
-                        <div class="code-block">export ANTHROPIC_BASE_URL="https://anyrouter.top"<br>export ANTHROPIC_API_KEY="your-anyrouter-api-key"</div>
+                        <div class="code-block"><pre><code>export ANTHROPIC_BASE_URL="https://anyrouter.top"
+export ANTHROPIC_API_KEY="your-anyrouter-api-key"</code></pre></div>
                     </div>
                 </div>
                 <p>Then reload your shell:</p>
-                <div class="code-block">source ~/.bashrc  # or source ~/.zshrc</div>
+                <div class="code-block"><pre><code>source ~/.bashrc  # or source ~/.zshrc</code></pre></div>
             </div>
         </div>
     </div>
