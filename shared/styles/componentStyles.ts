@@ -61,56 +61,58 @@ export const componentStyles = `
 }
 
 /* Full Width Layout for Best Practices */
-#best-practices {
+.practices-page {
   position: fixed;
   left: 0;
   right: 0;
   top: 80px; /* Navigation height */
   bottom: 0;
   margin: 0;
-  padding: 2rem;
-  background: var(--bp-page-bg);
+  padding: 0; /* 移除内边距实现全宽 */
+  background: var(--color-practices-page-bg);
   overflow-y: auto;
   z-index: 10;
-  color: var(--bp-text-primary);
+  color: var(--color-practices-text-primary);
 }
 
-#best-practices .section-header {
-  max-width: 1400px;
-  margin: 0 auto 3rem auto;
-  padding: 0 1rem;
+.practices-page__header {
+  width: 100%;
+  margin: 0 0 3rem 0;
+  padding: 2rem; /* 将内边距移到子元素 */
+  box-sizing: border-box;
 }
 
-#best-practices .practices-grid {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
+/* 网格布局在下面定义 */
 
-#best-practices .practices-footer {
-  max-width: 1400px;
-  margin: 2rem auto 0 auto;
-  padding: 0 1rem;
+.practices-page__footer {
+  width: 100%;
+  margin: 2rem 0 0 0;
+  padding: 2rem; /* 将内边距移到子元素 */
+  box-sizing: border-box;
 }
 
 /* Responsive adjustments for full width layout */
 @media (max-width: 1200px) {
-  #best-practices {
-    padding: 1.5rem;
+  .practices-page {
+    padding: 0; /* 保持全宽，不添加内边距 */
   }
   
-  #best-practices .section-header,
-  #best-practices .practices-grid,
-  #best-practices .practices-footer {
+  .practices-page__header,
+  .practices-page__footer {
     max-width: 100%;
-    padding: 0;
+    padding: 1.5rem; /* 内边距移到子元素 */
   }
 }
 
 @media (max-width: 768px) {
-  #best-practices {
-    padding: 1rem;
+  .practices-page {
+    padding: 0; /* 保持全宽，不添加内边距 */
     top: 70px; /* Smaller nav height on mobile */
+  }
+  
+  .practices-page__header,
+  .practices-page__footer {
+    padding: 1rem; /* 内边距移到子元素 */
   }
 }
 
@@ -142,30 +144,59 @@ export const componentStyles = `
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 2rem;
   margin-bottom: 3rem;
+  width: 100%;
+  max-width: none;
 }
 
-/* Enhanced grid layout for full width best practices */
-#best-practices .practices-grid {
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+/* Enhanced grid layout for full width best practices - 严格限制最多4列 */
+.practices-page__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 默认最多4列 */
+  grid-auto-rows: min-content; /* 让行高度自适应内容 */
   gap: 2.5rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  align-items: start; /* 卡片顶部对齐 */
 }
 
-@media (min-width: 1400px) {
-  #best-practices .practices-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (min-width: 1800px) {
-  #best-practices .practices-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  #best-practices .practices-grid {
+/* 移动端单列布局 */
+@media (max-width: 767px) {
+  .practices-page__grid {
     grid-template-columns: 1fr;
     gap: 1.5rem;
+    max-width: 100%;
+    margin: 0;
+  }
+}
+
+/* 小屏幕最多2列 */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .practices-page__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    max-width: 100%;
+    margin: 0;
+  }
+}
+
+/* 中等屏幕最多3列 */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .practices-page__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 100%;
+    margin: 0;
+  }
+}
+
+/* 大屏幕严格限制最多4列 - 使用!important确保优先级 */
+@media (min-width: 1280px) {
+  .practices-page__grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 2.5rem;
+    max-width: 1600px;
+    margin: 0 auto;
   }
 }
 
@@ -175,6 +206,13 @@ export const componentStyles = `
   padding: 1.5rem;
   border: 1px solid var(--border-color);
   transition: all 0.3s ease;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  align-self: start; /* 防止卡片被拉伸到相同高度 */
 }
 
 .practice-category:hover {
@@ -210,6 +248,7 @@ export const componentStyles = `
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  flex: 1; /* 占据剩余空间 */
 }
 
 .practice-item {
@@ -218,6 +257,11 @@ export const componentStyles = `
   padding: 1rem;
   border: 1px solid var(--border-color);
   transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .practice-item:hover {
@@ -2446,61 +2490,81 @@ export const componentStyles = `
 }
 
 /* Best Practices Page Specific Styles */
-#best-practices .section-header h2 {
+.practices-page__header h2 {
   background: linear-gradient(135deg, var(--bp-primary), var(--bp-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-#best-practices .practice-category {
+.practices-page__category {
   background: var(--bp-bg-secondary);
   border: 1px solid var(--bp-border-color);
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
 }
 
-#best-practices .practice-category:hover {
+.practices-page__category:hover {
   border-color: var(--bp-border-hover);
 }
 
-#best-practices .practice-item:hover {
+.practices-page__item {
+  background: var(--bp-bg-primary);
+  border: 1px solid var(--bp-border-color);
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
+
+.practices-page__item:hover {
   background: var(--bp-bg-hover);
   border-color: var(--bp-accent);
 }
 
-#best-practices .command-group {
+.practices-page__command-group {
   background: var(--bp-bg-secondary);
   border: 1px solid var(--bp-border-color);
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
 }
 
-#best-practices .command-item {
+.practices-page__command-item {
   background: var(--bp-bg-primary);
   border: 1px solid var(--bp-border-color);
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
 }
 
-#best-practices .command-item:hover {
+.practices-page__command-item:hover {
   background: var(--bp-bg-hover);
   border-color: var(--bp-accent);
 }
 
-#best-practices .command-item code {
+.practices-page__command-item code {
   color: var(--bp-accent);
 }
 
-#best-practices .practice-tips {
+.practices-page__tips {
   background: rgba(37, 99, 235, 0.05);
   border: 1px solid rgba(37, 99, 235, 0.2);
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
 }
 
-#best-practices .practice-tips code {
+.practices-page__tips code {
   background: var(--bp-bg-primary);
   color: var(--bp-accent);
 }
 
-#best-practices .category-header h3 {
+.practices-page__category .category-header h3 {
   color: var(--bp-text-primary);
 }
 
-#best-practices .section-subtitle {
+.practices-page__subtitle {
   color: var(--bp-text-secondary);
 }
 

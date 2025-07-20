@@ -2,28 +2,48 @@ export const navigationScript = `
 // Navigation tab switching
 function initNavigation() {
   const navTabs = document.querySelectorAll('.nav-tab');
-  const contentSections = document.querySelectorAll('.content-section');
+  const contentSections = document.querySelectorAll('.content-section, .practices-page');
+  
+  function showSection(sectionId) {
+    // Remove active class from all tabs
+    navTabs.forEach(t => t.classList.remove('active'));
+    
+    // Add active class to corresponding tab
+    const activeTab = document.querySelector('[data-section="' + sectionId + '"]');
+    if (activeTab) {
+      activeTab.classList.add('active');
+    }
+    
+    // Hide all content sections
+    contentSections.forEach(section => {
+      section.style.display = 'none';
+    });
+    
+    // Show corresponding content section
+    const targetElement = document.getElementById(sectionId);
+    if (targetElement) {
+      targetElement.style.display = 'block';
+    }
+  }
   
   navTabs.forEach(tab => {
     tab.addEventListener('click', () => {
-      // Remove active class from all tabs
-      navTabs.forEach(t => t.classList.remove('active'));
-      
-      // Add active class to clicked tab
-      tab.classList.add('active');
-      
-      // Hide all content sections
-      contentSections.forEach(section => {
-        section.style.display = 'none';
-      });
-      
-      // Show corresponding content section
       const targetSection = tab.dataset.section;
-      const targetElement = document.getElementById(targetSection);
-      if (targetElement) {
-        targetElement.style.display = 'block';
-      }
+      showSection(targetSection);
+      // Update URL hash
+      window.location.hash = targetSection;
     });
+  });
+  
+  // Handle initial hash or default to first section
+  const hash = window.location.hash.slice(1); // Remove # from hash
+  const initialSection = hash || 'get-started';
+  showSection(initialSection);
+  
+  // Handle hash changes (back/forward navigation)
+  window.addEventListener('hashchange', () => {
+    const newHash = window.location.hash.slice(1) || 'get-started';
+    showSection(newHash);
   });
 }
 

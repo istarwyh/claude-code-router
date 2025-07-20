@@ -1,11 +1,10 @@
 export const bestPracticesComponent = `
-<section class="content-section" id="best-practices" style="display: none;">
-  <div class="section-header">
+<section class="practices-page" id="best-practices">
+  <div class="practices-page__header">
     <h2>⚡ 如何用好 CC</h2>
-    <p class="section-subtitle">基于 Anthropic 官方最佳实践的深度指南</p>
   </div>
 
-  <div class="practices-grid">
+  <div class="practices-page__grid practices-grid">
     <div class="practice-category">
       <div class="category-header">
         <h3><span class="category-icon">⚙️</span>自定义环境配置</h3>
@@ -289,7 +288,7 @@ export const bestPracticesComponent = `
     </div>
   </div>
 
-  <div class="practices-footer">
+  <div class="practices-page__footer practices-footer">
     <div class="footer-note">
       <p>💡 <strong>提示</strong>：这些最佳实践基于 Anthropic 官方指南和社区经验总结，我们正在逐步完善每个模块的详细内容。</p>
     </div>

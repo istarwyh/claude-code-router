@@ -1,123 +1,5 @@
-export const implementationModule = `
-<!-- How to Implement Claude Code - 实现指南 -->
-<section class="content-section" id="how-to-implement">
-<div class="implementation-guide">
-    <div class="guide-header">
-        <h1>🏗️ 如何实现 Claude Code</h1>
-        <p class="subtitle">基于 <a href="https://github.com/shareAI-lab/analysis_claude_code" target="_blank">shareAI-lab/analysis_claude_code</a> 的核心技术实现</p>
-    </div>
-
-    <!-- 核心架构设计 -->
-    <div class="architecture-section">
-        <h2>🎯 核心架构设计</h2>
-        <div class="architecture-overview">
-            <div class="layer">
-                <h3>📱 用户交互层</h3>
-                <p>CLI 接口 • VSCode 插件 • Web 界面</p>
-            </div>
-            <div class="layer">
-                <h3>⚙️ Agent 核心调度层</h3>
-                <p>AgentLoop 主循环 • 消息队列 • 流式处理</p>
-            </div>
-            <div class="layer">
-                <h3>🛠️ 工具执行管理层</h3>
-                <p>权限验证 • 并发控制 • 任务隔离</p>
-            </div>
-            <div class="layer">
-                <h3>💾 存储与持久化层</h3>
-                <p>短期/中期/长期存储机制</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- 核心组件 -->
-    <div class="core-components">
-        <h2>⚙️ 核心组件</h2>
-        <div class="components-grid">
-            <div class="component-card">
-                <h3>🔄 AgentLoop 主循环</h3>
-                <p>任务调度、状态管理、异常处理</p>
-            </div>
-            <div class="component-card">
-                <h3>🛠️ 工具引擎</h3>
-                <p>工具发现、参数验证、执行调度</p>
-            </div>
-            <div class="component-card">
-                <h3>🔐 权限管理</h3>
-                <p>权限检查、安全审计、访问控制</p>
-            </div>
-            <div class="component-card">
-                <h3>💾 存储系统</h3>
-                <p>短期记忆、中期压缩、长期持久化</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- 实现步骤 -->
-    <div id="markdown-implementation" class="markdown-content">
-        <!-- Markdown内容将通过渲染器加载 -->
-    </div>
-
-    <!-- 关键代码示例 -->
-    <div class="code-examples">
-        <h2>💡 核心代码片段</h2>
-        
-        <div class="example-tabs">
-            <button class="tab-btn active" onclick="showTab(event, 'agent-loop')">Agent循环</button>
-            <button class="tab-btn" onclick="showTab(event, 'tool-engine')">工具引擎</button>
-        </div>
-
-        <div class="tab-content active" id="agent-loop">
-            <div class="code-block">
-                <code>// 核心Agent循环实现
-class ClaudeCodeAgent {
-    async *run(messages: Message[]): AsyncGenerator<Message> {
-        const context = await this.memoryManager.loadContext();
-        
-        for await (const message of this.messageQueue) {
-            const tools = await this.toolEngine.discoverTools(message);
-            
-            for (const tool of tools) {
-                if (await this.permissionGateway.validate(tool, context)) {
-                    const result = await this.toolEngine.execute(tool);
-                    yield result;
-                }
-            }
-        }
-    }
-}</code>
-                <button class="copy-btn" onclick="copyCode(this)">复制</button>
-            </div>
-        </div>
-
-        <div class="tab-content" id="tool-engine">
-            <div class="code-block">
-                <code>// 工具引擎实现
-class ToolEngine {
-    private tools = new Map<string, Tool>();
-    private scheduler = new ConcurrencyScheduler(10);
-    
-    async execute(tool: Tool, params: any): Promise<ToolResult> {
-        // 1. 参数验证
-        const validatedParams = await this.validateParams(tool, params);
-        
-        // 2. 权限检查
-        await this.permissionGateway.check(tool, validatedParams);
-        
-        // 3. 并发控制
-        return await this.scheduler.schedule(async () => {
-            // 4. 工具执行
-            return await tool.execute(validatedParams);
-        });
-    }
-}</code>
-                <button class="copy-btn" onclick="copyCode(this)">复制</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
+export const implementationStyles = `
+/* How to Implement Claude Code - 实现指南样式 */
 .implementation-guide {
     max-width: 1200px;
     margin: 0 auto;
@@ -376,7 +258,7 @@ class ToolEngine {
 }
 
 .step-number {
-    background: var(--accent-color);
+    background: var(--color-accent);
     color: white;
     border-radius: 50%;
     width: 2rem;
@@ -430,7 +312,7 @@ class ToolEngine {
 
 .practice-card li:before {
     content: "✓";
-    color: var(--accent-color);
+    color: var(--color-accent);
     margin-right: 0.5rem;
 }
 
@@ -451,6 +333,4 @@ class ToolEngine {
         grid-template-columns: 1fr;
     }
 }
-</style>
-</section>
-`; 
+`;
