@@ -37,13 +37,13 @@ export const componentStyles = `
 
 .nav-tab:hover {
   color: var(--text-primary);
-  background: var(--bg-secondary);
+  background: var(--bg-hover);
 }
 
 .nav-tab.active {
-  color: var(--accent-color);
-  border-bottom-color: var(--accent-color);
-  background: var(--bg-secondary);
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  background: var(--bg-hover);
 }
 
 .nav-icon {
@@ -60,6 +60,62 @@ export const componentStyles = `
   padding: 2rem 0;
 }
 
+/* Full Width Layout for Best Practices */
+.practices-page {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 80px; /* Navigation height */
+  bottom: 0;
+  margin: 0;
+  padding: 0; /* 移除内边距实现全宽 */
+  background: var(--color-practices-page-bg);
+  overflow-y: auto;
+  z-index: 10;
+  color: var(--color-practices-text-primary);
+}
+
+.practices-page__header {
+  width: 100%;
+  margin: 0 0 3rem 0;
+  padding: 2rem; /* 将内边距移到子元素 */
+  box-sizing: border-box;
+}
+
+/* 网格布局在下面定义 */
+
+.practices-page__footer {
+  width: 100%;
+  margin: 2rem 0 0 0;
+  padding: 2rem; /* 将内边距移到子元素 */
+  box-sizing: border-box;
+}
+
+/* Responsive adjustments for full width layout */
+@media (max-width: 1200px) {
+  .practices-page {
+    padding: 0; /* 保持全宽，不添加内边距 */
+  }
+  
+  .practices-page__header,
+  .practices-page__footer {
+    max-width: 100%;
+    padding: 1.5rem; /* 内边距移到子元素 */
+  }
+}
+
+@media (max-width: 768px) {
+  .practices-page {
+    padding: 0; /* 保持全宽，不添加内边距 */
+    top: 70px; /* Smaller nav height on mobile */
+  }
+  
+  .practices-page__header,
+  .practices-page__footer {
+    padding: 1rem; /* 内边距移到子元素 */
+  }
+}
+
 .section-header {
   text-align: center;
   margin-bottom: 3rem;
@@ -68,7 +124,7 @@ export const componentStyles = `
 .section-header h2 {
   font-size: 2.5rem;
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
+  background: linear-gradient(135deg, var(--primary), var(--color-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -88,6 +144,60 @@ export const componentStyles = `
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 2rem;
   margin-bottom: 3rem;
+  width: 100%;
+  max-width: none;
+}
+
+/* Enhanced grid layout for full width best practices - 严格限制最多4列 */
+.practices-page__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 默认最多4列 */
+  grid-auto-rows: min-content; /* 让行高度自适应内容 */
+  gap: 2.5rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  align-items: start; /* 卡片顶部对齐 */
+}
+
+/* 移动端单列布局 */
+@media (max-width: 767px) {
+  .practices-page__grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    max-width: 100%;
+    margin: 0;
+  }
+}
+
+/* 小屏幕最多2列 */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .practices-page__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    max-width: 100%;
+    margin: 0;
+  }
+}
+
+/* 中等屏幕最多3列 */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .practices-page__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 100%;
+    margin: 0;
+  }
+}
+
+/* 大屏幕严格限制最多4列 - 使用!important确保优先级 */
+@media (min-width: 1280px) {
+  .practices-page__grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 2.5rem;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
 }
 
 .practice-category {
@@ -96,12 +206,19 @@ export const componentStyles = `
   padding: 1.5rem;
   border: 1px solid var(--border-color);
   transition: all 0.3s ease;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  align-self: start; /* 防止卡片被拉伸到相同高度 */
 }
 
 .practice-category:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  border-color: var(--accent-color);
+  border-color: var(--border-hover);
 }
 
 .category-header {
@@ -131,6 +248,7 @@ export const componentStyles = `
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  flex: 1; /* 占据剩余空间 */
 }
 
 .practice-item {
@@ -139,10 +257,15 @@ export const componentStyles = `
   padding: 1rem;
   border: 1px solid var(--border-color);
   transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .practice-item:hover {
-  border-color: var(--accent-color);
+  border-color: var(--color-accent);
   background: var(--bg-hover);
 }
 
@@ -161,7 +284,7 @@ export const componentStyles = `
 
 .practice-status {
   display: inline-block;
-  background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
+  background: linear-gradient(135deg, var(--color-accent), var(--color-secondary));
   color: white;
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
@@ -201,7 +324,7 @@ export const componentStyles = `
 .impl-category:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  border-color: var(--accent-color);
+  border-color: var(--color-accent);
 }
 
 .impl-items {
@@ -219,7 +342,7 @@ export const componentStyles = `
 }
 
 .impl-item:hover {
-  border-color: var(--accent-color);
+  border-color: var(--color-accent);
   background: var(--bg-hover);
 }
 
@@ -238,7 +361,7 @@ export const componentStyles = `
 
 .tech-badge {
   display: inline-block;
-  background: var(--accent-color);
+  background: var(--color-accent);
   color: white;
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
@@ -263,11 +386,15 @@ export const componentStyles = `
 }
 
 .code-block {
-  background: var(--bg-primary);
+  background: var(--color-bg-secondary);
   border-radius: 8px;
   padding: 1.5rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--color-border-light);
   overflow-x: auto;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--color-text-primary);
 }
 
 .code-block pre {
@@ -275,7 +402,7 @@ export const componentStyles = `
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 0.9rem;
   line-height: 1.5;
-  color: var(--text-primary);
+  color: var(--color-text-primary);
 }
 
 .footer-links {
@@ -289,7 +416,7 @@ export const componentStyles = `
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background: var(--accent-color);
+  background: var(--color-accent);
   color: white;
   text-decoration: none;
   border-radius: 8px;
@@ -298,7 +425,7 @@ export const componentStyles = `
 }
 
 .impl-link:hover {
-  background: var(--secondary-color);
+  background: var(--color-secondary);
   transform: translateY(-2px);
 }
 
@@ -318,7 +445,7 @@ export const componentStyles = `
   }
   
   .nav-tab.active {
-    border-left-color: var(--accent-color);
+    border-left-color: var(--color-accent);
     border-bottom-color: transparent;
   }
   
@@ -769,7 +896,7 @@ export const componentStyles = `
 }
 
 .copy-btn {
-  background: var(--accent-color);
+  background: var(--color-accent);
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -826,7 +953,7 @@ export const componentStyles = `
   position: fixed;
   top: 2rem;
   right: 2rem;
-  background: var(--accent-color);
+  background: var(--color-accent);
   color: white;
   padding: 1rem 1.5rem;
   border-radius: 8px;
@@ -878,7 +1005,7 @@ export const componentStyles = `
 }
 
 .compact-provider-card:hover {
-  border-color: var(--accent-color);
+  border-color: var(--color-accent);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -1045,7 +1172,7 @@ export const componentStyles = `
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: var(--accent-color);
+  background: var(--color-accent);
   color: white;
   padding: 0.75rem 1.25rem;
   border-radius: 6px;
@@ -1161,7 +1288,7 @@ export const componentStyles = `
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: var(--accent-color);
+  background: var(--color-accent);
   color: white;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -1967,7 +2094,7 @@ export const componentStyles = `
 
 /* Practice Item Enhanced Styles */
 .practice-item.practice-advanced {
-  border: 2px solid var(--accent-color);
+  border: 2px solid var(--color-accent);
   background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.05), rgba(var(--accent-rgb), 0.02));
 }
 
@@ -2096,7 +2223,7 @@ export const componentStyles = `
 }
 
 .copy-btn:hover {
-  background: var(--accent-color);
+  background: var(--color-accent);
   color: white;
   transform: scale(1.1);
 }
@@ -2111,7 +2238,7 @@ export const componentStyles = `
   background: none;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 0.9rem;
-  color: var(--accent-color);
+  color: var(--color-accent);
   font-weight: 500;
   line-height: 1.4;
   margin: 0;
@@ -2213,4 +2340,263 @@ export const componentStyles = `
   }
 }
 
+/* Slash Commands Quick Reference Styles */
+.command-groups {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.command-group {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.75rem;
+  min-width: 220px;
+}
+
+.command-group h5 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.command-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.command-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.4rem 0.6rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  min-height: 2.2rem;
+  gap: 0.5rem;
+}
+
+.command-item:hover {
+  background: var(--bg-hover);
+  border-color: var(--color-accent);
+}
+
+.command-item code {
+  background: none;
+  color: var(--color-accent);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0;
+  border-radius: 0;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.command-item span {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  text-align: right;
+  flex: 1;
+  margin-left: 0.75rem;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.practice-tips {
+  background: var(--bg-accent);
+  border: 1px solid var(--border-accent);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.practice-tips h5 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.practice-tips ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.practice-tips li {
+  margin-bottom: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.practice-tips code {
+  background: var(--bg-primary);
+  color: var(--color-accent);
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  font-size: 0.8rem;
+}
+
+.practice-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  border-radius: 6px;
+  padding: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.practice-warning .warning-icon {
+  color: #ffc107;
+  font-size: 1rem;
+}
+
+.practice-warning code {
+  background: rgba(255, 193, 7, 0.2);
+  color: var(--text-primary);
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  font-size: 0.8rem;
+}
+
+/* Responsive Design for Command Groups */
+@media (max-width: 767px) {
+  .command-groups {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 0.75rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .command-groups {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1399px) {
+  .command-groups {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .command-groups {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .command-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+  
+  .command-item span {
+    text-align: left;
+    margin-left: 0;
+  }
+}
+
+/* Best Practices Page Specific Styles */
+.practices-page__header h2 {
+  background: linear-gradient(135deg, var(--bp-primary), var(--bp-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.practices-page__category {
+  background: var(--bp-bg-secondary);
+  border: 1px solid var(--bp-border-color);
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
+
+.practices-page__category:hover {
+  border-color: var(--bp-border-hover);
+}
+
+.practices-page__item {
+  background: var(--bp-bg-primary);
+  border: 1px solid var(--bp-border-color);
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
+
+.practices-page__item:hover {
+  background: var(--bp-bg-hover);
+  border-color: var(--bp-accent);
+}
+
+.practices-page__command-group {
+  background: var(--bp-bg-secondary);
+  border: 1px solid var(--bp-border-color);
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
+
+.practices-page__command-item {
+  background: var(--bp-bg-primary);
+  border: 1px solid var(--bp-border-color);
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
+
+.practices-page__command-item:hover {
+  background: var(--bp-bg-hover);
+  border-color: var(--bp-accent);
+}
+
+.practices-page__command-item code {
+  color: var(--bp-accent);
+}
+
+.practices-page__tips {
+  background: rgba(37, 99, 235, 0.05);
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
+
+.practices-page__tips code {
+  background: var(--bp-bg-primary);
+  color: var(--bp-accent);
+}
+
+.practices-page__category .category-header h3 {
+  color: var(--bp-text-primary);
+}
+
+.practices-page__subtitle {
+  color: var(--bp-text-secondary);
+}
+
 `;
+
+// Import Best Practices Overview Cards styles
+import { bestPracticesOverviewCardStyles } from './bestPracticesOverviewCards';
+
+// Export combined styles
+export const allComponentStyles = componentStyles + bestPracticesOverviewCardStyles;
