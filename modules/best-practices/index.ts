@@ -1,31 +1,54 @@
 import { bestPracticesComponent } from './components/bestPractices';
 
-// 未来可以在这里导入更多文章和内容
-// import { environmentConfigArticle } from './articles/environment-config';
-// import { workflowOptimizationArticle } from './articles/workflow-optimization';
-
 export const bestPracticesModule = bestPracticesComponent;
 
 export * from './components/bestPractices';
+export * from './components/ArticleContentLoader';
+export * from './components/ArticleDisplayComponent';
+export * from './components/cards/BestPracticesOverviewCards';
 
-// 文章列表 - 未来扩展用
+// 已实现的文章列表
 export const articlesList = [
+  {
+    id: 'current-workflow',
+    title: '我现在的工作流 - 基于 Claude Code 的完整开发实践',
+    category: 'workflow',
+    status: 'available'
+  },
   {
     id: 'environment-config',
     title: '自定义环境配置深度指南',
-    category: 'config',
-    status: 'coming-soon'
+    category: 'configuration',
+    status: 'available'
   },
   {
-    id: 'workflow-optimization', 
-    title: '工作流程优化最佳实践',
-    category: 'workflow',
-    status: 'coming-soon'
+    id: 'mcp-commands',
+    title: 'MCP 与常用命令 - 扩展 Claude Code 的能力边界',
+    category: 'mcp-commands',
+    status: 'available'
   },
   {
-    id: 'multi-instance-collaboration',
-    title: '多 Claude 实例协作模式',
-    category: 'collaboration', 
-    status: 'coming-soon'
+    id: 'core-workflow',
+    title: '核心工作流程 - 文档先行与测试驱动的开发实践',
+    category: 'context',
+    status: 'available'
+  },
+  {
+    id: 'context-management',
+    title: '上下文管理 - 精准沟通与高效协作的艺术',
+    category: 'context',
+    status: 'available'
+  },
+  {
+    id: 'automation-batch',
+    title: '自动化与批处理 - 让 Claude Code 成为你的开发生产力倍增器',
+    category: 'automation',
+    status: 'available'
+  },
+  {
+    id: 'concurrent-claude',
+    title: '多 Claude 并发干活 - 构建高效的 AI 协作开发团队',
+    category: 'collaboration',
+    status: 'available'
   }
 ];

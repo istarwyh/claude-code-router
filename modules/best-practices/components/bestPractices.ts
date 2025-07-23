@@ -6,7 +6,7 @@ export const bestPracticesComponent = `
   </div>
 
   <div class="practices-page__content">
-    <!-- 概览卡片容器 -->
+    <!-- 概览卡片容器，也用于显示文章详情 -->
     <div id="best-practices-overview-cards"></div>
   </div>
 

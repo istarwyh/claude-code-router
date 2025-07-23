@@ -1,5 +1,6 @@
 import { PracticeCard } from '../../../../shared/types/practiceCard';
 import { bestPracticesOverviewCards } from '../../data/bestPracticesOverviewData';
+import { ArticleDisplayComponent } from '../ArticleDisplayComponent';
 
 export class BestPracticesOverviewCard {
   private card: PracticeCard;
@@ -173,14 +174,43 @@ export function renderBestPracticesOverviewCards(containerId: string): void {
 declare global {
   interface Window {
     showDetailedContent: (cardId: string) => void;
+    showBestPracticesOverview: () => void;
+    bestPracticesArticleDisplay: ArticleDisplayComponent;
   }
 }
 
 if (typeof window !== 'undefined') {
+  // 创建全局的文章显示组件实例
+  window.bestPracticesArticleDisplay = new ArticleDisplayComponent('best-practices');
+
   window.showDetailedContent = function(cardId: string) {
-    // 这里将来会跳转到详细页面
     console.log(`显示详细内容: ${cardId}`);
-    // 暂时显示提示
-    alert(`即将显示 ${cardId} 的详细内容`);
+    
+    // 使用文章显示组件显示详细内容
+    window.bestPracticesArticleDisplay.showArticle(cardId).catch(error => {
+      console.error('Failed to show article:', error);
+      alert(`加载文章失败: ${error.message}`);
+    });
+  };
+
+  window.showBestPracticesOverview = function() {
+    console.log('返回最佳实践概览页面');
+    
+    // 使用文章显示组件的 showOverview 方法
+    if (window.bestPracticesArticleDisplay) {
+      window.bestPracticesArticleDisplay.showOverview();
+    }
+    
+    // 重新渲染概览页面
+    const container = document.getElementById('best-practices-overview-cards');
+    if (container) {
+      renderBestPracticesOverviewCards('best-practices-overview-cards');
+    }
+    
+    // 滚动到顶部
+    const section = document.getElementById('best-practices');
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 }
