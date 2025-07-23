@@ -2594,3 +2594,9 @@ export const componentStyles = `
 }
 
 `;
+
+// Import Best Practices Overview Cards styles
+import { bestPracticesOverviewCardStyles } from './bestPracticesOverviewCards';
+
+// Export combined styles
+export const allComponentStyles = componentStyles + bestPracticesOverviewCardStyles;

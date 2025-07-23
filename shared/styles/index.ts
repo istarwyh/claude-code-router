@@ -1,9 +1,9 @@
 import { designTokens } from './designTokens';
 import { baseStyles } from './baseStyles';
-import { componentStyles } from './componentStyles';
+import { allComponentStyles } from './componentStyles';
 
 export const allStyles = `
 ${designTokens}
 ${baseStyles}
-${componentStyles}
+${allComponentStyles}
 `;
