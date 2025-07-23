@@ -1,9 +1,11 @@
 import { designTokens } from './designTokens';
 import { baseStyles } from './baseStyles';
-import { allComponentStyles } from './componentStyles';
+import { componentStyles } from './componentStyles';
+import { bestPracticesOverviewCardStyles } from './bestPracticesOverviewCards';
 
 export const allStyles = `
 ${designTokens}
 ${baseStyles}
-${allComponentStyles}
+${componentStyles}
+${bestPracticesOverviewCardStyles}
 `;
