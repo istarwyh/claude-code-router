@@ -4,6 +4,7 @@
 import { bestPracticesCards } from './data/cardsData';
 import { categoryIcons, difficultyColors, difficultyLabels } from './data/categoryConfig';
 import { cardIdMapping } from './data/articleMapping';
+import { markdownArticles } from './data/markdownContent';
 
 // 生成完整的模块化脚本
 export const bestPracticesOverviewCardsScript = `
@@ -18,6 +19,8 @@ const categoryIcons = ${JSON.stringify(categoryIcons, null, 2)};
 const difficultyColors = ${JSON.stringify(difficultyColors, null, 2)};
 
 const difficultyText = ${JSON.stringify(difficultyLabels, null, 2)};
+
+const markdownArticles = ${JSON.stringify(markdownArticles, null, 2)};
 
 const cardIdMapping = ${JSON.stringify(cardIdMapping, null, 2)};
 
@@ -292,13 +295,28 @@ class ArticleService {
     this.showLoadingState();
     
     try {
-      const article = await this.fetchArticleFromMarkdown(articleId);
+      // 直接使用真实的 markdown 内容，确保内容一致性
+      const article = this.getArticleFromMarkdownData(articleId);
       this.displayArticle(articleId, article);
     } catch (error) {
       console.error('加载文章失败:', error);
       const fallbackArticle = this.getFallbackArticleContent(articleId);
       this.displayArticle(articleId, fallbackArticle);
     }
+  }
+
+  getArticleFromMarkdownData(articleId) {
+    const markdownArticle = markdownArticles[articleId];
+    if (!markdownArticle) {
+      throw new Error(\`文章 \${articleId} 未找到\`);
+    }
+    
+    const htmlContent = MarkdownParser.parseMarkdownToHtml(markdownArticle.content);
+    
+    return {
+      title: markdownArticle.title,
+      content: htmlContent
+    };
   }
 
   showLoadingState() {
