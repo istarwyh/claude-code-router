@@ -4,6 +4,7 @@ export interface Article {
   id: string;
   title: string;
   content: string;
+  rawMarkdown: string;
 }
 
 export class ArticleService {
@@ -30,7 +31,8 @@ export class ArticleService {
       const article: Article = {
         id: cardId,
         title: this.getTitleFromCardId(cardId),
-        content: htmlContent
+        content: htmlContent,
+        rawMarkdown: markdownContent
       };
 
       // 缓存结果

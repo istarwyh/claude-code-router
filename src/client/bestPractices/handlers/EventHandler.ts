@@ -101,22 +101,22 @@ export class EventHandler {
       // 使用 MarkdownViewer 渲染 Markdown 内容
       const markdownContainer = document.getElementById('markdown-content-container');
       if (markdownContainer) {
-        // 创建一个临时的 MarkdownViewer 实例
+        // 创建一个临时的 SafeMarkdownRenderer 实例
         const renderer = new SafeMarkdownRenderer();
-        const renderedHtml = renderer.render(article.content);
+        console.log('About to render raw markdown with SafeMarkdownRenderer');
+        const renderedHtml = renderer.render(article.rawMarkdown);
         
         // 渲染并应用样式
         markdownContainer.innerHTML = `<div class="markdown-content">${renderedHtml}</div>`;
         
-        // 应用代码高亮
+        // 应用代码高亮和 Mermaid 渲染
         renderer.highlightCode(markdownContainer);
       }
       
       // 暴露返回函数到全局作用域
       (window as any).showOverviewCards = () => {
         // 重新初始化概览卡片
-        const manager = new (window as any).BestPracticesManager();
-        manager.initialize();
+        (window as any).initializeBestPractices();
       };
       
     } catch (error) {

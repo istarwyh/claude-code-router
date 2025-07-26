@@ -142,13 +142,69 @@ export const markdownStyles = `
 }
 
 /* Mermaid 图表样式 */
-.markdown-content .mermaid {
-  text-align: center;
+.markdown-content .mermaid-diagram {
   margin: 24px 0;
+  padding: 20px;
   background: #fafbfc;
   border: 1px solid #e1e5e9;
   border-radius: 8px;
+  text-align: center;
+  overflow-x: auto;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.markdown-content .mermaid-diagram.mermaid-rendered {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
   padding: 16px;
+}
+
+.markdown-content .mermaid-diagram svg {
+  max-width: 100%;
+  height: auto;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+}
+
+.markdown-content .mermaid-diagram.mermaid-error {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #dc2626;
+  flex-direction: column;
+}
+
+.markdown-content .mermaid-diagram.mermaid-fallback {
+  background: #fffbeb;
+  border-color: #fbbf24;
+  color: #92400e;
+  flex-direction: column;
+}
+
+.markdown-content .mermaid-diagram.mermaid-fallback::before {
+  content: "⚠️ Mermaid 图表加载失败，显示原始代码：";
+  display: block;
+  margin-bottom: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #92400e;
+}
+
+.markdown-content .mermaid-diagram pre {
+  margin: 0;
+  background: transparent;
+  border: none;
+  padding: 8px;
+  width: 100%;
+  text-align: left;
+}
+
+.markdown-content .mermaid-diagram code {
+  background: transparent;
+  color: inherit;
+  border: none;
+  padding: 0;
 }
 
 /* 链接样式 */

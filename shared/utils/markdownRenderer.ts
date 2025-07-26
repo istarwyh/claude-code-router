@@ -34,6 +34,9 @@ export class SafeMarkdownRenderer {
             return '';
         }
 
+        console.log('SafeMarkdownRenderer.render called with markdown length:', markdown.length);
+        console.log('Markdown preview:', markdown.substring(0, 500) + '...');
+
         // 不要在开始就转义所有 HTML，而是在处理具体内容时进行安全处理
         let html = markdown;
         
@@ -45,6 +48,9 @@ export class SafeMarkdownRenderer {
         html = this.renderLinks(html);
         html = this.renderLists(html);
         html = this.renderParagraphs(html);
+        
+        console.log('Final rendered HTML length:', html.length);
+        console.log('Final HTML preview:', html.substring(0, 500) + '...');
         
         return html;
     }
@@ -88,12 +94,52 @@ export class SafeMarkdownRenderer {
      * 渲染代码块
      */
     private renderCodeBlocks(html: string): string {
+        console.log('renderCodeBlocks called, input length:', html.length);
+        
+        // 先检查是否包含代码块
+        const hasCodeBlocks = html.includes('```');
+        console.log('Contains code blocks:', hasCodeBlocks);
+        
+        if (hasCodeBlocks) {
+            // 匹配所有代码块
+            const codeBlockMatches = html.match(/```[\s\S]*?```/g);
+            console.log('Found code block matches:', codeBlockMatches?.length || 0);
+            if (codeBlockMatches) {
+                codeBlockMatches.forEach((match, index) => {
+                    console.log(`Code block ${index}:`, match.substring(0, 100) + '...');
+                });
+            }
+        }
+        
         // 处理三个反引号的代码块
-        html = html.replace(/```([^`]*?)```/gs, (match, code) => {
-            const trimmedCode = code.trim();
-            return `<pre><code>${this.escapeHtml(trimmedCode)}</code></pre>`;
+        html = html.replace(/```(\w*)\n?([\s\S]*?)```/g, (match, language, code) => {
+            const lang = (language || '').toLowerCase().trim();
+            const codeContent = code.trim();
+            
+            console.log('Processing code block:', { language: lang, codeLength: codeContent.length });
+            
+            // 检查是否是 Mermaid 图表
+            if (lang === 'mermaid' || lang === 'sequencediagram') {
+                console.log('Detected Mermaid diagram!');
+                return this.renderMermaidDiagram(codeContent);
+            }
+            
+            // 普通代码块
+            console.log('Rendering as regular code block');
+            return `<pre><code class="language-${lang}">${this.escapeHtml(codeContent)}</code></pre>`;
         });
+        
+        console.log('renderCodeBlocks finished, output length:', html.length);
         return html;
+    }
+
+    /**
+     * 渲染 Mermaid 图表
+     */
+    private renderMermaidDiagram(code: string): string {
+        const diagramId = `mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        console.log('Rendering Mermaid diagram:', { diagramId, code: code.substring(0, 100) + '...' });
+        return `<div class="mermaid-diagram" id="${diagramId}">${this.escapeHtml(code)}</div>`;
     }
 
     /**
@@ -210,11 +256,130 @@ export class SafeMarkdownRenderer {
     highlightCode(container: HTMLElement): void {
         if (!this.options.enableCodeHighlight) return;
 
+        // 处理普通代码块
         const codeBlocks = container.querySelectorAll('pre code');
         codeBlocks.forEach((block) => {
-            // 简单的语法高亮（可以根据需要扩展）
             this.applyBasicHighlighting(block as HTMLElement);
         });
+
+        // 处理 Mermaid 图表
+        this.renderMermaidDiagrams(container);
+    }
+
+    /**
+     * 渲染 Mermaid 图表
+     */
+    private renderMermaidDiagrams(container: HTMLElement): void {
+        const mermaidDiagrams = container.querySelectorAll('.mermaid-diagram');
+        if (mermaidDiagrams.length === 0) return;
+
+        console.log(`Found ${mermaidDiagrams.length} Mermaid diagrams to render`);
+
+        // 动态加载 Mermaid 库
+        this.loadMermaidLibrary().then(() => {
+            console.log('Mermaid library loaded successfully');
+            mermaidDiagrams.forEach((diagram, index) => {
+                console.log(`Initializing Mermaid diagram ${index + 1}/${mermaidDiagrams.length}`);
+                this.initializeMermaidDiagram(diagram as HTMLElement);
+            });
+        }).catch((error) => {
+            console.error('Failed to load Mermaid library:', error);
+            // 降级处理：显示原始代码
+            mermaidDiagrams.forEach((diagram) => {
+                const code = diagram.textContent || '';
+                diagram.innerHTML = `<pre><code>${code}</code></pre>`;
+                diagram.classList.add('mermaid-fallback');
+            });
+        });
+    }
+
+    /**
+     * 动态加载 Mermaid 库
+     */
+    private loadMermaidLibrary(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            // 检查是否已经加载
+            if ((window as any).mermaid) {
+                console.log('Mermaid library already loaded');
+                resolve();
+                return;
+            }
+
+            console.log('Loading Mermaid library from CDN...');
+            
+            // 创建 script 标签加载 Mermaid
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+            script.async = true;
+            script.onload = () => {
+                console.log('Mermaid library script loaded, initializing...');
+                try {
+                    // 初始化 Mermaid
+                    const mermaid = (window as any).mermaid;
+                    mermaid.initialize({
+                        startOnLoad: false,
+                        theme: 'default',
+                        securityLevel: 'loose',
+                        fontFamily: 'monospace'
+                    });
+                    console.log('Mermaid library initialized');
+                    resolve();
+                } catch (error) {
+                    console.error('Error initializing Mermaid:', error);
+                    reject(error);
+                }
+            };
+            script.onerror = (error) => {
+                console.error('Failed to load Mermaid script:', error);
+                reject(new Error('Failed to load Mermaid library'));
+            };
+            document.head.appendChild(script);
+        });
+    }
+
+    /**
+     * 初始化单个 Mermaid 图表
+     */
+    private initializeMermaidDiagram(element: HTMLElement): void {
+        const mermaid = (window as any).mermaid;
+        if (!mermaid) {
+            console.error('Mermaid library not available');
+            return;
+        }
+
+        const code = element.textContent || '';
+        const id = element.id;
+        
+        console.log(`Rendering diagram ${id}:`, code.substring(0, 100) + '...');
+
+        try {
+            // 清空元素内容
+            element.textContent = '';
+            element.innerHTML = '<div style="padding: 20px; color: #666;">正在渲染图表...</div>';
+            
+            // 渲染 Mermaid 图表
+            mermaid.render(id + '-svg', code).then((result: { svg: string }) => {
+                console.log(`Successfully rendered diagram ${id}`);
+                element.innerHTML = result.svg;
+                element.classList.add('mermaid-rendered');
+            }).catch((error: Error) => {
+                console.error(`Mermaid rendering error for ${id}:`, error);
+                // 降级显示原始代码
+                element.innerHTML = `
+                    <div style="color: #dc2626; margin-bottom: 8px;">⚠️ 图表渲染失败</div>
+                    <pre><code>${this.escapeHtml(code)}</code></pre>
+                `;
+                element.classList.add('mermaid-error');
+            });
+        } catch (error) {
+            console.error(`Mermaid initialization error for ${id}:`, error);
+            // 降级显示原始代码
+            element.innerHTML = `
+                <div style="color: #dc2626; margin-bottom: 8px;">⚠️ 图表初始化失败</div>
+                <pre><code>${this.escapeHtml(code)}</code></pre>
+            `;
+            element.classList.add('mermaid-error');
+        }
     }
 
     /**
