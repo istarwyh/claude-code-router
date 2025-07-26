@@ -1,16 +1,17 @@
 export class ArticleRenderer {
   public renderArticle(title: string, content: string): string {
+    // 使用 MarkdownViewer 组件来渲染 Markdown 内容
+    // 不再显示重复的标题，因为 Markdown 内容中已经包含了标题
     return `
       <div class="practice-article">
         <div class="practice-article__header">
           <button class="practice-article__back-btn" onclick="showOverviewCards()">
             ← 返回概览
           </button>
-          <h2 class="practice-article__title">${title}</h2>
         </div>
         
-        <div class="practice-article__content">
-          ${content}
+        <div class="practice-article__content" id="markdown-content-container">
+          <!-- Markdown 内容将在这里渲染 -->
         </div>
       </div>
     `;

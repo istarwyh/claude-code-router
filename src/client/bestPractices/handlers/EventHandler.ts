@@ -1,5 +1,8 @@
 import { ArticleService } from '../services/ArticleService';
 import { ArticleRenderer } from '../renderers/ArticleRenderer';
+import { MarkdownViewer } from '../../../../shared/components/markdownViewer';
+import { SafeMarkdownRenderer } from '../../../../shared/utils/markdownRenderer';
+import { injectMarkdownStyles } from '../styles/markdownStyles';
 
 export class EventHandler {
   private containerId: string;
@@ -82,15 +85,32 @@ export class EventHandler {
     }
 
     try {
+      // 注入 Markdown 样式
+      injectMarkdownStyles();
+      
       // 显示加载状态
       container.innerHTML = this.articleRenderer.renderLoadingState();
       
       // 获取文章内容
       const article = await this.articleService.getArticle(cardId);
       
-      // 渲染文章
+      // 渲染文章的 HTML 结构（不包含内容）
       const articleHtml = this.articleRenderer.renderArticle(article.title, article.content);
       container.innerHTML = articleHtml;
+      
+      // 使用 MarkdownViewer 渲染 Markdown 内容
+      const markdownContainer = document.getElementById('markdown-content-container');
+      if (markdownContainer) {
+        // 创建一个临时的 MarkdownViewer 实例
+        const renderer = new SafeMarkdownRenderer();
+        const renderedHtml = renderer.render(article.content);
+        
+        // 渲染并应用样式
+        markdownContainer.innerHTML = `<div class="markdown-content">${renderedHtml}</div>`;
+        
+        // 应用代码高亮
+        renderer.highlightCode(markdownContainer);
+      }
       
       // 暴露返回函数到全局作用域
       (window as any).showOverviewCards = () => {

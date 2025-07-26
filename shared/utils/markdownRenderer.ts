@@ -34,12 +34,12 @@ export class SafeMarkdownRenderer {
             return '';
         }
 
-        // 首先转义所有 HTML 以防止 XSS
-        let html = this.escapeHtml(markdown);
+        // 不要在开始就转义所有 HTML，而是在处理具体内容时进行安全处理
+        let html = markdown;
         
         // 按顺序应用 Markdown 规则
+        html = this.renderCodeBlocks(html);  // 先处理代码块，避免其中的内容被误处理
         html = this.renderHeaders(html);
-        html = this.renderCodeBlocks(html);
         html = this.renderInlineCode(html);
         html = this.renderBoldItalic(html);
         html = this.renderLinks(html);
@@ -59,16 +59,28 @@ export class SafeMarkdownRenderer {
     }
 
     /**
+     * 保留已经处理的 HTML 标签，对其他内容进行转义
+     */
+    private preserveHtmlTags(text: string): string {
+        // 对于已经包含 HTML 标签的内容，直接返回
+        if (text.includes('<') && text.includes('>')) {
+            return text;
+        }
+        // 对于纯文本内容，进行转义
+        return this.escapeHtml(text);
+    }
+
+    /**
      * 渲染标题
      */
     private renderHeaders(html: string): string {
-        // 按从大到小的顺序处理标题，避免嵌套问题
-        html = html.replace(/^######\s(.+)$/gm, '<h6>$1</h6>');
-        html = html.replace(/^#####\s(.+)$/gm, '<h5>$1</h5>');
-        html = html.replace(/^####\s(.+)$/gm, '<h4>$1</h4>');
-        html = html.replace(/^###\s(.+)$/gm, '<h3>$1</h3>');
-        html = html.replace(/^##\s(.+)$/gm, '<h2>$1</h2>');
-        html = html.replace(/^#\s(.+)$/gm, '<h1>$1</h1>');
+        // 按从大到小的顺序处理标题，对标题内容进行转义
+        html = html.replace(/^######\s(.+)$/gm, (match, title) => `<h6>${this.escapeHtml(title.trim())}</h6>`);
+        html = html.replace(/^#####\s(.+)$/gm, (match, title) => `<h5>${this.escapeHtml(title.trim())}</h5>`);
+        html = html.replace(/^####\s(.+)$/gm, (match, title) => `<h4>${this.escapeHtml(title.trim())}</h4>`);
+        html = html.replace(/^###\s(.+)$/gm, (match, title) => `<h3>${this.escapeHtml(title.trim())}</h3>`);
+        html = html.replace(/^##\s(.+)$/gm, (match, title) => `<h2>${this.escapeHtml(title.trim())}</h2>`);
+        html = html.replace(/^#\s(.+)$/gm, (match, title) => `<h1>${this.escapeHtml(title.trim())}</h1>`);
         return html;
     }
 
@@ -79,7 +91,7 @@ export class SafeMarkdownRenderer {
         // 处理三个反引号的代码块
         html = html.replace(/```([^`]*?)```/gs, (match, code) => {
             const trimmedCode = code.trim();
-            return `<pre><code>${trimmedCode}</code></pre>`;
+            return `<pre><code>${this.escapeHtml(trimmedCode)}</code></pre>`;
         });
         return html;
     }
@@ -89,7 +101,17 @@ export class SafeMarkdownRenderer {
      */
     private renderInlineCode(html: string): string {
         // 处理单个反引号的行内代码，但不处理已经在 <pre><code> 中的
-        html = html.replace(/(?<!<pre><code[^>]*>.*)`([^`\n]+)`(?!.*<\/code><\/pre>)/g, '<code>$1</code>');
+        html = html.replace(/`([^`\n]+)`/g, (match, code) => {
+            // 检查是否在代码块中
+            if (html.indexOf('<pre><code>') !== -1 && html.indexOf('</code></pre>') !== -1) {
+                const preStart = html.lastIndexOf('<pre><code>', html.indexOf(match));
+                const preEnd = html.indexOf('</code></pre>', html.indexOf(match));
+                if (preStart !== -1 && preEnd !== -1 && preStart < html.indexOf(match) && html.indexOf(match) < preEnd) {
+                    return match; // 在代码块中，不处理
+                }
+            }
+            return `<code>${this.escapeHtml(code)}</code>`;
+        });
         return html;
     }
 
@@ -176,7 +198,9 @@ export class SafeMarkdownRenderer {
             if (!trimmed) {
                 return '';
             }
-            return `<p>${trimmed}</p>`;
+            // 对段落内容进行转义，但保留已经处理的 HTML 标签
+            const content = this.preserveHtmlTags(trimmed);
+            return `<p>${content}</p>`;
         }).join('\n\n');
     }
 
