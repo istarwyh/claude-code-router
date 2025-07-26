@@ -5,6 +5,11 @@ routes = [
   { pattern = "cc.xiaohui.cool", custom_domain = true }
 ]
 
+# Build configuration for client scripts
+[build]
+command = "npm run build:client"
+watch_dir = "src/client"
+
 # Enable logging
 [observability]
 enabled = true

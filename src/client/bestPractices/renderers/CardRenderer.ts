@@ -1,7 +1,11 @@
-import type { PracticeCard } from '../../../types/practiceCard';
+import type { PracticeCard, PracticeSection, PracticeTip } from '../types/PracticeCard';
 import { categoryIcons, difficultyColors, difficultyLabels } from '../data/categoryConfig';
 
 export class CardRenderer {
+  public renderCards(cards: PracticeCard[]): string {
+    return cards.map(card => this.renderCard(card)).join('');
+  }
+
   public renderCard(card: PracticeCard): string {
     const icon = categoryIcons[card.category] || '📋';
     const difficultyColor = difficultyColors[card.difficulty];
@@ -48,39 +52,31 @@ export class CardRenderer {
           <button class="overview-card__action-btn" data-card-id="${card.id}">
             查看详细内容 →
           </button>
-          <div class="overview-card__updated">
-            更新时间：${card.lastUpdated}
+          <div class="overview-card__meta-info">
+            <span class="overview-card__version">v${card.version}</span>
+            <span class="overview-card__updated">更新于 ${card.lastUpdated}</span>
           </div>
         </div>
       </div>
     `;
   }
 
-  public renderCards(cards: PracticeCard[]): string {
-    const cardsHtml = cards.map(card => this.renderCard(card)).join('');
-    
-    return `
-      <div class="overview-cards-grid">
-        ${cardsHtml}
-      </div>
-    `;
-  }
-
-  private renderSections(sections: PracticeCard['sections']): string {
+  private renderSections(sections: PracticeSection[]): string {
     return sections.map(section => `
       <li class="overview-card__section-item">
         <span class="overview-card__section-title">${section.title}</span>
-        <span class="overview-card__section-desc">${section.content}</span>
+        <span class="overview-card__section-content">${section.content}</span>
       </li>
     `).join('');
   }
 
-  private renderTips(tips?: PracticeCard['tips']): string {
-    if (!tips) return '';
+  private renderTips(tips: PracticeTip[]): string {
+    if (!tips || tips.length === 0) return '';
     
     return tips.map(tip => `
       <div class="overview-card__tip overview-card__tip--${tip.type}">
-        <strong>${tip.title}：</strong>${tip.content}
+        <strong class="overview-card__tip-title">${tip.title}:</strong>
+        <span class="overview-card__tip-content">${tip.content}</span>
       </div>
     `).join('');
   }
