@@ -295,23 +295,31 @@ class ArticleService {
     this.showLoadingState();
     
     try {
-      // 直接使用真实的 markdown 内容，确保内容一致性
-      const article = this.getArticleFromMarkdownData(articleId);
+      // 异步读取真实的 markdown 文件内容
+      const article = await this.getArticleFromMarkdownData(articleId);
       this.displayArticle(articleId, article);
     } catch (error) {
       console.error('加载文章失败:', error);
-      const fallbackArticle = this.getFallbackArticleContent(articleId);
-      this.displayArticle(articleId, fallbackArticle);
+      this.displayError(articleId, error.message);
     }
   }
 
-  getArticleFromMarkdownData(articleId) {
+  async getArticleFromMarkdownData(articleId) {
     const markdownArticle = markdownArticles[articleId];
     if (!markdownArticle) {
       throw new Error(\`文章 \${articleId} 未找到\`);
     }
     
-    const htmlContent = MarkdownParser.parseMarkdownToHtml(markdownArticle.content);
+    // 读取真实的 markdown 文件
+    const markdownPath = \`/modules/best-practices/articles/\${markdownArticle.filePath}\`;
+    const response = await fetch(markdownPath);
+    
+    if (!response.ok) {
+      throw new Error(\`无法加载文章文件: \${markdownPath}\`);
+    }
+    
+    const markdownContent = await response.text();
+    const htmlContent = MarkdownParser.parseMarkdownToHtml(markdownContent);
     
     return {
       title: markdownArticle.title,
@@ -351,75 +359,21 @@ class ArticleService {
     container.innerHTML = this.articleRenderer.renderArticle(articleId, article);
   }
 
-  getFallbackArticleContent(articleId) {
-    const articles = {
-      'current-workflow': {
-        title: '我现在的工作流 - 基于 Claude Code 的完整开发实践',
-        content: \`
-          <h1>我现在的工作流</h1>
-          <p>基于 Claude Code，我综合了最佳实践形成了自己的工作流。整个过程中，我只需要提出需求以及 Review，Claude Code 承担了大部分的编码和实现工作。</p>
-          
-          <h2>核心理念</h2>
-          <p>现代 AI 驱动的开发流程核心是：<strong>人负责需求定义和质量把关，AI 负责具体实现</strong>。</p>
-          
-          <h2>完整工作流程</h2>
-          <ol>
-            <li>创建多工作区（并发开发时）</li>
-            <li>启动 Claude 无限制模式</li>
-            <li>Issue 管理和任务分派</li>
-            <li>技术方案设计（复杂需求）</li>
-            <li>代码实现</li>
-            <li>代码审查</li>
-            <li>反馈处理</li>
-            <li>流程自动化</li>
-          </ol>
-          
-          <h2>关键成功要素</h2>
-          <ul>
-            <li><strong>清晰的需求定义</strong>：Issue 描述要详细具体</li>
-            <li><strong>有效的沟通方式</strong>：使用精确的技术词汇</li>
-            <li><strong>质量保证机制</strong>：多重 AI 代码审查</li>
-            <li><strong>流程优化意识</strong>：识别重复性工作</li>
-          </ul>
-        \`
-      },
-      'environment-config': {
-        title: '自定义环境配置',
-        content: \`
-          <h1>自定义环境配置</h1>
-          <p>配置 CLAUDE.md 文件、权限管理和 GitHub CLI 集成。</p>
-          
-          <h2>CLAUDE.md 项目记忆库</h2>
-          <p>CLAUDE.md 是一个特殊的项目文件，用于存储项目的上下文信息。</p>
-          
-          <h2>权限管理策略</h2>
-          <pre><code># 查看当前权限
-/permissions
-
-# 允许特定操作
-/permissions add Edit
-/permissions add Bash(git commit:*)
-
-# 跳过所有权限检查（谨慎使用）
-claude --dangerously-skip-permissions</code></pre>
-          
-          <h2>GitHub CLI 集成</h2>
-          <pre><code># 安装
-brew install gh  # macOS
-
-# 常用操作
-gh pr create
-gh issue view
-gh issue edit --add-label</code></pre>
-        \`
-      }
-    };
+  displayError(articleId, errorMessage) {
+    const container = document.getElementById(this.containerId);
+    if (!container) return;
     
-    return articles[articleId] || {
-      title: '文章未找到',
-      content: '<p>抱歉，该文章内容暂时不可用。</p>'
-    };
+    container.innerHTML = \`
+      <div class="article-error" style="text-align: center; padding: 60px 30px; background: white; border-radius: 12px; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);">
+        <div style="color: #ef4444; font-size: 48px; margin-bottom: 20px;">⚠️</div>
+        <h2 style="color: #dc2626; margin-bottom: 16px;">文章加载失败</h2>
+        <p style="color: #6b7280; margin-bottom: 20px;">错误信息：\${errorMessage}</p>
+        <p style="color: #6b7280; margin-bottom: 30px;">请稍后重试，或联系管理员解决此问题。</p>
+        <button onclick="showBestPracticesOverview()" style="background: #667eea; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-size: 16px;">← 返回概览</button>
+      </div>
+    \`;
   }
+
 }
 
 // ===== 导航处理层 =====
