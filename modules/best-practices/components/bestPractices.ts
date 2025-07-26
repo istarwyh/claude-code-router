@@ -1,9 +1,5 @@
 export const bestPracticesComponent = `
 <section class="practices-page" id="best-practices">
-  <div class="practices-page__header">
-    <h2>⚡ 如何用好 CC</h2>
-    <p class="practices-page__subtitle">基于 Anthropic 官方最佳实践的深度指南，7个核心模块助你精通 Claude Code</p>
-  </div>
 
   <div class="practices-page__content">
     <!-- 概览卡片容器，也用于显示文章详情 -->

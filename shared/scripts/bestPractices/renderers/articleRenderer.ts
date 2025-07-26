@@ -21,6 +21,18 @@ export class ArticleRenderer {
     `;
   }
 
+  public renderErrorState(articleId: string, errorMessage: string): string {
+    return `
+      <div class="article-error" style="text-align: center; padding: 60px 30px;">
+        <div style="color: #dc2626; font-size: 48px; margin-bottom: 20px;">⚠️</div>
+        <h2 style="color: #dc2626; margin-bottom: 16px;">文章加载失败</h2>
+        <p style="color: #6b7280; margin-bottom: 16px;">文章 "${articleId}" 暂时无法加载</p>
+        <p style="color: #9ca3af; font-size: 14px; margin-bottom: 30px;">错误信息: ${errorMessage}</p>
+        <button onclick="showBestPracticesOverview()" style="background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">← 返回概览</button>
+      </div>
+    `;
+  }
+
   public renderArticle(articleId: string, article: ArticleContent): string {
     return `
       <div class="article-container" style="max-width: 800px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08); overflow: hidden;">

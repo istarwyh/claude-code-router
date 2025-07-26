@@ -1,9 +1,3 @@
-# 我现在的工作流 - 基于 Claude Code 的完整开发实践
-
-> 状态：已完成
-> 分类：工作流程
-> 更新时间：2025-01-19
-
 ## 概述
 
 基于 Claude Code，我综合了最佳实践形成了自己的工作流。整个过程中，我只需要提出需求以及 Review，Claude Code 承担了大部分的编码和实现工作。
@@ -14,7 +8,7 @@
 
 ## 完整工作流时序图
 
-```mermaid
+\`\`\`mermaid
 sequenceDiagram
     autonumber
     actor 开发者
@@ -40,7 +34,7 @@ sequenceDiagram
     Claude-->>开发者: 基于意见响应、点评并修复代码
     note right of 开发者: 开发者将修复后的代码<br/>再次提交至 GitHub
     开发者->>Claude: 反思并将重复性工作抽象为可组合的 Slash Commands
-```
+\`\`\
 
 ## 详细流程步骤
 
@@ -50,7 +44,7 @@ sequenceDiagram
 
 当需要同时处理多个功能或修复时，使用 Git Worktrees 创建独立的工作环境：
 
-```bash
+\`\`\`bash
 # 创建独立的功能分支工作区
 git worktree add -b feature/auth ../project-auth main
 git worktree add -b feature/ui-redesign ../project-ui main
@@ -58,17 +52,17 @@ git worktree add -b feature/ui-redesign ../project-ui main
 # 在各自工作区安装依赖
 cd ../project-auth && npm install
 cd ../project-ui && npm install
-```
+\`\`\
 
 ### 2. Claude 模式配置
 
 **启动无限制模式**
 
-在每个子工作区中启动 Claude 的无限制模式，通过 `Shift + Tab` 可以快速切换模式：
+在每个子工作区中启动 Claude 的无限制模式，通过 \`Shift + Tab\` 可以快速切换模式：
 
-```bash
+\`\`\`bash
 claude --dangerously-skip-permissions
-```
+\`\`\
 
 ![模式切换界面示例](https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202507201515678.png)
 
@@ -86,7 +80,7 @@ claude --dangerously-skip-permissions
 
 对于复杂需求，遵循以下步骤：
 
-```bash
+\`\`\`bash
 # 1. 启用探索模式
 claude "请使用 think harder 模式分析这个需求"
 
@@ -95,7 +89,7 @@ claude "请使用 think harder 模式分析这个需求"
 
 # 3. 方案 Review
 "方案看起来不错，请开始实现第一个测试用例"
-```
+\`\`\
 
 ### 5. 代码实现阶段
 
@@ -110,10 +104,10 @@ Claude 根据技术方案执行具体的代码实现，包括：
 
 **多 AI 协作审查**
 
-```bash
+\`\`\`bash
 # 提交 PR 后，使用多个 AI 进行代码审查
 gh pr create --title "feat: 实现用户认证功能" --body "详细的PR描述"
-```
+\`\`\
 
 使用通义灵码和 Gemini Code Assistant 对 PR 进行自动化审查：
 
@@ -123,7 +117,7 @@ gh pr create --title "feat: 实现用户认证功能" --body "详细的PR描述"
 
 **Claude 响应 Code Review**
 
-```bash
+\`\`\`bash
 # 让 Claude 处理审查意见
 "请查看 PR #123 中的所有 review 意见，并逐一修复"
 
@@ -132,7 +126,7 @@ gh pr create --title "feat: 实现用户认证功能" --body "详细的PR描述"
 # 2. 分析问题并提出解决方案
 # 3. 实现代码修复
 # 4. 运行测试验证修复效果
-```
+\`\`\
 
 ![Claude处理审查意见](https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202507201516392.png)
 
@@ -142,10 +136,10 @@ gh pr create --title "feat: 实现用户认证功能" --body "详细的PR描述"
 
 将重复的工作流程抽象为可复用的命令：
 
-```bash
+\`\`\`bash
 # 例如：创建 PR 评论处理命令
 /pr-comments <pr-number>
-```
+\`\`\
 
 这样的命令可以包含完整的处理逻辑：
 - 获取 PR 详情
