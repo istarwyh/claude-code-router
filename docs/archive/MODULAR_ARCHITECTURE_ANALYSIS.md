@@ -208,12 +208,16 @@ customElements.define('best-practice-card', BestPracticeCard);
 
 ```
 开发阶段：
-shared/scripts/bestPractices/
-├── index.ts                    # 主入口
-├── manager/BestPracticesManager.ts
-├── renderers/CardRenderer.ts
-├── handlers/EventHandler.ts
-└── data/cardsData.ts
+claude-code-router/
+├── src/client/bestPractices/        # 模块化源码（开发时）
+├── shared/scripts/generated/        # 构建输出（运行时）
+├── docs/
+│   ├── archive/                     # 归档的开发阶段文档
+│   ├── best-practices/              # 活跃的最佳实践文档
+│   └── *.md                         # 核心用户文档
+├── modules/                         # 页面模块
+├── shared/                          # 共享资源
+└── scripts/                         # 构建脚本
 
 构建阶段：
 esbuild 打包 → 单个 IIFE 字符串

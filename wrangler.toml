@@ -15,7 +15,7 @@ watch_dir = "src/client"
 enabled = true
 head_sampling_rate = 1
 
-# Assets configuration for static files
-[assets]
-directory = "./modules/best-practices/articles"
-binding = "ASSETS"
+# Assets configuration for static files (disabled - using new modular system)
+# [assets]
+# directory = "./static"
+# binding = "ASSETS"
