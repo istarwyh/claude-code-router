@@ -141,7 +141,54 @@ export const markdownStyles = `
   border-radius: 0;
 }
 
-/* Mermaid 图表样式 */
+/* 骨架屏加载动画 */
+.article-skeleton {
+  padding: 20px 0;
+}
+
+.skeleton-title {
+  height: 32px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+  margin-bottom: 24px;
+  width: 60%;
+}
+
+.skeleton-line {
+  height: 16px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  width: 100%;
+}
+
+.skeleton-line.short {
+  width: 70%;
+}
+
+.skeleton-diagram {
+  height: 200px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 8px;
+  margin: 24px 0;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Mermaid 图表增强样式 */
 .markdown-content .mermaid-diagram {
   margin: 24px 0;
   padding: 20px;
@@ -154,57 +201,183 @@ export const markdownStyles = `
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.markdown-content .mermaid-diagram:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 .markdown-content .mermaid-diagram.mermaid-rendered {
   background: #ffffff;
   border: 1px solid #e5e7eb;
   padding: 16px;
+  cursor: pointer;
+}
+
+.markdown-content .mermaid-diagram.mermaid-rendered::after {
+  content: "🔍 点击查看大图";
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 12px;
+  color: #6b7280;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px 8px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.markdown-content .mermaid-diagram.mermaid-rendered:hover::after {
+  opacity: 1;
 }
 
 .markdown-content .mermaid-diagram svg {
   max-width: 100%;
   height: auto;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  transition: transform 0.3s ease;
 }
 
-.markdown-content .mermaid-diagram.mermaid-error {
-  background: #fef2f2;
-  border-color: #fca5a5;
-  color: #dc2626;
-  flex-direction: column;
+.markdown-content .mermaid-diagram.mermaid-rendered:hover svg {
+  transform: scale(1.02);
 }
 
-.markdown-content .mermaid-diagram.mermaid-fallback {
-  background: #fffbeb;
-  border-color: #fbbf24;
-  color: #92400e;
-  flex-direction: column;
-}
-
-.markdown-content .mermaid-diagram.mermaid-fallback::before {
-  content: "⚠️ Mermaid 图表加载失败，显示原始代码：";
-  display: block;
-  margin-bottom: 12px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #92400e;
-}
-
-.markdown-content .mermaid-diagram pre {
-  margin: 0;
-  background: transparent;
-  border: none;
-  padding: 8px;
+/* 全屏查看模态框 */
+.mermaid-fullscreen-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  text-align: left;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
 }
 
-.markdown-content .mermaid-diagram code {
-  background: transparent;
-  color: inherit;
+.mermaid-fullscreen-content {
+  max-width: 95%;
+  max-height: 95%;
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  position: relative;
+  overflow: auto;
+  transform: scale(0.9);
+  animation: scaleIn 0.3s ease forwards;
+}
+
+.mermaid-fullscreen-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
   border: none;
-  padding: 0;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  z-index: 1001;
+}
+
+.mermaid-fullscreen-close:hover {
+  color: #333;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  to { transform: scale(1); }
+}
+
+/* 代码块增强 */
+.markdown-content pre {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 20px 0;
+  overflow-x: auto;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  position: relative;
+}
+
+.markdown-content pre:hover .copy-button {
+  opacity: 1;
+}
+
+.copy-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #e5e7eb;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.copy-button:hover {
+  background: #d1d5db;
+}
+
+.copy-button.copied {
+  background: #10b981;
+  color: white;
+}
+
+/* 返回顶部按钮 */
+.back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+}
+
+/* 阅读进度条 */
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 3px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  z-index: 999;
+  transition: width 0.1s ease;
 }
 
 /* 链接样式 */

@@ -16,9 +16,10 @@ export class ArticleService {
   }
 
   public async getArticle(cardId: string): Promise<Article> {
-    // 检查缓存
+    // 临时清除缓存以获取最新内容（开发调试用）
     if (this.cache.has(cardId)) {
-      return this.cache.get(cardId)!;
+      console.log('清除缓存，重新加载文章:', cardId);
+      this.cache.delete(cardId);
     }
 
     try {

@@ -58,6 +58,13 @@ export class EventHandler {
     
     console.log('handleCardClick被调用:', target);
     
+    // 检查当前是否在文章详情页面
+    const isInArticleView = document.querySelector('.practice-article');
+    if (isInArticleView) {
+      console.log('当前在文章详情页面，忽略点击事件');
+      return;
+    }
+    
     // 查找按钮元素
     const button = target.closest('.overview-card__action-btn') as HTMLElement;
     if (!button) {
@@ -111,6 +118,9 @@ export class EventHandler {
         
         // 应用代码高亮和 Mermaid 渲染
         renderer.highlightCode(markdownContainer);
+        
+        // 添加增强功能
+        this.addEnhancedFeatures(markdownContainer);
       }
       
       // 暴露返回函数到全局作用域
@@ -124,5 +134,111 @@ export class EventHandler {
       const errorHtml = this.articleRenderer.renderErrorState(error.message);
       container.innerHTML = errorHtml;
     }
+  }
+
+  /**
+   * 添加增强功能
+   */
+  private addEnhancedFeatures(container: HTMLElement): void {
+    this.addCopyButtonsToCodeBlocks(container);
+    this.addReadingProgress();
+    this.addBackToTopButton();
+  }
+
+  /**
+   * 为代码块添加复制按钮
+   */
+  private addCopyButtonsToCodeBlocks(container: HTMLElement): void {
+    const codeBlocks = container.querySelectorAll('pre');
+    codeBlocks.forEach((block) => {
+      if (!block.querySelector('.copy-button')) {
+        const copyButton = document.createElement('button');
+        copyButton.className = 'copy-button';
+        copyButton.textContent = '复制';
+        copyButton.onclick = () => this.copyCodeBlock(block, copyButton);
+        block.appendChild(copyButton);
+      }
+    });
+  }
+
+  /**
+   * 复制代码块内容
+   */
+  private copyCodeBlock(block: HTMLElement, button: HTMLElement): void {
+    const code = block.querySelector('code');
+    if (code) {
+      navigator.clipboard.writeText(code.textContent || '').then(() => {
+        button.textContent = '已复制';
+        button.classList.add('copied');
+        setTimeout(() => {
+          button.textContent = '复制';
+          button.classList.remove('copied');
+        }, 2000);
+      }).catch(() => {
+        button.textContent = '复制失败';
+        setTimeout(() => {
+          button.textContent = '复制';
+        }, 2000);
+      });
+    }
+  }
+
+  /**
+   * 添加阅读进度条
+   */
+  private addReadingProgress(): void {
+    // 移除已存在的进度条
+    const existingProgress = document.querySelector('.reading-progress');
+    if (existingProgress) {
+      existingProgress.remove();
+    }
+
+    // 创建新的进度条
+    const progressBar = document.createElement('div');
+    progressBar.className = 'reading-progress';
+    document.body.appendChild(progressBar);
+
+    // 监听滚动事件
+    const updateProgress = () => {
+      const scrollTop = window.pageYOffset;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = (scrollTop / docHeight) * 100;
+      progressBar.style.width = `${Math.min(progress, 100)}%`;
+    };
+
+    window.addEventListener('scroll', updateProgress);
+    updateProgress(); // 初始化
+  }
+
+  /**
+   * 添加返回顶部按钮
+   */
+  private addBackToTopButton(): void {
+    // 移除已存在的按钮
+    const existingButton = document.querySelector('.back-to-top');
+    if (existingButton) {
+      existingButton.remove();
+    }
+
+    // 创建返回顶部按钮
+    const backToTopButton = document.createElement('button');
+    backToTopButton.className = 'back-to-top';
+    backToTopButton.innerHTML = '↑';
+    backToTopButton.onclick = () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    document.body.appendChild(backToTopButton);
+
+    // 监听滚动显示/隐藏按钮
+    const toggleBackToTop = () => {
+      if (window.pageYOffset > 300) {
+        backToTopButton.classList.add('visible');
+      } else {
+        backToTopButton.classList.remove('visible');
+      }
+    };
+
+    window.addEventListener('scroll', toggleBackToTop);
+    toggleBackToTop(); // 初始化
   }
 }

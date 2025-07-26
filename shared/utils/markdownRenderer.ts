@@ -111,22 +111,24 @@ export class SafeMarkdownRenderer {
             }
         }
         
-        // 处理三个反引号的代码块
-        html = html.replace(/```(\w*)\n?([\s\S]*?)```/g, (match, language, code) => {
-            const lang = (language || '').toLowerCase().trim();
-            const codeContent = code.trim();
+        // 处理三个反引号的代码块 - 恢复原来的正则表达式
+        html = html.replace(/```([^`]*?)```/gs, (match, codeWithLang) => {
+            const lines = codeWithLang.trim().split('\n');
+            const firstLine = lines[0] || '';
+            const language = firstLine.toLowerCase().trim();
+            const code = lines.slice(1).join('\n').trim();
             
-            console.log('Processing code block:', { language: lang, codeLength: codeContent.length });
+            console.log('Processing code block:', { language, codeLength: code.length });
             
             // 检查是否是 Mermaid 图表
-            if (lang === 'mermaid' || lang === 'sequencediagram') {
+            if (language === 'mermaid' || language === 'sequencediagram') {
                 console.log('Detected Mermaid diagram!');
-                return this.renderMermaidDiagram(codeContent);
+                return this.renderMermaidDiagram(code);
             }
             
             // 普通代码块
             console.log('Rendering as regular code block');
-            return `<pre><code class="language-${lang}">${this.escapeHtml(codeContent)}</code></pre>`;
+            return `<pre><code class="language-${language}">${this.escapeHtml(code)}</code></pre>`;
         });
         
         console.log('renderCodeBlocks finished, output length:', html.length);
@@ -236,16 +238,34 @@ export class SafeMarkdownRenderer {
         
         return paragraphs.map(paragraph => {
             const trimmed = paragraph.trim();
-            // 如果已经是 HTML 标签，不要包装在 <p> 中
-            if (trimmed.match(/^<(h[1-6]|ul|ol|pre|blockquote)/)) {
+            
+            // 如果已经是 HTML 标签（包括 div、pre 等），不要包装在 <p> 中，也不要处理换行
+            if (trimmed.match(/^<(h[1-6]|ul|ol|pre|blockquote|div)/)) {
                 return trimmed;
             }
+            
             // 空段落不处理
             if (!trimmed) {
                 return '';
             }
-            // 对段落内容进行转义，但保留已经处理的 HTML 标签
-            const content = this.preserveHtmlTags(trimmed);
+            
+            // 只对纯文本内容进行换行处理
+            let content = trimmed;
+            
+            // 检查是否为纯文本内容（不包含 HTML 标签）
+            const hasHtmlTags = /<[^>]+>/.test(content);
+            
+            if (!hasHtmlTags) {
+                // 对于纯文本内容，转义 HTML 字符
+                content = this.escapeHtml(content);
+                // 将单个换行符转换为 <br> 标签
+                content = content.replace(/\n/g, '<br>');
+            } else {
+                // 对于包含 HTML 标签的内容，保持原样
+                // 这些内容通常已经在之前的步骤中正确处理过了
+                content = trimmed;
+            }
+            
             return `<p>${content}</p>`;
         }).join('\n\n');
     }
@@ -362,6 +382,12 @@ export class SafeMarkdownRenderer {
                 console.log(`Successfully rendered diagram ${id}`);
                 element.innerHTML = result.svg;
                 element.classList.add('mermaid-rendered');
+                
+                // 添加点击全屏查看功能
+                element.addEventListener('click', () => {
+                    this.showMermaidFullscreen(result.svg, id);
+                });
+                
             }).catch((error: Error) => {
                 console.error(`Mermaid rendering error for ${id}:`, error);
                 // 降级显示原始代码
@@ -380,6 +406,39 @@ export class SafeMarkdownRenderer {
             `;
             element.classList.add('mermaid-error');
         }
+    }
+
+    /**
+     * 显示 Mermaid 图表全屏模式
+     */
+    private showMermaidFullscreen(svgContent: string, diagramId: string): void {
+        // 创建全屏模态框
+        const modal = document.createElement('div');
+        modal.className = 'mermaid-fullscreen-modal';
+        modal.innerHTML = `
+            <div class="mermaid-fullscreen-content">
+                <button class="mermaid-fullscreen-close" onclick="this.closest('.mermaid-fullscreen-modal').remove()">&times;</button>
+                ${svgContent}
+            </div>
+        `;
+        
+        // 点击背景关闭
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+        
+        // ESC 键关闭
+        const handleEscape = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                modal.remove();
+                document.removeEventListener('keydown', handleEscape);
+            }
+        };
+        document.addEventListener('keydown', handleEscape);
+        
+        document.body.appendChild(modal);
     }
 
     /**

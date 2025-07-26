@@ -24,13 +24,16 @@ export class ArticleRenderer {
           <button class="practice-article__back-btn" onclick="showOverviewCards()">
             ← 返回概览
           </button>
-          <h2 class="practice-article__title">加载中...</h2>
         </div>
         
         <div class="practice-article__content">
-          <div class="loading-spinner">
-            <div class="spinner"></div>
-            <p>正在加载内容...</p>
+          <div class="article-skeleton">
+            <div class="skeleton-title"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-diagram"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line short"></div>
           </div>
         </div>
       </div>
