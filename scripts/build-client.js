@@ -49,6 +49,9 @@ async function buildBestPracticesModule() {
     platform: 'browser',
     define: {
       'process.env.NODE_ENV': '"production"'
+    },
+    loader: {
+      '.md': 'text' // 将 .md 文件作为文本加载
     }
   });
 
