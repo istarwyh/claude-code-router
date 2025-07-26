@@ -193,28 +193,56 @@ export class SafeMarkdownRenderer {
      * 渲染列表
      */
     private renderLists(html: string): string {
-        // 处理无序列表
         const lines = html.split('\n');
         const result: string[] = [];
-        let inList = false;
+        let inUnorderedList = false;
+        let inOrderedList = false;
         let listItems: string[] = [];
 
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
-            const isListItem = /^[*+-]\s(.+)$/.test(line);
+            const isUnorderedListItem = /^[*+-]\s(.+)$/.test(line);
+            const isOrderedListItem = /^\d+\.\s(.+)$/.test(line);
 
-            if (isListItem) {
-                if (!inList) {
-                    inList = true;
+            if (isUnorderedListItem) {
+                // 如果之前在有序列表中，先结束有序列表
+                if (inOrderedList) {
+                    result.push(`<ol>${listItems.join('')}</ol>`);
+                    inOrderedList = false;
+                    listItems = [];
+                }
+                
+                if (!inUnorderedList) {
+                    inUnorderedList = true;
                     listItems = [];
                 }
                 const content = line.replace(/^[*+-]\s/, '');
+                // 将换行符转换为 <br> 标签以保持原有格式
+                const formattedContent = content.replace(/\n/g, '<br>');
+                listItems.push(`<li>${formattedContent}</li>`);
+            } else if (isOrderedListItem) {
+                // 如果之前在无序列表中，先结束无序列表
+                if (inUnorderedList) {
+                    result.push(`<ul>${listItems.join('')}</ul>`);
+                    inUnorderedList = false;
+                    listItems = [];
+                }
+                
+                if (!inOrderedList) {
+                    inOrderedList = true;
+                    listItems = [];
+                }
+                const content = line.replace(/^\d+\.\s/, '');
                 listItems.push(`<li>${content}</li>`);
             } else {
-                if (inList) {
-                    // 结束当前列表
+                // 结束当前列表（无论是有序还是无序）
+                if (inUnorderedList) {
                     result.push(`<ul>${listItems.join('')}</ul>`);
-                    inList = false;
+                    inUnorderedList = false;
+                    listItems = [];
+                } else if (inOrderedList) {
+                    result.push(`<ol>${listItems.join('')}</ol>`);
+                    inOrderedList = false;
                     listItems = [];
                 }
                 result.push(line);
@@ -222,8 +250,10 @@ export class SafeMarkdownRenderer {
         }
 
         // 处理文件末尾的列表
-        if (inList && listItems.length > 0) {
+        if (inUnorderedList && listItems.length > 0) {
             result.push(`<ul>${listItems.join('')}</ul>`);
+        } else if (inOrderedList && listItems.length > 0) {
+            result.push(`<ol>${listItems.join('')}</ol>`);
         }
 
         return result.join('\n');
