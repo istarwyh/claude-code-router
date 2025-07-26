@@ -67,6 +67,36 @@ export default {
         headers: { "Content-Type": "text/html" }
       });
     }
+
+    // Handle markdown file requests for best practices articles
+    if (url.pathname.startsWith('/modules/best-practices/articles/') && url.pathname.endsWith('.md') && request.method === 'GET') {
+      try {
+        // Extract filename from path
+        const fileName = url.pathname.split('/').pop();
+        
+        if (!fileName) {
+          return new Response('Invalid file path', { status: 400 });
+        }
+
+        // Use Assets binding to serve static files
+        const assetResponse = await env.ASSETS.fetch(new Request(`http://placeholder/${fileName}`));
+        
+        if (assetResponse.ok) {
+          const content = await assetResponse.text();
+          return new Response(content, {
+            headers: { 
+              "Content-Type": "text/plain; charset=utf-8",
+              "Cache-Control": "public, max-age=3600" // Cache for 1 hour
+            }
+          });
+        } else {
+          return new Response('Article not found', { status: 404 });
+        }
+      } catch (error) {
+        console.error('Error loading article:', error);
+        return new Response('Error loading article', { status: 500 });
+      }
+    }
     
     if (url.pathname === '/v1/messages' && request.method === 'POST') {
       const anthropicRequest = await request.json();

@@ -40,6 +40,18 @@ export const designTokens = `
     --color-practices-primary: #2563eb;
     --color-practices-secondary: #6366f1;
     
+    /* 简化的CSS变量别名，用于最佳实践卡片 */
+    --bp-bg-primary: var(--color-practices-bg-primary);
+    --bp-bg-secondary: var(--color-practices-bg-secondary);
+    --bp-text-primary: var(--color-practices-text-primary);
+    --bp-text-secondary: var(--color-practices-text-secondary);
+    --bp-border-color: var(--color-practices-border-color);
+    --bp-border-hover: var(--color-practices-border-hover);
+    --bp-accent: var(--color-practices-accent);
+    --bp-primary: var(--color-practices-primary);
+    --bp-primary-dark: var(--color-primary-dark);
+    --bp-secondary: var(--color-practices-secondary);
+    
     /* Typography */
     --font-family-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     --font-family-mono: 'JetBrains Mono', 'SF Mono', Monaco, Inconsolata, 'Roboto Mono', Consolas, 'Courier New', monospace;

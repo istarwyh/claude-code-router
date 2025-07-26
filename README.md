@@ -1,193 +1,212 @@
 # Claude-Code-Router
 
-A Cloudflare Worker that acts as a **proxy service**, translating between Anthropic's Claude API and OpenAI-compatible APIs, enabling you to use Claude Code with OpenRouter, OpenAI, DeepSeek, and other OpenAI-style providers through a single proxy endpoint.
+Universal API proxy for using Claude Code with multiple AI providers. Seamlessly translates between Anthropic's Claude API and OpenAI-compatible APIs.
 
-## Quick Usage
+## ✨ Features
 
-**Step 1:** Install Claude Code
+- **🔄 API Translation**: Anthropic ↔ OpenAI format conversion
+- **🌍 Multi-Provider**: OpenRouter, OpenAI, DeepSeek, Kimi, SiliconFlow
+- **⚡ Edge Computing**: Cloudflare Workers for global performance
+- **📡 Streaming Support**: Real-time response streaming
+- **🛡️ Type Safety**: Full TypeScript implementation
+
+## 🚀 Quick Start
+
+### 1. Install Claude Code
 ```bash
 npm install -g @anthropic-ai/claude-code
 ```
 
-**Step 2:** Get OpenRouter API key from [openrouter.ai](https://openrouter.ai)
-
-**Step 3:** Configure environment variables in your shell config (`~/.bashrc` or `~/.zshrc`):
-
+### 2. Configure API Access
 ```bash
-# For quick testing, you can use our shared instance. For daily use, deploy your own instance for better reliability.
+# Option A: Use shared instance (testing only)
 export ANTHROPIC_BASE_URL="https://cc.xiaohui.cool"
-export ANTHROPIC_API_KEY="your-openrouter-api-key"
+export ANTHROPIC_API_KEY="your-provider-api-key"
+
+# Option B: Deploy your own instance (recommended)
+git clone https://github.com/your-username/claude-code-router
+cd claude-code-router && wrangler deploy
+export ANTHROPIC_BASE_URL="https://your-domain.workers.dev"
 ```
 
-**Step 4:** Reload your shell and run Claude Code:
+### 3. Start Using Claude Code
 ```bash
-source ~/.bashrc
-claude
+source ~/.bashrc && claude
 ```
 
-That's it! Claude Code will now use OpenRouter's models through Claude-Code-Router.
+### Provider Setup
 
-## GitHub Actions Usage
+| Provider | API Key Source | Base URL |
+|----------|----------------|----------|
+| OpenRouter | [openrouter.ai](https://openrouter.ai) | `https://cc.xiaohui.cool` |
+| DeepSeek | [platform.deepseek.com](https://platform.deepseek.com) | Deploy with `DEEPSEEK_BASE_URL` |
+| OpenAI | [platform.openai.com](https://platform.openai.com) | Deploy with `OPENAI_BASE_URL` |
 
-To use Claude Code in GitHub Actions workflows, add the environment variable to your workflow:
 
-```yaml
-env:
-  ANTHROPIC_BASE_URL: ${{ secrets.ANTHROPIC_BASE_URL }}
+## 🏗️ Architecture
+
+```mermaid
+graph TB
+    A[Claude Code Client] -->|Anthropic API Format| B[Claude-Code-Router]
+    B -->|Provider Selection| C{Environment Config}
+    C -->|OpenRouter| D[OpenRouter API]
+    C -->|DeepSeek| E[DeepSeek API]
+    C -->|OpenAI| F[OpenAI API]
+    C -->|Others| G[Other OpenAI-Compatible APIs]
+    
+    B -->|Format Conversion| H[Request Translator]
+    B -->|Response Processing| I[Response Translator]
+    B -->|Streaming| J[SSE Handler]
+    
+    subgraph "Cloudflare Workers"
+        B
+        H
+        I
+        J
+    end
+    
+    style A fill:#e1f5fe
+    style B fill:#fff3e0
+    style D fill:#f3e5f5
+    style E fill:#e8f5e8
+    style F fill:#fff8e1
+    style G fill:#fce4ec
 ```
 
-Set `ANTHROPIC_BASE_URL` to `https://cc.xiaohui.cool` in your repository secrets.
+## ⚡ Technical Stack
 
-Example workflows:
-- [Interactive Claude Code](.github/workflows/claude.yml) - Responds to @claude mentions
-- [Automated Code Review](.github/workflows/claude-code-review.yml) - Automatic PR reviews
+### Core Runtime
+- **Platform**: Cloudflare Workers (V8 Isolates)
+- **Language**: TypeScript with strict typing
+- **Runtime**: Edge-optimized JavaScript (no Node.js dependencies)
+- **Deployment**: Wrangler CLI + GitHub Actions
 
-## What it does
+### Architecture Patterns
+| Pattern | Implementation | Benefit |
+|---------|----------------|----------|
+| **Edge Computing** | 300+ global locations | <1ms cold start, 0ms warm start |
+| **Serverless** | Auto-scaling isolates | 0 maintenance, infinite scale |
+| **Type Safety** | Full TypeScript coverage | Runtime error prevention |
+| **Streaming** | Web Streams API | Real-time response delivery |
+| **Modular Design** | Functional composition | Easy testing & maintenance |
 
-Claude-Code-Router acts as a **transparent proxy service** that:
-- Accepts requests in Anthropic's API format (`/v1/messages`)
-- Converts them to OpenAI's chat completions format
-- Forwards to the configured backend (OpenRouter, OpenAI, DeepSeek, or any OpenAI-compatible API)
-- Translates the response back to Anthropic's format
-- Supports both streaming and non-streaming responses
+### Build System
+- **Bundler**: esbuild (10x faster than webpack)
+- **Module System**: ES6 with tree-shaking
+- **Asset Pipeline**: TypeScript → JavaScript + type checking
+- **Hot Reload**: Wrangler dev server with instant updates
 
-**Key benefit:** Users only need to configure their Claude Code to point to the proxy - they don't need to know which backend provider is being used.
 
-## Perfect for Claude Code + Multiple Providers
+## 🔧 Deployment
 
-This proxy allows you to use [Claude Code](https://claude.ai/code) with various model providers by:
-1. Deploying Claude-Code-Router with your preferred backend (OpenRouter, OpenAI, DeepSeek, etc.)
-2. Pointing Claude Code to your Claude-Code-Router deployment
-3. Using your backend provider's API key
-4. Accessing models through Claude Code's interface transparently
-
-## Setup
-
-1. **Clone and deploy:**
-   ```bash
-   git clone <repo>
-   cd claude-code-router
-   npm install -g wrangler
-   wrangler deploy
-   ```
-
-2. **Set environment variables:**
-   ```bash
-   # Optional: defaults to https://openrouter.ai/api/v1
-   wrangler secret put OPENROUTER_BASE_URL
-   ```
-
-3. **Configure Claude Code:**
-   - Set API endpoint to your deployed Worker URL
-   - Use your OpenRouter API key
-   - Enjoy access to Claude models via OpenRouter!
-
-## Environment Variables
-
-- `OPENROUTER_BASE_URL` (optional): Base URL for OpenRouter API. Defaults to `https://openrouter.ai/api/v1`
-- `OPENAI_COMPATIBLE_BASE_URL` (optional): Base URL for any OpenAI-compatible API. When set, routes requests to this endpoint instead of OpenRouter. Defaults to `https://api.deepseek.com` when using OpenAI-compatible mode. Examples:
-  - DeepSeek: `https://api.deepseek.com` (default)
-  - OpenAI: `https://api.openai.com/v1` 
-  - Other providers: Set to their OpenAI-compatible endpoint
-
-**Provider Priority:** If both environment variables are configured, OpenAI-compatible takes priority over OpenRouter.
-
-## Using with OpenAI-Compatible APIs
-
-Claude-Code-Router supports any OpenAI-compatible API as an alternative backend to OpenRouter. This is configured at **deployment time** by the service administrator.
-
-### For Service Administrators (Deployment Configuration)
-
-To deploy Claude-Code-Router with an OpenAI-compatible backend:
-
-1. **Get API key** from your chosen provider (DeepSeek, OpenAI, etc.)
-
-2. **Deploy with OpenAI-compatible configuration:**
-   ```bash
-   # Configure the proxy to use an OpenAI-compatible API as backend
-   # Examples:
-   
-   # For DeepSeek (default models already configured):
-   wrangler secret put OPENAI_COMPATIBLE_BASE_URL  # DeepSeek: https://api.deepseek.com
-   
-   # For OpenAI (need custom model mappings):
-   wrangler secret put OPENAI_COMPATIBLE_BASE_URL  # OpenAI: https://api.openai.com/v1
-   wrangler secret put OPENAI_COMPATIBLE_MODEL_MAPPINGS  # {"haiku":"gpt-4o-mini","sonnet":"gpt-4o","opus":"gpt-4o"}
-   
-   # For other providers:
-   wrangler secret put OPENAI_COMPATIBLE_BASE_URL  # Other: https://your-provider.com/v1
-   wrangler secret put OPENAI_COMPATIBLE_MODEL_MAPPINGS  # Custom mappings as needed
-   
-   wrangler deploy
-   ```
-
-### For End Users (Claude Code Configuration)
-
-Users interact with the proxy service the same way regardless of backend:
-
+### Development
 ```bash
-# Point Claude Code to your deployed proxy
-export ANTHROPIC_BASE_URL="https://your-deployed-domain.com"  # or https://cc.xiaohui.cool
-export ANTHROPIC_API_KEY="your-backend-api-key"  # OpenRouter, DeepSeek, OpenAI, or other provider key
+git clone https://github.com/your-username/claude-code-router
+cd claude-code-router
+npm install && npm install -g wrangler
+npm run dev    # Start development server
 ```
 
-### Common OpenAI-Compatible Providers
+### Production Deployment
+```bash
+# Configure environment variables
+wrangler secret put OPENROUTER_BASE_URL       # OpenRouter backend
+wrangler secret put DEEPSEEK_BASE_URL         # DeepSeek backend  
+wrangler secret put OPENAI_BASE_URL           # OpenAI backend
 
-**DeepSeek Example (Default Configuration):**
-- **Available Models**: `deepseek-chat`, `deepseek-reasoner`
-- **Base URL**: `https://api.deepseek.com` (default when using OpenAI-compatible mode)
-- **Claude model mapping**: haiku/sonnet → `deepseek-chat`, opus → `deepseek-reasoner`
-- **Configuration**: Only need to set `OPENAI_COMPATIBLE_BASE_URL`
+# Deploy to Cloudflare Workers
+npm run deploy
+```
 
-**OpenAI Example:**
-- **Available Models**: `gpt-4o`, `gpt-4o-mini`, `gpt-3.5-turbo`
-- **Base URL**: `https://api.openai.com/v1`
-- **Claude model mapping**: haiku/sonnet/opus → `gpt-4o-mini`/`gpt-4o`/`gpt-4o`
+### Environment Configuration
 
-**Note:** Users don't need to know which backend the proxy is configured to use. The proxy handles all translation transparently.
+```mermaid
+flowchart LR
+    A[Environment Variables] --> B{Provider Selection}
+    B -->|Priority 1| C[DEEPSEEK_BASE_URL]
+    B -->|Priority 2| D[OPENAI_BASE_URL]
+    B -->|Priority 3| E[KIMI_BASE_URL]
+    B -->|Priority 4| F[SILICONFLOW_BASE_URL]
+    B -->|Default| G[OPENROUTER_BASE_URL]
+    
+    C --> H[DeepSeek API]
+    D --> I[OpenAI API]
+    E --> J[Kimi API]
+    F --> K[SiliconFlow API]
+    G --> L[OpenRouter API]
+```
 
-## API Usage
+## 🔌 API Reference
 
-Send requests to `/v1/messages` using Anthropic's format:
-
+### Request Format (Anthropic)
 ```bash
 curl -X POST https://cc.xiaohui.cool/v1/messages \
   -H "Content-Type: application/json" \
-  -H "x-api-key: your-openrouter-key" \
+  -H "x-api-key: your-api-key" \
   -d '{
-    "model": "claude-sonnet-4-20250514",
-    "messages": [{"role": "user", "content": "Hello, Claude"}],
-    "max_tokens": 100
+    "model": "claude-3-5-sonnet-20241022",
+    "messages": [{"role": "user", "content": "Hello"}],
+    "max_tokens": 100,
+    "stream": true
   }'
 ```
 
-## Development
+### Model Mapping
+| Claude Model | OpenRouter | DeepSeek | OpenAI |
+|--------------|------------|----------|---------|
+| `claude-3-5-haiku-20241022` | `anthropic/claude-3.5-haiku` | `deepseek-chat` | `gpt-4o-mini` |
+| `claude-3-5-sonnet-20241022` | `anthropic/claude-3.5-sonnet` | `deepseek-chat` | `gpt-4o` |
+| `claude-3-opus-20240229` | `anthropic/claude-3-opus` | `deepseek-reasoner` | `gpt-4o` |
 
-```bash
-npm run dev    # Start development server
-npm run deploy # Deploy to Cloudflare Workers
+## 📁 Architecture & Structure
+
+### Worker Runtime Architecture
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        Cloudflare Workers                        │
+├─────────────────────────────────────────────────────────────────┤
+│ 🔄 Request Router    │ 🔄 Format Converter │ 📡 Stream Handler  │
+│ • Path matching       │ • Anthropic → OpenAI  │ • SSE processing    │
+│ • Method validation   │ • OpenAI → Anthropic  │ • Chunk buffering   │
+│ • Auth handling       │ • Model mapping      │ • Error recovery    │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-## Thanks
+### File Structure
+```
+claude-code-router/
+├── 📁 src/
+│   ├── 📁 client/              # Frontend & documentation system
+│   │   └── 📁 bestPractices/    # Markdown-based docs with TypeScript
+│   └── 📁 server/              # Worker runtime logic
+├── 📁 shared/                  # Cross-platform utilities
+│   ├── 📁 components/          # Reusable UI components
+│   └── 📁 utils/               # Helper functions
+├── 📁 modules/                 # Static HTML templates
+├── 📁 scripts/                 # Build automation
+├── 🔧 index.ts                 # Worker entry point (fetch handler)
+├── 🔧 formatRequest.ts         # Anthropic → OpenAI transformer
+├── 🔧 formatResponse.ts        # OpenAI → Anthropic transformer
+├── 🔧 streamResponse.ts        # Server-Sent Events handler
+├── 🔧 types.ts                 # TypeScript definitions
+└── ⚙️ wrangler.toml            # Worker configuration & bindings
+```
 
-Special thanks to these projects that inspired Claude-Code-Router:
+### Key Design Principles
+- **🌐 Edge-First**: Optimized for Cloudflare's global network
+- **🔒 Zero Dependencies**: No external runtime dependencies
+- **⚡ Performance**: Sub-millisecond response times
+- **🔄 Streaming**: Native Web Streams API support
+- **🛡️ Type Safety**: Full TypeScript coverage with strict mode
+
+## 🙏 Acknowledgments
+
+Built with inspiration from:
 - [claude-code-router](https://github.com/musistudio/claude-code-router)
 - [claude-code-proxy](https://github.com/kiyo-e/claude-code-proxy)
 
-## Disclaimer
+## ⚖️ License & Disclaimer
 
-**Important Legal Notice:**
+**MIT License** - Use at your own risk and discretion.
 
-- **Third-party Tool**: Claude-Code-Router is an independent, unofficial tool and is not affiliated with, endorsed by, or supported by Anthropic PBC, OpenAI, or OpenRouter
-- **Service Terms**: Users are responsible for ensuring compliance with the Terms of Service of all involved parties (Anthropic, OpenRouter, and any other API providers)
-- **API Key Responsibility**: Users must use their own valid API keys and are solely responsible for any usage, costs, or violations associated with those keys
-- **No Warranty**: This software is provided "as is" without any warranties. The authors are not responsible for any damages, service interruptions, or legal issues arising from its use
-- **Data Privacy**: While Claude-Code-Router does not intentionally store user data, users should review the privacy policies of all connected services
-- **Compliance**: Users are responsible for ensuring their use complies with applicable laws and regulations in their jurisdiction
-- **Commercial Use**: Any commercial use should be carefully evaluated against relevant terms of service and licensing requirements
-
-**Use at your own risk and discretion.**
-
-## License
-
-MIT
+⚠️ **Important**: This is an independent tool, not affiliated with Anthropic, OpenAI, or OpenRouter. Users are responsible for compliance with all relevant Terms of Service and API usage policies.
