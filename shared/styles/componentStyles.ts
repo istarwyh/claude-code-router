@@ -717,16 +717,8 @@ export const componentStyles = `
     font-weight: bold;
     color: white;
     font-size: var(--font-size-sm);
+    /* 移除硬编码颜色，改用动态生成 */
 }
-
-.provider-icon.deepseek { background: linear-gradient(45deg, #1a365d, #2d5aa0); }
-.provider-icon.openai { background: linear-gradient(45deg, #10a37f, #16ba9a); }
-.provider-icon.kimi { background: linear-gradient(45deg, #7c3aed, #a855f7); }
-.provider-icon.openrouter { background: linear-gradient(45deg, #f59e0b, #f97316); }
-.provider-icon.anyrouter { background: linear-gradient(45deg, #ef4444, #dc2626); }
-.provider-icon.siliconflow { background: linear-gradient(45deg, #64748b, #94a3b8); }
-.provider-icon.qwen3-coder { background: linear-gradient(45deg, #ff6b35, #f7931e); }
-.provider-icon.aicodewith { background: linear-gradient(45deg, #667eea, #764ba2); }
 
 .provider-card p {
     color: var(--color-text-secondary);
@@ -1704,26 +1696,7 @@ export const componentStyles = `
     font-weight: bold;
     font-size: var(--font-size-sm);
     color: white;
-}
-
-.config-option .provider-icon.deepseek {
-    background: linear-gradient(135deg, #1e40af, #3b82f6);
-}
-
-.config-option .provider-icon.openai {
-    background: linear-gradient(135deg, #059669, #10b981);
-}
-
-.config-option .provider-icon.kimi {
-    background: linear-gradient(135deg, #7c3aed, #a855f7);
-}
-
-.config-option .provider-icon.qwen3-coder {
-    background: linear-gradient(135deg, #ff6b35, #f7931e);
-}
-
-.config-option .provider-icon.aicodewith {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    /* 移除硬编码颜色，改用动态生成 */
 }
 
 .expand-icon {
