@@ -82,6 +82,26 @@ export const providers: Provider[] = [
     }
   },
   {
+    id: 'qwen3-coder',
+    name: 'Qwen3-Coder',
+    displayName: 'Qwen3-Coder',
+    icon: 'QW',
+    description: 'Advanced coding model from Alibaba Cloud with strong programming capabilities and Chinese language support.',
+    isDirectlyUsable: true,
+    proxyUrl: 'https://dashscope.aliyuncs.com/api/v2/apps/claude-code-proxy',
+    originalUrl: 'https://dashscope.aliyuncs.com/api/v1',
+    aliasCommand: 'alias qwen3-coder="ANTHROPIC_BASE_URL=https://dashscope.aliyuncs.com/api/v2/apps/claude-code-proxy ANTHROPIC_AUTH_TOKEN=your-dashscope-apikey claude"',
+    apiKeyUrl: 'https://dashscope.console.aliyun.com',
+    features: ['Programming focused', 'Chinese language support', 'Alibaba OpenSource'],
+    specialConfig: {
+      envVars: {
+        'ANTHROPIC_BASE_URL': 'https://dashscope.aliyuncs.com/api/v2/apps/claude-code-proxy',
+        'ANTHROPIC_AUTH_TOKEN': 'your-dashscope-apikey'
+      },
+      notes: 'Qwen3-Coder may be expensive according to some feedbacks'
+    }
+  },
+  {
     id: 'openrouter',
     name: 'OpenRouter',
     displayName: 'OpenRouter',
