@@ -10,24 +10,6 @@ function escapeHtml(unsafe: string): string {
     .replace(/'/g, "&#039;");
 }
 
-// 工具函数：生成徽章HTML
-function generateBadge(isDirectlyUsable: boolean, providerId: string): string {
-  const badgeClass = isDirectlyUsable ? 'ready-to-use' : 'deploy-required';
-  const badgeText = isDirectlyUsable ? '可直接使用' : '需要部署';
-  
-  if (providerId === 'anyrouter') {
-    return '<div class="register-bonus">🎁 $100 Free Credits</div>';
-  }
-  return `<div class="provider-badge ${badgeClass}">${badgeText}</div>`;
-}
-
-// 工具函数：获取特殊徽章
-function getSpecialBadge(providerId: string): string {
-  return providerId === 'anyrouter' ? 
-    '<div class="register-bonus">🎁 $100 Free Credits</div>' : 
-    '';
-}
-
 // 工具函数：获取状态徽章
 function getStatusBadge(isDirectlyUsable: boolean, providerId: string): string {
   const statusBadge = isDirectlyUsable ? 
@@ -37,81 +19,40 @@ function getStatusBadge(isDirectlyUsable: boolean, providerId: string): string {
   const specialBadge = providerId === 'anyrouter' ? 
     '<span class="bonus-badge">🎁 $100</span>' : '';
   
-  return `${statusBadge}${specialBadge}`;
+    const specialAiCodeWithBadge = providerId === 'aicodewith' ? 
+    '<span class="bonus-badge">🎁 2000 Free Credits</span>' : '';
+  return `${statusBadge}${specialBadge}${specialAiCodeWithBadge}`;
 }
 
-// 工具函数：生成别名配置部分
-function generateAliasSection(aliasCommand?: string): string {
-  if (!aliasCommand) return '';
+// 工具函数：获取provider颜色（优先使用自定义颜色，否则自动生成）
+function getProviderColor(provider: any): string {
+  if (provider.color) {
+    return provider.color;
+  }
   
-  return `
-    <div class="alias-command">
-      <div class="alias-label">🚀 快速配置命令：</div>
-      <div class="alias-code">
-        <code>${escapeHtml(aliasCommand)}</code>
-        <button class="copy-btn" onclick="copyToClipboard('${aliasCommand.replace(/'/g, "\\'")}')">Copy</button>
-      </div>
-    </div>`;
-}
-
-// 工具函数：生成特殊配置说明
-function generateSpecialConfigSection(specialConfig?: { notes?: string }): string {
-  if (!specialConfig?.notes) return '';
+  // 自动生成颜色的哈希函数
+  let hash = 0;
+  for (let i = 0; i < provider.id.length; i++) {
+    hash = provider.id.charCodeAt(i) + ((hash << 5) - hash);
+  }
   
-  return `
-    <div class="special-note">
-      <span class="note-icon">ℹ️</span>
-      ${escapeHtml(specialConfig.notes)}
-    </div>`;
-}
-
-// 工具函数：生成特性标签
-function generateFeatures(features: string[]): string {
-  return features
-    .map((feature: string) => `<span class="feature-tag">${escapeHtml(feature)}</span>`)
-    .join('');
-}
-
-function generateProviderCard(provider: any) {
-  const specialBadge = getSpecialBadge(provider.id);
-  const badgeClass = provider.isDirectlyUsable ? 'ready-to-use' : 'deploy-required';
-  const badgeText = provider.isDirectlyUsable ? '可直接使用' : '需要部署';
-  const providerBadge = provider.id !== 'anyrouter' ? 
-    `<div class="provider-badge ${badgeClass}">${badgeText}</div>` : '';
+  const hue1 = Math.abs(hash) % 360;
+  const hue2 = (hue1 + 40) % 360;
+  const saturation = 65 + (Math.abs(hash >> 8) % 20);
+  const lightness = 45 + (Math.abs(hash >> 16) % 15);
   
-  const clickHandler = provider.id === 'anyrouter' ? 
-    'onclick="window.open(\'https://anyrouter.top/register?aff=4Ly0\', \'_blank\')" style="cursor: pointer;"' : '';
-  
-  const stopPropagation = provider.id === 'anyrouter' ? 'onclick="event.stopPropagation();"' : '';
-  
-  const aliasSection = generateAliasSection(provider.aliasCommand);
-  const specialConfigSection = generateSpecialConfigSection(provider.specialConfig);
-  const features = generateFeatures(provider.features);
-  
-  return `
-    <div class="provider-card" id="${escapeHtml(provider.id)}" ${clickHandler}>
-      ${specialBadge}${providerBadge}
-      <h3><span class="provider-icon ${escapeHtml(provider.id)}">${escapeHtml(provider.icon)}</span>${escapeHtml(provider.displayName)}</h3>
-      <p>${escapeHtml(provider.description)}</p>
-      ${aliasSection}
-      ${specialConfigSection}
-      <div class="provider-features">
-        ${features}
-      </div>
-      <div class="provider-links">
-        <a href="${escapeHtml(provider.apiKeyUrl)}" target="_blank" ${stopPropagation}>Get API Key →</a>
-      </div>
-    </div>`;
+  return `linear-gradient(45deg, hsl(${hue1}, ${saturation}%, ${lightness}%), hsl(${hue2}, ${saturation}%, ${lightness - 5}%))`;
 }
 
 // 紧凑的供应商卡片生成函数
 function generateCompactProviderCard(provider: any) {
   const statusBadges = getStatusBadge(provider.isDirectlyUsable, provider.id);
+  const iconStyle = getProviderColor(provider);
   
   return `
     <div class="compact-provider-card" data-provider="${escapeHtml(provider.id)}" onclick="showProviderDetails('${escapeHtml(provider.id)}')">
       <div class="provider-header">
-        <span class="provider-icon ${escapeHtml(provider.id)}">${escapeHtml(provider.icon)}</span>
+        <span class="provider-icon" style="background: ${iconStyle}">${escapeHtml(provider.icon)}</span>
         <div class="provider-info">
           <h4>${escapeHtml(provider.displayName)}</h4>
           <div class="provider-badges">
@@ -176,7 +117,6 @@ function generateProviderDetailsContent(provider: any) {
   `;
 }
 
-// 主组件导出（保持向后兼容）
 // 生成所有紧凑型供应商卡片的 HTML
 function generateAllProviderCards() {
   return providers.map(provider => generateCompactProviderCard(provider)).join('');
@@ -195,6 +135,26 @@ ${providerDetailsComponent}
 <script>
 // 供应商数据
 const providersData = ${JSON.stringify(providers)};
+
+// 工具函数：基于字符串生成唯一颜色
+function generateProviderColor(providerId) {
+  let hash = 0;
+  for (let i = 0; i < providerId.length; i++) {
+    hash = providerId.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  
+  const hue1 = Math.abs(hash) % 360;
+  const hue2 = (hue1 + 40) % 360;
+  const saturation = 65 + (Math.abs(hash >> 8) % 20);
+  const lightness = 45 + (Math.abs(hash >> 16) % 15);
+  
+  return \`linear-gradient(45deg, hsl(\${hue1}, \${saturation}%, \${lightness}%), hsl(\${hue2}, \${saturation}%, \${lightness - 5}%))\`;
+}
+
+// 工具函数：获取provider颜色（优先使用自定义颜色，否则自动生成）
+function getProviderColor(provider) {
+  return provider.color || generateProviderColor(provider.id);
+}
 
 // 显示供应商详情
 function showProviderDetails(providerId) {

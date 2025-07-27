@@ -725,6 +725,8 @@ export const componentStyles = `
 .provider-icon.openrouter { background: linear-gradient(45deg, #f59e0b, #f97316); }
 .provider-icon.anyrouter { background: linear-gradient(45deg, #ef4444, #dc2626); }
 .provider-icon.siliconflow { background: linear-gradient(45deg, #64748b, #94a3b8); }
+.provider-icon.qwen3-coder { background: linear-gradient(45deg, #ff6b35, #f7931e); }
+.provider-icon.aicodewith { background: linear-gradient(45deg, #667eea, #764ba2); }
 
 .provider-card p {
     color: var(--color-text-secondary);
@@ -1714,6 +1716,14 @@ export const componentStyles = `
 
 .config-option .provider-icon.kimi {
     background: linear-gradient(135deg, #7c3aed, #a855f7);
+}
+
+.config-option .provider-icon.qwen3-coder {
+    background: linear-gradient(135deg, #ff6b35, #f7931e);
+}
+
+.config-option .provider-icon.aicodewith {
+    background: linear-gradient(135deg, #667eea, #764ba2);
 }
 
 .expand-icon {

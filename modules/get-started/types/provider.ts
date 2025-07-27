@@ -3,6 +3,7 @@ export interface Provider {
   name: string;
   displayName: string;
   icon: string;
+  color?: string; // 可选的自定义颜色，支持任何CSS颜色值
   description: string;
   isDirectlyUsable: boolean;
   proxyUrl?: string;
@@ -85,7 +86,7 @@ export const providers: Provider[] = [
     id: 'qwen3-coder',
     name: 'Qwen3-Coder',
     displayName: 'Qwen3-Coder',
-    icon: 'QW',
+    icon: 'Q3C',
     description: 'Advanced coding model from Alibaba Cloud with strong programming capabilities and Chinese language support.',
     isDirectlyUsable: true,
     proxyUrl: 'https://dashscope.aliyuncs.com/api/v2/apps/claude-code-proxy',
@@ -99,6 +100,26 @@ export const providers: Provider[] = [
         'ANTHROPIC_AUTH_TOKEN': 'your-dashscope-apikey'
       },
       notes: 'Qwen3-Coder may be expensive according to some feedbacks'
+    }
+  },
+  {
+    id: 'aicodewith',
+    name: 'AICodeWith',
+    displayName: 'AICodeWith',
+    icon: 'ACW',
+    description: 'AI coding assistant platform providing direct Claude Code API access. Get 2000 free credits upon registration!',
+    isDirectlyUsable: true,
+    proxyUrl: 'https://api.aicodewith.com',
+    originalUrl: 'https://api.aicodewith.com',
+    aliasCommand: 'alias aicodewith="ANTHROPIC_AUTH_TOKEN=xxx ANTHROPIC_BASE_URL=https://api.aicodewith.com claude --dangerously-skip-permissions"',
+    apiKeyUrl: 'https://aicodewith.com/?invitation=VI84XXSW',
+    features: ['2000 free credits', 'Direct API access', 'No deployment needed'],
+    specialConfig: {
+      envVars: {
+        'ANTHROPIC_AUTH_TOKEN': 'xxx',
+        'ANTHROPIC_BASE_URL': 'https://api.aicodewith.com'
+      },
+      notes: '🎁 Get 2000 free credits (~10 conversations) upon registration'
     }
   },
   {

@@ -1,4 +1,4 @@
-export type Provider = 'openrouter' | 'deepseek' | 'openai' | 'kimi' | 'siliconflow' ;
+export type Provider = 'openrouter' | 'deepseek' | 'openai' ;
 
 export interface ModelMapping {
   [key: string]: string;
