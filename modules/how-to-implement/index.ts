@@ -376,7 +376,7 @@ class ToolEngine {
 }
 
 .step-number {
-    background: var(--accent-color);
+    background: var(--color-accent);
     color: white;
     border-radius: 50%;
     width: 2rem;
@@ -430,7 +430,7 @@ class ToolEngine {
 
 .practice-card li:before {
     content: "✓";
-    color: var(--accent-color);
+    color: var(--color-accent);
     margin-right: 0.5rem;
 }
 

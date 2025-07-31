@@ -1634,6 +1634,9 @@ export const componentStyles = `
     display: flex;
     align-items: center;
     gap: var(--space-2);
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .code-snippet code {
@@ -1647,7 +1650,7 @@ export const componentStyles = `
     word-break: break-all;
 }
 
-.copy-btn {
+.code-snippet .copy-btn {
     background: var(--color-primary);
     color: white;
     border: none;
@@ -1657,11 +1660,49 @@ export const componentStyles = `
     font-size: var(--font-size-sm);
     transition: var(--transition-fast);
     flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    min-width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.copy-btn:hover {
+.code-snippet .copy-btn:hover {
     background: var(--color-primary-dark);
     transform: scale(1.05);
+}
+
+/* Deployment specific copy button styles - override global absolute positioning */
+.deployment .copy-btn,
+.deploy-card .copy-btn,
+.step-item .copy-btn {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    background: var(--color-primary) !important;
+    color: white !important;
+    border: none !important;
+    padding: 0.5rem !important;
+    border-radius: var(--radius-md) !important;
+    cursor: pointer !important;
+    font-size: var(--font-size-sm) !important;
+    transition: var(--transition-fast) !important;
+    flex-shrink: 0 !important;
+    min-width: 40px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 1 !important;
+}
+
+.deployment .copy-btn:hover,
+.deploy-card .copy-btn:hover,
+.step-item .copy-btn:hover {
+    background: var(--color-primary-dark) !important;
+    transform: scale(1.05) !important;
 }
 
 .provider-configs {
