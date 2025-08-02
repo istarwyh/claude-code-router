@@ -15,6 +15,8 @@ export const getStartedModule = `
                 <a href="javascript:void(0)" class="badge" data-provider="openrouter" onclick="scrollToProvider('openrouter')">OpenRouter</a>
                 <a href="javascript:void(0)" class="badge" data-provider="anyrouter" onclick="scrollToProvider('anyrouter')">AnyRouter</a>
                 <a href="javascript:void(0)" class="badge" data-provider="siliconflow" onclick="scrollToProvider('siliconflow')">SiliconFlow</a>
+                <a href="javascript:void(0)" class="badge" data-provider="qwen3-coder" onclick="scrollToProvider('qwen3-coder')">Qwen3-Coder</a>
+                <a href="javascript:void(0)" class="badge" data-provider="aicodewith" onclick="scrollToProvider('aicodewith')">AICodeWith</a>
             </div>
         </div>
     </div>

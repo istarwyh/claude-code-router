@@ -50,7 +50,7 @@ function generateCompactProviderCard(provider: any) {
   const iconStyle = getProviderColor(provider);
   
   return `
-    <div class="compact-provider-card" data-provider="${escapeHtml(provider.id)}" onclick="showProviderDetails('${escapeHtml(provider.id)}')">
+    <div id="provider-${escapeHtml(provider.id)}" class="compact-provider-card" data-provider="${escapeHtml(provider.id)}" onclick="showProviderDetails('${escapeHtml(provider.id)}')">
       <div class="provider-header">
         <span class="provider-icon" style="background: ${iconStyle}">${escapeHtml(provider.icon)}</span>
         <div class="provider-info">
@@ -219,52 +219,6 @@ function generateProviderDetailsContent(provider) {
   \`;
 }
 
-// 滚动到指定供应商卡片
-function scrollToProvider(providerId) {
-  const providerCard = document.getElementById('provider-' + providerId);
-  if (providerCard) {
-    // 移除所有卡片的高亮
-    document.querySelectorAll('.compact-provider-card').forEach(card => {
-      card.classList.remove('highlighted');
-    });
-    
-    // 高亮目标卡片
-    providerCard.classList.add('highlighted');
-    
-    // 滚动到卡片位置
-    providerCard.scrollIntoView({ 
-      behavior: 'smooth', 
-      block: 'center' 
-    });
-    
-    // 3秒后移除高亮
-    setTimeout(() => {
-      providerCard.classList.remove('highlighted');
-    }, 3000);
-  }
-}
-
-// 复制到剪贴板
-function copyToClipboard(text) {
-  navigator.clipboard.writeText(text).then(function() {
-    const toast = document.createElement('div');
-    toast.className = 'copy-toast';
-    toast.textContent = '命令已复制到剪贴板！';
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-      toast.classList.add('show');
-    }, 10);
-    
-    setTimeout(() => {
-      toast.classList.remove('show');
-      setTimeout(() => {
-        document.body.removeChild(toast);
-      }, 300);
-    }, 2000);
-  }).catch(function(err) {
-    console.error('复制失败: ', err);
-  });
-}
+// 注意：scrollToProvider 和 copyToClipboard 函数已移至全局脚本
 </script>
 `;
