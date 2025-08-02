@@ -19,6 +19,22 @@ export interface Provider {
 
 export const providers: Provider[] = [
   {
+    id: 'anthropic',
+    name: 'Anthropic',
+    displayName: 'Anthropic (官方)',
+    icon: 'AN',
+    color: 'linear-gradient(45deg, #5436DA, #7B61FF)',
+    description: '官方Claude API，无需代理，但需要解决中国大陆账号充值问题。',
+    isDirectlyUsable: true,
+    originalUrl: 'https://api.anthropic.com',
+    apiKeyUrl: 'https://claude.ai',
+    features: ['官方API', '无需代理', '稳定可靠'],
+    specialConfig: {
+      envVars: {},
+      notes: '🔄 中国大陆充值方法：<br>1. 弄个美区Apple ID下载Claude Code<br>2. 支付宝定位切到旧金山，使用小程序PockytShop买20刀的苹果礼品卡<br>3. 用礼品卡去苹果App Store充值<br>4. 在Claude Code中完成订阅'
+    }
+  },
+  {
     id: 'deepseek',
     name: 'DeepSeek',
     displayName: 'DeepSeek',

@@ -75,52 +75,16 @@ export const providerDetailsComponent = `
 </div>
 `;
 
-// 生成详细信息的函数
-function generateProviderDetailsContent(provider: any) {
-  const aliasSection = provider.aliasCommand ? `
-    <div class="alias-command">
-      <div class="alias-label">🚀 快速配置命令：</div>
-      <div class="alias-code">
-        <code>${provider.aliasCommand}</code>
-        <button class="copy-btn" onclick="copyToClipboard('${provider.aliasCommand.replace(/'/g, "\\'")}')">Copy</button>
-      </div>
-    </div>` : `
-    <div class="deploy-notice">
-      <div class="notice-icon">⚠️</div>
-      <div class="notice-content">
-        <p><strong>需要部署代理服务</strong></p>
-        <p>该供应商需要您自己部署代理服务。请参考下方的部署指南。</p>
-      </div>
-    </div>`;
-  
-  const specialConfigSection = provider.specialConfig?.notes ? `
-    <div class="special-note">
-      <span class="note-icon">ℹ️</span>
-      ${provider.specialConfig.notes}
-    </div>` : '';
-  
-  return `
-    <p class="provider-description">${provider.description}</p>
-    ${aliasSection}
-    ${specialConfigSection}
-    <div class="provider-features">
-      <h5>✨ 特性亮点：</h5>
-      <div class="feature-list">
-        ${provider.features.map((feature: string) => `<span class="feature-tag">${feature}</span>`).join('')}
-      </div>
-    </div>
-    <div class="provider-links">
-      <a href="${provider.apiKeyUrl}" target="_blank" class="api-key-btn">
-        🔑 获取 API Key →
-      </a>
-    </div>
-  `;
-}
+// Worker 中只负责生成静态 HTML 结构
+// DOM 操作函数将移到客户端脚本中
 
 // 生成所有紧凑型供应商卡片的 HTML
 function generateAllProviderCards() {
   return providers.map(provider => generateCompactProviderCard(provider)).join('');
 }
+
+// 供应商详情交互函数将在客户端实现
+// 这里只提供类型定义和接口
 
 export const providersComponent = `
 <!-- Provider Selection integrated into Quick Setup -->
@@ -132,93 +96,5 @@ export const providersComponent = `
 
 ${providerDetailsComponent}
 
-<script>
-// 供应商数据
-const providersData = ${JSON.stringify(providers)};
-
-// 工具函数：基于字符串生成唯一颜色
-function generateProviderColor(providerId) {
-  let hash = 0;
-  for (let i = 0; i < providerId.length; i++) {
-    hash = providerId.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  
-  const hue1 = Math.abs(hash) % 360;
-  const hue2 = (hue1 + 40) % 360;
-  const saturation = 65 + (Math.abs(hash >> 8) % 20);
-  const lightness = 45 + (Math.abs(hash >> 16) % 15);
-  
-  return \`linear-gradient(45deg, hsl(\${hue1}, \${saturation}%, \${lightness}%), hsl(\${hue2}, \${saturation}%, \${lightness - 5}%))\`;
-}
-
-// 工具函数：获取provider颜色（优先使用自定义颜色，否则自动生成）
-function getProviderColor(provider) {
-  return provider.color || generateProviderColor(provider.id);
-}
-
-// 显示供应商详情
-function showProviderDetails(providerId) {
-  const provider = providersData.find(p => p.id === providerId);
-  if (!provider) return;
-  
-  const detailsElement = document.getElementById('provider-details');
-  const titleElement = document.getElementById('details-title');
-  const contentElement = document.getElementById('details-content');
-  
-  titleElement.textContent = provider.displayName;
-  contentElement.innerHTML = generateProviderDetailsContent(provider);
-  
-  detailsElement.style.display = 'block';
-  detailsElement.scrollIntoView({ behavior: 'smooth' });
-}
-
-// 隐藏供应商详情
-function hideProviderDetails() {
-  document.getElementById('provider-details').style.display = 'none';
-}
-
-// 生成详细内容
-function generateProviderDetailsContent(provider) {
-  const aliasSection = provider.aliasCommand ? \`
-    <div class="alias-command">
-      <div class="alias-label">🚀 快速配置命令：</div>
-      <div class="alias-code">
-        <code>\${provider.aliasCommand}</code>
-        <button class="copy-btn" onclick="copyToClipboard('\${provider.aliasCommand.replace(/'/g, "\\\\'")}')">Copy</button>
-      </div>
-    </div>\` : \`
-    <div class="deploy-notice">
-      <div class="notice-icon">⚠️</div>
-      <div class="notice-content">
-        <p><strong>需要部署代理服务</strong></p>
-        <p>该供应商需要您自己部署代理服务。请参考下方的部署指南。</p>
-      </div>
-    </div>\`;
-  
-  const specialConfigSection = provider.specialConfig?.notes ? \`
-    <div class="special-note">
-      <span class="note-icon">ℹ️</span>
-      \${provider.specialConfig.notes}
-    </div>\` : '';
-  
-  return \`
-    <p class="provider-description">\${provider.description}</p>
-    \${aliasSection}
-    \${specialConfigSection}
-    <div class="provider-features">
-      <h5>✨ 特性亮点：</h5>
-      <div class="feature-list">
-        \${provider.features.map(feature => \`<span class="feature-tag">\${feature}</span>\`).join('')}
-      </div>
-    </div>
-    <div class="provider-links">
-      <a href="\${provider.apiKeyUrl}" target="_blank" class="api-key-btn">
-        🔑 获取 API Key →
-      </a>
-    </div>
-  \`;
-}
-
-// 注意：scrollToProvider 和 copyToClipboard 函数已移至全局脚本
-</script>
+<!-- 不再需要 JavaScript 代码，使用 TypeScript 模块化实现 -->
 `;
