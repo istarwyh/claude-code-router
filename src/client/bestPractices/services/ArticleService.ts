@@ -1,58 +1,10 @@
-import { MarkdownParser } from './MarkdownParser';
+import { BaseContentService } from '../../shared/services/BaseContentService';
+import type { PracticeCard } from '../types/PracticeCard';
 
-export interface Article {
-  id: string;
-  title: string;
-  content: string;
-  rawMarkdown: string;
-}
+export { Article } from '../../shared/services/BaseContentService';
 
-export class ArticleService {
-  private markdownParser: MarkdownParser;
-  private cache: Map<string, Article> = new Map();
-
-  constructor() {
-    this.markdownParser = new MarkdownParser();
-  }
-
-  public async getArticle(cardId: string): Promise<Article> {
-    // 临时清除缓存以获取最新内容（开发调试用）
-    if (this.cache.has(cardId)) {
-      console.log('清除缓存，重新加载文章:', cardId);
-      this.cache.delete(cardId);
-    }
-
-    try {
-      // 模拟从服务器获取 Markdown 内容
-      const markdownContent = await this.fetchMarkdownContent(cardId);
-      
-      // 解析 Markdown
-      const htmlContent = this.markdownParser.parse(markdownContent);
-      
-      const article: Article = {
-        id: cardId,
-        title: this.getTitleFromCardId(cardId),
-        content: htmlContent,
-        rawMarkdown: markdownContent
-      };
-
-      // 缓存结果
-      this.cache.set(cardId, article);
-      
-      return article;
-    } catch (error) {
-      throw new Error(`无法加载文章 ${cardId}: ${error.message}`);
-    }
-  }
-
-  private async fetchMarkdownContent(cardId: string): Promise<string> {
-    // 从内容文件中获取真实的 Markdown 内容
-    return this.getContentFromFile(cardId);
-  }
-
-  private async getContentFromFile(cardId: string): Promise<string> {
-    // 使用构建时打包的方式导入 .md 文件
-    // esbuild 会将 .md 文件作为文本字符串打包进来
+export class ArticleService extends BaseContentService<PracticeCard> {
+  protected async getContentFromFile(cardId: string): Promise<string> {
     try {
       const contentMap: Record<string, () => Promise<string>> = {
         'workflow-overview': async () => (await import('../content/workflow-overview.md')).default,
@@ -76,7 +28,7 @@ export class ArticleService {
     }
   }
 
-  private getDefaultContent(cardId: string): string {
+  protected getDefaultContent(cardId: string): string {
     return `# ${this.getTitleFromCardId(cardId)}
 
 内容正在开发中...
@@ -84,7 +36,7 @@ export class ArticleService {
 请稍后查看完整内容。`;
   }
 
-  private getTitleFromCardId(cardId: string): string {
+  protected getTitleFromCardId(cardId: string): string {
     const titles = {
       'workflow-overview': '我现在的工作流',
       'environment-config': '自定义环境配置',

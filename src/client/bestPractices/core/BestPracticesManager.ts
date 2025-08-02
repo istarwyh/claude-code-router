@@ -1,54 +1,33 @@
-// 最佳实践管理器 - 主要协调类
+import { BaseContentManager } from '../../shared/managers/BaseContentManager';
 import { CardRenderer } from '../renderers/CardRenderer';
 import { ArticleRenderer } from '../renderers/ArticleRenderer';
 import { EventHandler } from '../handlers/EventHandler';
 import { NavigationHandler } from '../handlers/NavigationHandler';
 import { ArticleService } from '../services/ArticleService';
+import { MarkdownParser } from '../services/MarkdownParser';
 import { bestPracticesCards } from '../data/cardsData';
+import type { PracticeCard } from '../types/PracticeCard';
 
-export class BestPracticesManager {
-  private cardRenderer: CardRenderer;
-  private articleRenderer: ArticleRenderer;
-  private eventHandler: EventHandler;
-  private navigationHandler: NavigationHandler;
-  private articleService: ArticleService;
-  private containerId = 'best-practices-overview-cards';
-
+export class BestPracticesManager extends BaseContentManager<PracticeCard> {
   constructor() {
-    this.cardRenderer = new CardRenderer();
-    this.articleRenderer = new ArticleRenderer();
-    this.eventHandler = new EventHandler(this.containerId);
-    this.navigationHandler = new NavigationHandler();
-    this.articleService = new ArticleService();
+    const cardRenderer = new CardRenderer();
+    const articleRenderer = new ArticleRenderer();
+    const eventHandler = new EventHandler('best-practices-overview-cards');
+    const navigationHandler = new NavigationHandler();
+    const markdownParser = new MarkdownParser();
+    const articleService = new ArticleService(markdownParser);
+    
+    super(
+      cardRenderer,
+      articleRenderer,
+      eventHandler,
+      navigationHandler,
+      articleService,
+      'best-practices-overview-cards'
+    );
   }
 
-  /**
-   * 初始化最佳实践模块
-   */
-  initialize(): void {
-    this.renderBestPracticesOverviewCards();
-    this.bindEventListeners();
-  }
-
-  /**
-   * 渲染最佳实践概览卡片
-   */
-  private renderBestPracticesOverviewCards(): void {
-    const container = document.getElementById(this.containerId);
-    if (!container) {
-      console.warn(`Container with id "${this.containerId}" not found`);
-      return;
-    }
-
-    const cardsHtml = this.cardRenderer.renderCards(bestPracticesCards);
-    container.innerHTML = cardsHtml;
-  }
-
-  /**
-   * 绑定事件监听器
-   */
-  private bindEventListeners(): void {
-    this.eventHandler.bindEventListeners();
-    this.navigationHandler.bindEventListeners();
+  protected getCards(): PracticeCard[] {
+    return bestPracticesCards;
   }
 }
