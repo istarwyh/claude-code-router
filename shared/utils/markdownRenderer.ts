@@ -34,17 +34,23 @@ export class SafeMarkdownRenderer {
             return '';
         }
 
-        // 首先转义所有 HTML 以防止 XSS
-        let html = this.escapeHtml(markdown);
+        console.log('SafeMarkdownRenderer.render called with markdown length:', markdown.length);
+        console.log('Markdown preview:', markdown.substring(0, 500) + '...');
+
+        // 不要在开始就转义所有 HTML，而是在处理具体内容时进行安全处理
+        let html = markdown;
         
         // 按顺序应用 Markdown 规则
+        html = this.renderCodeBlocks(html);  // 先处理代码块，避免其中的内容被误处理
         html = this.renderHeaders(html);
-        html = this.renderCodeBlocks(html);
         html = this.renderInlineCode(html);
         html = this.renderBoldItalic(html);
         html = this.renderLinks(html);
         html = this.renderLists(html);
         html = this.renderParagraphs(html);
+        
+        console.log('Final rendered HTML length:', html.length);
+        console.log('Final HTML preview:', html.substring(0, 500) + '...');
         
         return html;
     }
@@ -59,16 +65,28 @@ export class SafeMarkdownRenderer {
     }
 
     /**
+     * 保留已经处理的 HTML 标签，对其他内容进行转义
+     */
+    private preserveHtmlTags(text: string): string {
+        // 对于已经包含 HTML 标签的内容，直接返回
+        if (text.includes('<') && text.includes('>')) {
+            return text;
+        }
+        // 对于纯文本内容，进行转义
+        return this.escapeHtml(text);
+    }
+
+    /**
      * 渲染标题
      */
     private renderHeaders(html: string): string {
-        // 按从大到小的顺序处理标题，避免嵌套问题
-        html = html.replace(/^######\s(.+)$/gm, '<h6>$1</h6>');
-        html = html.replace(/^#####\s(.+)$/gm, '<h5>$1</h5>');
-        html = html.replace(/^####\s(.+)$/gm, '<h4>$1</h4>');
-        html = html.replace(/^###\s(.+)$/gm, '<h3>$1</h3>');
-        html = html.replace(/^##\s(.+)$/gm, '<h2>$1</h2>');
-        html = html.replace(/^#\s(.+)$/gm, '<h1>$1</h1>');
+        // 按从大到小的顺序处理标题，对标题内容进行转义
+        html = html.replace(/^######\s(.+)$/gm, (match, title) => `<h6>${this.escapeHtml(title.trim())}</h6>`);
+        html = html.replace(/^#####\s(.+)$/gm, (match, title) => `<h5>${this.escapeHtml(title.trim())}</h5>`);
+        html = html.replace(/^####\s(.+)$/gm, (match, title) => `<h4>${this.escapeHtml(title.trim())}</h4>`);
+        html = html.replace(/^###\s(.+)$/gm, (match, title) => `<h3>${this.escapeHtml(title.trim())}</h3>`);
+        html = html.replace(/^##\s(.+)$/gm, (match, title) => `<h2>${this.escapeHtml(title.trim())}</h2>`);
+        html = html.replace(/^#\s(.+)$/gm, (match, title) => `<h1>${this.escapeHtml(title.trim())}</h1>`);
         return html;
     }
 
@@ -76,12 +94,54 @@ export class SafeMarkdownRenderer {
      * 渲染代码块
      */
     private renderCodeBlocks(html: string): string {
-        // 处理三个反引号的代码块
-        html = html.replace(/```([^`]*?)```/gs, (match, code) => {
-            const trimmedCode = code.trim();
-            return `<pre><code>${trimmedCode}</code></pre>`;
+        console.log('renderCodeBlocks called, input length:', html.length);
+        
+        // 先检查是否包含代码块
+        const hasCodeBlocks = html.includes('```');
+        console.log('Contains code blocks:', hasCodeBlocks);
+        
+        if (hasCodeBlocks) {
+            // 匹配所有代码块
+            const codeBlockMatches = html.match(/```[\s\S]*?```/g);
+            console.log('Found code block matches:', codeBlockMatches?.length || 0);
+            if (codeBlockMatches) {
+                codeBlockMatches.forEach((match, index) => {
+                    console.log(`Code block ${index}:`, match.substring(0, 100) + '...');
+                });
+            }
+        }
+        
+        // 处理三个反引号的代码块 - 恢复原来的正则表达式
+        html = html.replace(/```([^`]*?)```/gs, (match, codeWithLang) => {
+            const lines = codeWithLang.trim().split('\n');
+            const firstLine = lines[0] || '';
+            const language = firstLine.toLowerCase().trim();
+            const code = lines.slice(1).join('\n').trim();
+            
+            console.log('Processing code block:', { language, codeLength: code.length });
+            
+            // 检查是否是 Mermaid 图表
+            if (language === 'mermaid' || language === 'sequencediagram') {
+                console.log('Detected Mermaid diagram!');
+                return this.renderMermaidDiagram(code);
+            }
+            
+            // 普通代码块
+            console.log('Rendering as regular code block');
+            return `<pre><code class="language-${language}">${this.escapeHtml(code)}</code></pre>`;
         });
+        
+        console.log('renderCodeBlocks finished, output length:', html.length);
         return html;
+    }
+
+    /**
+     * 渲染 Mermaid 图表
+     */
+    private renderMermaidDiagram(code: string): string {
+        const diagramId = `mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        console.log('Rendering Mermaid diagram:', { diagramId, code: code.substring(0, 100) + '...' });
+        return `<div class="mermaid-diagram" id="${diagramId}">${this.escapeHtml(code)}</div>`;
     }
 
     /**
@@ -89,7 +149,17 @@ export class SafeMarkdownRenderer {
      */
     private renderInlineCode(html: string): string {
         // 处理单个反引号的行内代码，但不处理已经在 <pre><code> 中的
-        html = html.replace(/(?<!<pre><code[^>]*>.*)`([^`\n]+)`(?!.*<\/code><\/pre>)/g, '<code>$1</code>');
+        html = html.replace(/`([^`\n]+)`/g, (match, code) => {
+            // 检查是否在代码块中
+            if (html.indexOf('<pre><code>') !== -1 && html.indexOf('</code></pre>') !== -1) {
+                const preStart = html.lastIndexOf('<pre><code>', html.indexOf(match));
+                const preEnd = html.indexOf('</code></pre>', html.indexOf(match));
+                if (preStart !== -1 && preEnd !== -1 && preStart < html.indexOf(match) && html.indexOf(match) < preEnd) {
+                    return match; // 在代码块中，不处理
+                }
+            }
+            return `<code>${this.escapeHtml(code)}</code>`;
+        });
         return html;
     }
 
@@ -123,28 +193,56 @@ export class SafeMarkdownRenderer {
      * 渲染列表
      */
     private renderLists(html: string): string {
-        // 处理无序列表
         const lines = html.split('\n');
         const result: string[] = [];
-        let inList = false;
+        let inUnorderedList = false;
+        let inOrderedList = false;
         let listItems: string[] = [];
 
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
-            const isListItem = /^[*+-]\s(.+)$/.test(line);
+            const isUnorderedListItem = /^[*+-]\s(.+)$/.test(line);
+            const isOrderedListItem = /^\d+\.\s(.+)$/.test(line);
 
-            if (isListItem) {
-                if (!inList) {
-                    inList = true;
+            if (isUnorderedListItem) {
+                // 如果之前在有序列表中，先结束有序列表
+                if (inOrderedList) {
+                    result.push(`<ol>${listItems.join('')}</ol>`);
+                    inOrderedList = false;
+                    listItems = [];
+                }
+                
+                if (!inUnorderedList) {
+                    inUnorderedList = true;
                     listItems = [];
                 }
                 const content = line.replace(/^[*+-]\s/, '');
+                // 将换行符转换为 <br> 标签以保持原有格式
+                const formattedContent = content.replace(/\n/g, '<br>');
+                listItems.push(`<li>${formattedContent}</li>`);
+            } else if (isOrderedListItem) {
+                // 如果之前在无序列表中，先结束无序列表
+                if (inUnorderedList) {
+                    result.push(`<ul>${listItems.join('')}</ul>`);
+                    inUnorderedList = false;
+                    listItems = [];
+                }
+                
+                if (!inOrderedList) {
+                    inOrderedList = true;
+                    listItems = [];
+                }
+                const content = line.replace(/^\d+\.\s/, '');
                 listItems.push(`<li>${content}</li>`);
             } else {
-                if (inList) {
-                    // 结束当前列表
+                // 结束当前列表（无论是有序还是无序）
+                if (inUnorderedList) {
                     result.push(`<ul>${listItems.join('')}</ul>`);
-                    inList = false;
+                    inUnorderedList = false;
+                    listItems = [];
+                } else if (inOrderedList) {
+                    result.push(`<ol>${listItems.join('')}</ol>`);
+                    inOrderedList = false;
                     listItems = [];
                 }
                 result.push(line);
@@ -152,8 +250,10 @@ export class SafeMarkdownRenderer {
         }
 
         // 处理文件末尾的列表
-        if (inList && listItems.length > 0) {
+        if (inUnorderedList && listItems.length > 0) {
             result.push(`<ul>${listItems.join('')}</ul>`);
+        } else if (inOrderedList && listItems.length > 0) {
+            result.push(`<ol>${listItems.join('')}</ol>`);
         }
 
         return result.join('\n');
@@ -168,15 +268,35 @@ export class SafeMarkdownRenderer {
         
         return paragraphs.map(paragraph => {
             const trimmed = paragraph.trim();
-            // 如果已经是 HTML 标签，不要包装在 <p> 中
-            if (trimmed.match(/^<(h[1-6]|ul|ol|pre|blockquote)/)) {
+            
+            // 如果已经是 HTML 标签（包括 div、pre 等），不要包装在 <p> 中，也不要处理换行
+            if (trimmed.match(/^<(h[1-6]|ul|ol|pre|blockquote|div)/)) {
                 return trimmed;
             }
+            
             // 空段落不处理
             if (!trimmed) {
                 return '';
             }
-            return `<p>${trimmed}</p>`;
+            
+            // 只对纯文本内容进行换行处理
+            let content = trimmed;
+            
+            // 检查是否为纯文本内容（不包含 HTML 标签）
+            const hasHtmlTags = /<[^>]+>/.test(content);
+            
+            if (!hasHtmlTags) {
+                // 对于纯文本内容，转义 HTML 字符
+                content = this.escapeHtml(content);
+                // 将单个换行符转换为 <br> 标签
+                content = content.replace(/\n/g, '<br>');
+            } else {
+                // 对于包含 HTML 标签的内容，保持原样
+                // 这些内容通常已经在之前的步骤中正确处理过了
+                content = trimmed;
+            }
+            
+            return `<p>${content}</p>`;
         }).join('\n\n');
     }
 
@@ -186,11 +306,169 @@ export class SafeMarkdownRenderer {
     highlightCode(container: HTMLElement): void {
         if (!this.options.enableCodeHighlight) return;
 
+        // 处理普通代码块
         const codeBlocks = container.querySelectorAll('pre code');
         codeBlocks.forEach((block) => {
-            // 简单的语法高亮（可以根据需要扩展）
             this.applyBasicHighlighting(block as HTMLElement);
         });
+
+        // 处理 Mermaid 图表
+        this.renderMermaidDiagrams(container);
+    }
+
+    /**
+     * 渲染 Mermaid 图表
+     */
+    private renderMermaidDiagrams(container: HTMLElement): void {
+        const mermaidDiagrams = container.querySelectorAll('.mermaid-diagram');
+        if (mermaidDiagrams.length === 0) return;
+
+        console.log(`Found ${mermaidDiagrams.length} Mermaid diagrams to render`);
+
+        // 动态加载 Mermaid 库
+        this.loadMermaidLibrary().then(() => {
+            console.log('Mermaid library loaded successfully');
+            mermaidDiagrams.forEach((diagram, index) => {
+                console.log(`Initializing Mermaid diagram ${index + 1}/${mermaidDiagrams.length}`);
+                this.initializeMermaidDiagram(diagram as HTMLElement);
+            });
+        }).catch((error) => {
+            console.error('Failed to load Mermaid library:', error);
+            // 降级处理：显示原始代码
+            mermaidDiagrams.forEach((diagram) => {
+                const code = diagram.textContent || '';
+                diagram.innerHTML = `<pre><code>${code}</code></pre>`;
+                diagram.classList.add('mermaid-fallback');
+            });
+        });
+    }
+
+    /**
+     * 动态加载 Mermaid 库
+     */
+    private loadMermaidLibrary(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            // 检查是否已经加载
+            if ((window as any).mermaid) {
+                console.log('Mermaid library already loaded');
+                resolve();
+                return;
+            }
+
+            console.log('Loading Mermaid library from CDN...');
+            
+            // 创建 script 标签加载 Mermaid
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+            script.async = true;
+            script.onload = () => {
+                console.log('Mermaid library script loaded, initializing...');
+                try {
+                    // 初始化 Mermaid
+                    const mermaid = (window as any).mermaid;
+                    mermaid.initialize({
+                        startOnLoad: false,
+                        theme: 'default',
+                        securityLevel: 'loose',
+                        fontFamily: 'monospace'
+                    });
+                    console.log('Mermaid library initialized');
+                    resolve();
+                } catch (error) {
+                    console.error('Error initializing Mermaid:', error);
+                    reject(error);
+                }
+            };
+            script.onerror = (error) => {
+                console.error('Failed to load Mermaid script:', error);
+                reject(new Error('Failed to load Mermaid library'));
+            };
+            document.head.appendChild(script);
+        });
+    }
+
+    /**
+     * 初始化单个 Mermaid 图表
+     */
+    private initializeMermaidDiagram(element: HTMLElement): void {
+        const mermaid = (window as any).mermaid;
+        if (!mermaid) {
+            console.error('Mermaid library not available');
+            return;
+        }
+
+        const code = element.textContent || '';
+        const id = element.id;
+        
+        console.log(`Rendering diagram ${id}:`, code.substring(0, 100) + '...');
+
+        try {
+            // 清空元素内容
+            element.textContent = '';
+            element.innerHTML = '<div style="padding: 20px; color: #666;">正在渲染图表...</div>';
+            
+            // 渲染 Mermaid 图表
+            mermaid.render(id + '-svg', code).then((result: { svg: string }) => {
+                console.log(`Successfully rendered diagram ${id}`);
+                element.innerHTML = result.svg;
+                element.classList.add('mermaid-rendered');
+                
+                // 添加点击全屏查看功能
+                element.addEventListener('click', () => {
+                    this.showMermaidFullscreen(result.svg, id);
+                });
+                
+            }).catch((error: Error) => {
+                console.error(`Mermaid rendering error for ${id}:`, error);
+                // 降级显示原始代码
+                element.innerHTML = `
+                    <div style="color: #dc2626; margin-bottom: 8px;">⚠️ 图表渲染失败</div>
+                    <pre><code>${this.escapeHtml(code)}</code></pre>
+                `;
+                element.classList.add('mermaid-error');
+            });
+        } catch (error) {
+            console.error(`Mermaid initialization error for ${id}:`, error);
+            // 降级显示原始代码
+            element.innerHTML = `
+                <div style="color: #dc2626; margin-bottom: 8px;">⚠️ 图表初始化失败</div>
+                <pre><code>${this.escapeHtml(code)}</code></pre>
+            `;
+            element.classList.add('mermaid-error');
+        }
+    }
+
+    /**
+     * 显示 Mermaid 图表全屏模式
+     */
+    private showMermaidFullscreen(svgContent: string, diagramId: string): void {
+        // 创建全屏模态框
+        const modal = document.createElement('div');
+        modal.className = 'mermaid-fullscreen-modal';
+        modal.innerHTML = `
+            <div class="mermaid-fullscreen-content">
+                <button class="mermaid-fullscreen-close" onclick="this.closest('.mermaid-fullscreen-modal').remove()">&times;</button>
+                ${svgContent}
+            </div>
+        `;
+        
+        // 点击背景关闭
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+        
+        // ESC 键关闭
+        const handleEscape = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                modal.remove();
+                document.removeEventListener('keydown', handleEscape);
+            }
+        };
+        document.addEventListener('keydown', handleEscape);
+        
+        document.body.appendChild(modal);
     }
 
     /**

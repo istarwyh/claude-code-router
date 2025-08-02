@@ -80,7 +80,6 @@ export const deploymentComponent = `
                         <div class="step-title">Deploy</div>
                         <div class="code-snippet">
                             <code>npm run deploy</code>
-                            <button class="copy-btn" onclick="copyToClipboard('npm run deploy')">📋</button>
                         </div>
                     </div>
                 </div>

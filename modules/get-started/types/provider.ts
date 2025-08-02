@@ -3,6 +3,7 @@ export interface Provider {
   name: string;
   displayName: string;
   icon: string;
+  color?: string; // 可选的自定义颜色，支持任何CSS颜色值
   description: string;
   isDirectlyUsable: boolean;
   proxyUrl?: string;
@@ -17,6 +18,22 @@ export interface Provider {
 }
 
 export const providers: Provider[] = [
+  {
+    id: 'anthropic',
+    name: 'Anthropic',
+    displayName: 'Anthropic (官方)',
+    icon: 'AN',
+    color: 'linear-gradient(45deg, #5436DA, #7B61FF)',
+    description: '官方Claude API，无需代理，但需要解决中国大陆账号充值问题。',
+    isDirectlyUsable: true,
+    originalUrl: 'https://api.anthropic.com',
+    apiKeyUrl: 'https://claude.ai',
+    features: ['官方API', '无需代理', '稳定可靠'],
+    specialConfig: {
+      envVars: {},
+      notes: '🔄 中国大陆充值方法：<br>1. 弄个美区Apple ID下载Claude Code<br>2. 支付宝定位切到旧金山，使用小程序PockytShop买20刀的苹果礼品卡<br>3. 用礼品卡去苹果App Store充值<br>4. 在Claude Code中完成订阅'
+    }
+  },
   {
     id: 'deepseek',
     name: 'DeepSeek',
@@ -79,6 +96,46 @@ export const providers: Provider[] = [
         'ANTHROPIC_MODEL': 'Pro/moonshotai/Kimi-K2-Instruct'
       },
       notes: 'Uses special environment variable format'
+    }
+  },
+  {
+    id: 'qwen3-coder',
+    name: 'Qwen3-Coder',
+    displayName: 'Qwen3-Coder',
+    icon: 'Q3C',
+    description: 'Advanced coding model from Alibaba Cloud with strong programming capabilities and Chinese language support.',
+    isDirectlyUsable: true,
+    proxyUrl: 'https://dashscope.aliyuncs.com/api/v2/apps/claude-code-proxy',
+    originalUrl: 'https://dashscope.aliyuncs.com/api/v1',
+    aliasCommand: 'alias qwen3-coder="ANTHROPIC_BASE_URL=https://dashscope.aliyuncs.com/api/v2/apps/claude-code-proxy ANTHROPIC_AUTH_TOKEN=your-dashscope-apikey claude"',
+    apiKeyUrl: 'https://dashscope.console.aliyun.com',
+    features: ['Programming focused', 'Chinese language support', 'Alibaba OpenSource'],
+    specialConfig: {
+      envVars: {
+        'ANTHROPIC_BASE_URL': 'https://dashscope.aliyuncs.com/api/v2/apps/claude-code-proxy',
+        'ANTHROPIC_AUTH_TOKEN': 'your-dashscope-apikey'
+      },
+      notes: 'Qwen3-Coder may be expensive according to some feedbacks'
+    }
+  },
+  {
+    id: 'aicodewith',
+    name: 'AICodeWith',
+    displayName: 'AICodeWith',
+    icon: 'ACW',
+    description: 'AI coding assistant platform providing direct Claude Code API access. Get 2000 free credits upon registration!',
+    isDirectlyUsable: true,
+    proxyUrl: 'https://api.aicodewith.com',
+    originalUrl: 'https://api.aicodewith.com',
+    aliasCommand: 'alias aicodewith="ANTHROPIC_AUTH_TOKEN=xxx ANTHROPIC_BASE_URL=https://api.aicodewith.com claude --dangerously-skip-permissions"',
+    apiKeyUrl: 'https://aicodewith.com/?invitation=VI84XXSW',
+    features: ['2000 free credits', 'Direct API access', 'No deployment needed'],
+    specialConfig: {
+      envVars: {
+        'ANTHROPIC_AUTH_TOKEN': 'xxx',
+        'ANTHROPIC_BASE_URL': 'https://api.aicodewith.com'
+      },
+      notes: '🎁 Get 2000 free credits (~10 conversations) upon registration'
     }
   },
   {

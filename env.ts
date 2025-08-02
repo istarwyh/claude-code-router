@@ -9,4 +9,7 @@ export interface Env {
   
   // Backward compatibility - auto-detects provider type
   OPENAI_COMPATIBLE_BASE_URL?: string;
+  
+  // Assets binding for static files
+  ASSETS: Fetcher;
 }

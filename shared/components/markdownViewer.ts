@@ -199,6 +199,54 @@ export class MarkdownViewer {
                 color: #6a737d;
                 font-style: italic;
             }
+
+            /* Mermaid 图表样式 */
+            .markdown-content .mermaid-diagram {
+                margin: 16px 0;
+                padding: 16px;
+                background: var(--bg-secondary, #f8f9fa);
+                border: 1px solid var(--border-color, #e0e0e0);
+                border-radius: 8px;
+                text-align: center;
+                overflow-x: auto;
+            }
+
+            .markdown-content .mermaid-diagram.mermaid-rendered {
+                background: #fff;
+                border: 1px solid var(--border-color, #e0e0e0);
+            }
+
+            .markdown-content .mermaid-diagram svg {
+                max-width: 100%;
+                height: auto;
+            }
+
+            .markdown-content .mermaid-diagram.mermaid-error {
+                background: #ffeaea;
+                border-color: #dc3545;
+                color: #dc3545;
+            }
+
+            .markdown-content .mermaid-diagram.mermaid-fallback {
+                background: #fff3cd;
+                border-color: #ffc107;
+                color: #856404;
+            }
+
+            .markdown-content .mermaid-diagram.mermaid-fallback::before {
+                content: "⚠️ Mermaid 图表加载失败，显示原始代码：";
+                display: block;
+                margin-bottom: 8px;
+                font-size: 0.9em;
+                font-weight: bold;
+            }
+
+            .markdown-content .mermaid-diagram pre {
+                margin: 0;
+                background: transparent;
+                border: none;
+                padding: 8px;
+            }
         `;
         document.head.appendChild(style);
     }

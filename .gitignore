@@ -169,6 +169,8 @@ dist
 .pnp.\*
 
 # wrangler project
-
 .dev.vars
 .wrangler/
+
+# Generated files
+shared/scripts/generated/

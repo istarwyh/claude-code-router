@@ -2,6 +2,7 @@
 export { createHead } from './components/head';
 export { sidebarComponent } from './components/sidebar';
 export { navigationComponent } from './components/navigation';
+export { sideCardsComponent } from './components/sideCards';
 
 // 样式和脚本
 export { allStyles } from './styles';

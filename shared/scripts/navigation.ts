@@ -24,6 +24,16 @@ function initNavigation() {
     if (targetElement) {
       targetElement.style.display = 'block';
     }
+    
+    // Special handling for best-practices section
+    if (sectionId === 'best-practices') {
+      // Ensure we show the overview when navigating to best-practices
+      if (window.showBestPracticesOverview) {
+        setTimeout(() => {
+          window.showBestPracticesOverview();
+        }, 100);
+      }
+    }
   }
   
   navTabs.forEach(tab => {
@@ -98,8 +108,48 @@ function fallbackCopyTextToClipboard(text, button) {
   document.body.removeChild(textArea);
 }
 
+// Enhanced navigation functions for article display
+function toggleFooterVisibility(isArticleView) {
+  const footer = document.querySelector('.practices-footer');
+  if (footer) {
+    footer.style.display = isArticleView ? 'none' : 'block';
+  }
+}
+
+function updateBreadcrumb(isArticleView, articleTitle = '') {
+  const header = document.querySelector('.practices-page__header');
+  if (!header) return;
+  
+  if (isArticleView && articleTitle) {
+    const breadcrumb = document.createElement('div');
+    breadcrumb.className = 'practices-page__breadcrumb';
+    breadcrumb.innerHTML = \`
+      <button class="breadcrumb-back" onclick="showBestPracticesOverview()">
+        ← 返回概览
+      </button>
+      <span class="breadcrumb-path">如何用好 CC > \${articleTitle}</span>
+    \`;
+    
+    // Remove existing breadcrumb if any
+    const existing = header.querySelector('.practices-page__breadcrumb');
+    if (existing) {
+      existing.remove();
+    }
+    
+    header.appendChild(breadcrumb);
+  } else {
+    // Remove breadcrumb when showing overview
+    const breadcrumb = header.querySelector('.practices-page__breadcrumb');
+    if (breadcrumb) {
+      breadcrumb.remove();
+    }
+  }
+}
+
 // Make functions globally available
 window.copyCommand = copyCommand;
+window.toggleFooterVisibility = toggleFooterVisibility;
+window.updateBreadcrumb = updateBreadcrumb;
 
 // Initialize navigation when DOM is loaded
 document.addEventListener('DOMContentLoaded', initNavigation);
