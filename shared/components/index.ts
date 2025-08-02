@@ -1,11 +1,11 @@
 import { createHead } from './head';
 import { sidebarComponent } from './sidebar';
 import { navigationComponent } from './navigation';
-import { bestPracticesComponent } from './bestPractices';
+import { sideCardsComponent } from './sideCards';
 
 export {
   createHead,
   sidebarComponent,
   navigationComponent,
-  bestPracticesComponent
+  sideCardsComponent
 };

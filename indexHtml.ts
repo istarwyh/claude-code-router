@@ -1,5 +1,5 @@
 import { faviconDataUrl } from './faviconServer';
-import { createHead, sidebarComponent, navigationComponent, allStyles, allScripts } from './shared';
+import { createHead, sidebarComponent, navigationComponent, sideCardsComponent, allStyles, allScripts } from './shared';
 import { getStartedModule } from './modules/get-started';
 import { bestPracticesModule } from './modules/best-practices';
 import { implementationModule } from './modules/how-to-implement';
@@ -15,9 +15,9 @@ ${sidebarComponent}
 ${navigationComponent}
 
 <div class="container">
-${getStartedModule}
-${bestPracticesModule}
-${implementationModule}
+  ${getStartedModule}
+  ${bestPracticesModule}
+  ${implementationModule}
 </div>
 
 <script>
