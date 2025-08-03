@@ -1,20 +1,43 @@
 import type { BaseContentCard } from '../types/ContentCard';
 
+// Base interfaces for type safety
+interface ICardRenderer<T extends BaseContentCard> {
+  renderCards(cards: T[]): string;
+}
+
+interface IArticleRenderer {
+  renderArticle(title: string, content: string): string;
+  renderLoadingState(): string;
+  renderErrorState(error: string): string;
+}
+
+interface IEventHandler {
+  bindEventListeners(): void;
+}
+
+interface INavigationHandler {
+  bindEventListeners(): void;
+}
+
+interface IContentService {
+  getArticle(id: string): Promise<{ title: string; content: string; rawMarkdown: string }>;
+}
+
 // 通用内容管理器 - 依赖注入模式，符合 SOLID 原则
 export abstract class BaseContentManager<T extends BaseContentCard> {
-  protected cardRenderer: any;
-  protected articleRenderer: any;
-  protected eventHandler: any;
-  protected navigationHandler: any;
-  protected contentService: any;
+  protected cardRenderer: ICardRenderer<T>;
+  protected articleRenderer: IArticleRenderer;
+  protected eventHandler: IEventHandler;
+  protected navigationHandler: INavigationHandler;
+  protected contentService: IContentService;
   protected containerId: string;
 
   constructor(
-    cardRenderer: any,
-    articleRenderer: any,
-    eventHandler: any,
-    navigationHandler: any,
-    contentService: any,
+    cardRenderer: ICardRenderer<T>,
+    articleRenderer: IArticleRenderer,
+    eventHandler: IEventHandler,
+    navigationHandler: INavigationHandler,
+    contentService: IContentService,
     containerId: string
   ) {
     this.cardRenderer = cardRenderer;

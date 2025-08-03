@@ -10,19 +10,18 @@ export class HowToImplementEventHandler {
   private contentService: HowToImplementService;
   private articleRenderer: ArticleRenderer;
 
-  constructor(containerId: string) {
+  constructor(
+    containerId: string,
+    contentService: HowToImplementService,
+    articleRenderer: ArticleRenderer
+  ) {
     this.containerId = containerId;
     this.boundClickHandler = this.handleCardClick.bind(this);
-    
-    // 复用 MarkdownParser
-    const markdownParser = new MarkdownParser();
-    this.contentService = new HowToImplementService(markdownParser);
-    this.articleRenderer = new ArticleRenderer();
+    this.contentService = contentService;
+    this.articleRenderer = articleRenderer;
   }
 
   public bindEventListeners(): void {
-    console.log('开始绑定 How to Implement 事件监听器');
-    
     const container = document.getElementById(this.containerId);
     if (!container) {
       console.error(`未找到容器元素: ${this.containerId}`);
@@ -31,8 +30,6 @@ export class HowToImplementEventHandler {
     
     this.removeExistingListeners(container);
     this.addEventListeners(container);
-    
-    console.log('How to Implement 事件委托绑定完成');
   }
 
   private removeExistingListeners(container: HTMLElement): void {
@@ -41,37 +38,23 @@ export class HowToImplementEventHandler {
 
   private addEventListeners(container: HTMLElement): void {
     container.addEventListener('click', this.boundClickHandler);
-    
-    container.addEventListener('click', function(e) {
-      console.log('How to Implement 容器收到点击事件:', {
-        target: e.target,
-        targetClass: (e.target as HTMLElement).className,
-        targetTag: (e.target as HTMLElement).tagName
-      });
-    }, true);
   }
 
   private handleCardClick(e: Event): void {
     const event = e as MouseEvent;
     const target = event.target as HTMLElement;
     
-    console.log('How to Implement handleCardClick被调用:', target);
-    
     // 检查当前是否在文章详情页面
     const isInArticleView = document.querySelector('.practice-article');
     if (isInArticleView) {
-      console.log('当前在文章详情页面，忽略点击事件');
       return;
     }
     
     // 查找按钮元素
     const button = target.closest('.overview-card__action-btn') as HTMLElement;
     if (!button) {
-      console.log('点击的不是操作按钮');
       return;
     }
-    
-    console.log('找到操作按钮:', button);
     
     const cardId = button.getAttribute('data-card-id');
     if (!cardId) {
@@ -79,7 +62,6 @@ export class HowToImplementEventHandler {
       return;
     }
     
-    console.log('准备显示 How to Implement 详细内容:', cardId);
     this.showDetailedContent(cardId);
   }
 
@@ -108,7 +90,6 @@ export class HowToImplementEventHandler {
       const markdownContainer = document.getElementById('markdown-content-container');
       if (markdownContainer) {
         const renderer = new SafeMarkdownRenderer();
-        console.log('How to Implement: 开始渲染 Markdown 内容');
         const renderedHtml = renderer.render(article.rawMarkdown);
         
         markdownContainer.innerHTML = `<div class="markdown-content">${renderedHtml}</div>`;

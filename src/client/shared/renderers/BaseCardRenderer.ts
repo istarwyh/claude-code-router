@@ -1,23 +1,17 @@
 import type { BaseContentCard, ContentSection, ContentTip } from '../types/ContentCard';
+import { defaultDifficultyConfig, type DifficultyConfig } from '../config/cardConfig';
 
 // 通用卡片渲染器 - 符合 SOLID 原则的单一职责
 export class BaseCardRenderer<T extends BaseContentCard> {
   protected categoryIcons: Record<string, string> = {};
-  protected difficultyColors: Record<string, string> = {
-    'beginner': '#10B981',
-    'intermediate': '#F59E0B', 
-    'advanced': '#EF4444',
-    'expert': '#8B5CF6'
-  };
-  protected difficultyLabels: Record<string, string> = {
-    'beginner': '入门',
-    'intermediate': '进阶',
-    'advanced': '高级',
-    'expert': '专家'
-  };
+  protected difficultyConfig: DifficultyConfig;
 
-  constructor(categoryIcons: Record<string, string> = {}) {
+  constructor(
+    categoryIcons: Record<string, string> = {},
+    difficultyConfig: DifficultyConfig = defaultDifficultyConfig
+  ) {
     this.categoryIcons = categoryIcons;
+    this.difficultyConfig = difficultyConfig;
   }
 
   public renderCards(cards: T[]): string {
@@ -26,8 +20,8 @@ export class BaseCardRenderer<T extends BaseContentCard> {
 
   public renderCard(card: T): string {
     const icon = this.categoryIcons[card.category] || '📋';
-    const difficultyColor = this.difficultyColors[card.difficulty];
-    const difficultyLabel = this.difficultyLabels[card.difficulty];
+    const difficultyColor = this.difficultyConfig.colors[card.difficulty];
+    const difficultyLabel = this.difficultyConfig.labels[card.difficulty];
     
     const sectionsHtml = this.renderSections(card.sections);
     const tipsHtml = this.renderTips(card.tips);

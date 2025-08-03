@@ -12,10 +12,14 @@ export class HowToImplementManager extends BaseContentManager<ImplementCard> {
   constructor() {
     const cardRenderer = new HowToImplementCardRenderer();
     const articleRenderer = new ArticleRenderer();
-    const eventHandler = new HowToImplementEventHandler('how-to-implement-overview-cards');
-    const navigationHandler = new NavigationHandler();
     const markdownParser = new MarkdownParser();
     const contentService = new HowToImplementService(markdownParser);
+    const eventHandler = new HowToImplementEventHandler(
+      'how-to-implement-overview-cards',
+      contentService,
+      articleRenderer
+    );
+    const navigationHandler = new NavigationHandler();
     
     super(
       cardRenderer,

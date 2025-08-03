@@ -11,15 +11,16 @@ export interface Article {
 export abstract class BaseContentService<T extends BaseContentCard> {
   protected markdownParser: any;
   protected cache: Map<string, Article> = new Map();
+  protected disableCache: boolean;
   
-  constructor(markdownParser: any) {
+  constructor(markdownParser: any, disableCache: boolean = process.env.NODE_ENV === 'development') {
     this.markdownParser = markdownParser;
+    this.disableCache = disableCache;
   }
 
   public async getArticle(cardId: string): Promise<Article> {
-    // 开发环境清除缓存以获取最新内容
-    if (this.cache.has(cardId)) {
-      console.log('清除缓存，重新加载文章:', cardId);
+    // 根据配置决定是否清除缓存
+    if (this.disableCache && this.cache.has(cardId)) {
       this.cache.delete(cardId);
     }
 

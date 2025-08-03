@@ -53,7 +53,7 @@ async function buildBestPracticesModule() {
     format: 'iife',
     globalName: 'BestPracticesApp',
     target: 'es2020',
-    minify: false, // 开发时不压缩，便于调试
+    minify: process.env.NODE_ENV === 'production',
     write: false,
     platform: 'browser',
     define: {
@@ -105,7 +105,7 @@ async function buildHowToImplementModule() {
     format: 'iife',
     globalName: 'HowToImplementApp',
     target: 'es2020',
-    minify: false, // 开发时不压缩，便于调试
+    minify: process.env.NODE_ENV === 'production',
     write: false,
     platform: 'browser',
     define: {
@@ -156,7 +156,7 @@ async function buildProviderDetailsModule() {
     format: 'iife',
     globalName: 'ProviderDetailsApp',
     target: 'es2020',
-    minify: false, // 开发时不压缩，便于调试
+    minify: process.env.NODE_ENV === 'production',
     write: false,
     platform: 'browser',
     define: {
@@ -239,38 +239,53 @@ async function injectProviderDetailsScript() {
  * 注入 How to Implement 脚本
  */
 async function injectHowToImplementScript() {
-  // 读取 How to Implement 脚本
-  const howToImplementBundle = path.resolve(__dirname, '../shared/scripts/generated/howToImplementBundle.ts');
-  
-  if (!fs.existsSync(howToImplementBundle)) {
-    console.warn('⚠️ How to Implement 脚本未找到，跳过注入');
-    return;
+  try {
+    // 读取 How to Implement 脚本
+    const howToImplementBundle = path.resolve(__dirname, '../shared/scripts/generated/howToImplementBundle.ts');
+    
+    if (!fs.existsSync(howToImplementBundle)) {
+      console.warn('⚠️ How to Implement 脚本未找到，跳过注入');
+      return;
+    }
+    
+    // 读取构建后的脚本
+    const bundleContent = fs.readFileSync(howToImplementBundle, 'utf8');
+    const scriptMatch = bundleContent.match(/export const howToImplementClientScript = "(.+)";/);
+    
+    if (!scriptMatch) {
+      console.warn('⚠️ 无法解析 How to Implement 脚本');
+      return;
+    }
+    
+    // 解析脚本内容
+    const scriptContent = JSON.parse(`"${scriptMatch[1]}"`);
+    
+    // 读取 how-to-implement 模块文件
+    const howToImplementFile = path.resolve(__dirname, '../modules/how-to-implement/index.ts');
+    
+    if (!fs.existsSync(howToImplementFile)) {
+      throw new Error(`How to Implement 模块文件不存在: ${howToImplementFile}`);
+    }
+    
+    let howToImplementContent = fs.readFileSync(howToImplementFile, 'utf8');
+    
+    // 替换占位符
+    if (!howToImplementContent.includes('// HOW_TO_IMPLEMENT_SCRIPT_PLACEHOLDER')) {
+      console.warn('⚠️ How to Implement 模块中未找到脚本占位符');
+      return;
+    }
+    
+    howToImplementContent = howToImplementContent.replace(
+      '// HOW_TO_IMPLEMENT_SCRIPT_PLACEHOLDER',
+      scriptContent
+    );
+    
+    // 写回文件
+    fs.writeFileSync(howToImplementFile, howToImplementContent, 'utf8');
+  } catch (error) {
+    console.error('❌ 注入 How to Implement 脚本时发生错误:', error.message);
+    throw error;
   }
-  
-  // 读取构建后的脚本
-  const bundleContent = fs.readFileSync(howToImplementBundle, 'utf8');
-  const scriptMatch = bundleContent.match(/export const howToImplementClientScript = "(.+)";/);
-  
-  if (!scriptMatch) {
-    console.warn('⚠️ 无法解析 How to Implement 脚本');
-    return;
-  }
-  
-  // 解析脚本内容
-  const scriptContent = JSON.parse(`"${scriptMatch[1]}"`);
-  
-  // 读取 how-to-implement 模块文件
-  const howToImplementFile = path.resolve(__dirname, '../modules/how-to-implement/index.ts');
-  let howToImplementContent = fs.readFileSync(howToImplementFile, 'utf8');
-  
-  // 替换占位符
-  howToImplementContent = howToImplementContent.replace(
-    '// HOW_TO_IMPLEMENT_SCRIPT_PLACEHOLDER',
-    scriptContent
-  );
-  
-  // 写回文件
-  fs.writeFileSync(howToImplementFile, howToImplementContent, 'utf8');
 }
 
 // 运行构建
