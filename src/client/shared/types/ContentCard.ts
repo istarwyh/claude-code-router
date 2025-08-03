@@ -41,5 +41,5 @@ export interface PracticeCard extends BaseContentCard {
 
 // How to Implement 的特定类型
 export interface ImplementCard extends BaseContentCard {
-  category: 'conversation' | 'system-prompt' | 'integration' | 'configuration';
+  category: 'conversation' | 'system-prompt' | 'integration' | 'configuration' | 'implementation' | 'examples';
 }
