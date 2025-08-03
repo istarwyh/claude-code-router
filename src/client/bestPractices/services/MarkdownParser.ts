@@ -1,4 +1,8 @@
 export class MarkdownParser {
+  public render(markdown: string): string {
+    return this.parse(markdown);
+  }
+
   public parse(markdown: string): string {
     let html = markdown;
 
