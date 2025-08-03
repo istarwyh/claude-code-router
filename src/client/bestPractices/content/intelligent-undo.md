@@ -185,6 +185,7 @@ ccundo language
 ### 5.3 会话管理
 
 **跨项目开发**：
+
 ```bash
 # 查看所有会话
 ccundo sessions
@@ -201,34 +202,34 @@ ccundo session <session-id>
 
 **步骤**：
 1. **建立检查点**
-   ```bash
-   git commit -m "checkpoint: before auth API refactor"
-   ```
+```bash
+git commit -m "checkpoint: before auth API refactor"
+```
 
 2. **让 Claude 执行重构**
-   ```bash
-   "请重构用户认证 API，将其拆分为更小的模块"
-   ```
+```bash
+"请重构用户认证 API，将其拆分为更小的模块"
+```
 
 3. **检查修改**
-   ```bash
-   ccundo list
-   # 显示：5个文件被修改，2个新文件被创建
-   ```
+```bash
+ccundo list
+# 显示：5个文件被修改，2个新文件被创建
+```
 
 4. **发现问题后精确回退**
-   ```bash
-   ccundo preview
-   # 查看具体会被撤销的内容
-   
-   ccundo undo
-   # 一键恢复到重构前状态
-   ```
+```bash
+ccundo preview
+# 查看具体会被撤销的内容
+
+ccundo undo
+# 一键恢复到重构前状态
+```
 
 5. **调整策略后重新实施**
-   ```bash
-   "请采用更保守的方式重构，一次只重构一个模块"
-   ```
+```bash
+"请采用更保守的方式重构，一次只重构一个模块"
+```
 
 ### 6.2 案例：性能优化
 
@@ -258,23 +259,23 @@ ccundo redo opt_v2  # 最终选择方案2
 ### 7.1 开发习惯
 
 1. **定期检查操作历史**
-   ```bash
-   # 每次大的开发阶段后
-   ccundo list
-   ```
+```bash
+# 每次大的开发阶段后
+ccundo list
+```
 
 2. **预览先于执行**
-   ```bash
-   # 永远先预览再撤销
-   ccundo preview
-   ccundo undo
-   ```
+```bash
+# 永远先预览再撤销
+ccundo preview
+ccundo undo
+```
 
 3. **合理使用 Git 检查点**
-   ```bash
-   # 重要节点用 Git，细节调整用 ccundo
-   git commit -m "milestone: core feature complete"
-   ```
+```bash
+# 重要节点用 Git，细节调整用 ccundo
+git commit -m "milestone: core feature complete"
+```
 
 ### 7.2 团队协作
 
