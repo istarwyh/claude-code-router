@@ -36,7 +36,7 @@ export interface DifficultyConfig {
 
 // 扩展 Best Practices 的特定类型
 export interface PracticeCard extends BaseContentCard {
-  category: 'workflow' | 'configuration' | 'mcp-commands' | 'context' | 'automation' | 'concurrency';
+  category: 'workflow' | 'configuration' | 'mcp-commands' | 'context' | 'automation' | 'concurrency' | 'tools';
 }
 
 // How to Implement 的特定类型

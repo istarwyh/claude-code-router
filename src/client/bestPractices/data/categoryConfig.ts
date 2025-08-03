@@ -6,7 +6,8 @@ export const categoryIcons: Record<string, string> = {
   'mcp-commands': '🛠️',
   'context': '📝',
   'automation': '🤖',
-  'concurrency': '👥'
+  'concurrency': '👥',
+  'tools': '🔧'
 };
 
 export const difficultyColors: Record<string, string> = {

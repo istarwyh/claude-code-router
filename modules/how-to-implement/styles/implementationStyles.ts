@@ -42,21 +42,21 @@ export const implementationStyles = `
 }
 
 .layer {
-    background: var(--color-bg-primary);
+    background: #f9f9f9;
     padding: 1.5rem;
     border-radius: 8px;
-    border: 1px solid var(--color-border-light);
+    border: 1px solid #ddd;
     text-align: center;
 }
 
 .layer h3 {
     margin: 0 0 0.5rem 0;
-    color: var(--color-accent);
+    color: #337ab7;
 }
 
 .layer p {
     margin: 0;
-    color: var(--color-text-secondary);
+    color: #666;
     font-size: 0.9rem;
 }
 
@@ -67,10 +67,10 @@ export const implementationStyles = `
 }
 
 .component-card {
-    background: var(--color-bg-secondary);
+    background: #f9f9f9;
     padding: 1.5rem;
     border-radius: 8px;
-    border: 1px solid var(--color-border-light);
+    border: 1px solid #ddd;
     text-align: center;
     transition: transform 0.2s ease;
 }
@@ -81,20 +81,20 @@ export const implementationStyles = `
 
 .component-card h3 {
     margin: 0 0 0.5rem 0;
-    color: var(--color-accent);
+    color: #337ab7;
 }
 
 .component-card p {
     margin: 0;
-    color: var(--color-text-secondary);
+    color: #666;
     font-size: 0.9rem;
 }
 
 .quick-start {
     padding: 2rem;
-    background: var(--color-bg-secondary);
+    background: #f9f9f9;
     border-radius: 12px;
-    border: 1px solid var(--color-border-light);
+    border: 1px solid #ddd;
 }
 
 .start-command {
@@ -104,26 +104,30 @@ export const implementationStyles = `
 
 .start-command code {
     display: block;
-    background: var(--color-bg-primary);
+    background: #f8fafc;
     padding: 1rem;
     border-radius: 8px;
     font-family: 'Monaco', 'Menlo', monospace;
     font-size: 0.9rem;
     line-height: 1.4;
     overflow-x: auto;
+    color: #334155;
+    border: 1px solid #e2e8f0;
 }
 
 .start-note {
     margin-top: 1rem;
-    color: var(--color-text-secondary);
+    color: #666;
     font-style: italic;
 }
 
 .start-note code {
-    background: var(--color-bg-primary);
+    background: #f1f5f9;
     padding: 0.2rem 0.4rem;
     border-radius: 4px;
     font-size: 0.9rem;
+    color: #e11d48;
+    border: 1px solid #e2e8f0;
 }
 
 .architecture-section h2,
@@ -133,15 +137,15 @@ export const implementationStyles = `
 .best-practices h2 {
     font-size: 2rem;
     margin-bottom: 1.5rem;
-    color: var(--color-text-primary);
+    color: #333;
 }
 
 .ascii-diagram {
-    background: var(--color-bg-secondary);
+    background: #f8fafc;
     border-radius: 12px;
     padding: 2rem;
     overflow-x: auto;
-    border: 1px solid var(--color-border-light);
+    border: 1px solid #e2e8f0;
 }
 
 .ascii-diagram pre {
@@ -149,12 +153,12 @@ export const implementationStyles = `
     font-size: 0.9rem;
     line-height: 1.4;
     margin: 0;
-    color: var(--color-text-primary);
+    color: #334155;
 }
 
 .step-card {
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border-light);
+    background: #f9f9f9;
+    border: 1px solid #ddd;
     border-radius: 12px;
     padding: 2rem;
     margin-bottom: 1.5rem;
@@ -169,20 +173,20 @@ export const implementationStyles = `
 .step-card h3 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
-    color: var(--color-text-primary);
+    color: #333;
 }
 
 .step-content p {
-    color: var(--color-text-secondary);
+    color: #666;
     margin-bottom: 1rem;
 }
 
 .code-block {
     position: relative;
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border-light);
-    border-radius: 8px;
-    padding: 1rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.5rem;
     margin: 1rem 0;
     overflow-x: auto;
 }
@@ -191,7 +195,7 @@ export const implementationStyles = `
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
     font-size: 0.9rem;
     line-height: 1.5;
-    color: var(--color-text-primary);
+    color: #334155;
     white-space: pre;
     display: block;
 }
@@ -200,7 +204,7 @@ export const implementationStyles = `
     position: absolute;
     top: 0.5rem;
     right: 0.5rem;
-    background: var(--color-accent);
+    background: #06b6d4;
     color: white;
     border: none;
     border-radius: 4px;
@@ -211,7 +215,7 @@ export const implementationStyles = `
 }
 
 .copy-btn:hover {
-    background: var(--color-primary-dark);
+    background: #1d4ed8;
     transform: translateY(-1px);
 }
 
@@ -219,7 +223,7 @@ export const implementationStyles = `
     display: flex;
     gap: 0.5rem;
     margin-bottom: 1.5rem;
-    border-bottom: 1px solid var(--color-border-light);
+    border-bottom: 1px solid #ddd;
 }
 
 .tab-btn {
@@ -228,12 +232,12 @@ export const implementationStyles = `
     padding: 0.75rem 1.5rem;
     cursor: pointer;
     border-radius: 8px 8px 0 0;
-    color: var(--color-text-secondary);
+    color: #666;
     transition: all 0.3s ease;
 }
 
 .tab-btn.active {
-    background: var(--color-accent);
+    background: #337ab7;
     color: white;
 }
 
@@ -258,7 +262,7 @@ export const implementationStyles = `
 }
 
 .step-number {
-    background: var(--color-accent);
+    background: #337ab7;
     color: white;
     border-radius: 50%;
     width: 2rem;
@@ -272,7 +276,7 @@ export const implementationStyles = `
 
 .step-content h4 {
     margin: 0 0 0.5rem 0;
-    color: var(--color-text-primary);
+    color: #333;
 }
 
 .practices-grid {
@@ -282,8 +286,8 @@ export const implementationStyles = `
 }
 
 .practice-card {
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border-light);
+    background: #f9f9f9;
+    border: 1px solid #ddd;
     border-radius: 12px;
     padding: 1.5rem;
     transition: all 0.3s ease;

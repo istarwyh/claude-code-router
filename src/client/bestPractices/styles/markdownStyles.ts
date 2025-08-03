@@ -121,24 +121,35 @@ export const markdownStyles = `
   border: 1px solid #e2e8f0;
 }
 
-.markdown-content pre {
+/* 代码块样式 - 匹配 SafeMarkdownRenderer 生成的结构 */
+.markdown-content .code-block {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   padding: 16px;
   margin: 20px 0;
   overflow-x: auto;
+  position: relative;
+}
+
+.markdown-content .code-block pre {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
   font-size: 0.875rem;
   line-height: 1.5;
 }
 
-.markdown-content pre code {
+.markdown-content .code-block pre code {
   background: none;
   color: #334155;
   padding: 0;
   border: none;
   border-radius: 0;
+  display: block;
+  white-space: pre;
 }
 
 /* 骨架屏加载动画 */
@@ -298,21 +309,8 @@ export const markdownStyles = `
   to { transform: scale(1); }
 }
 
-/* 代码块增强 */
-.markdown-content pre {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 16px;
-  margin: 20px 0;
-  overflow-x: auto;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  position: relative;
-}
-
-.markdown-content pre:hover .copy-button {
+/* 复制按钮样式 - 适配新的代码块结构 */
+.markdown-content .code-block:hover .copy-button {
   opacity: 1;
 }
 
@@ -328,6 +326,7 @@ export const markdownStyles = `
   cursor: pointer;
   opacity: 0;
   transition: all 0.3s ease;
+  z-index: 1;
 }
 
 .copy-button:hover {

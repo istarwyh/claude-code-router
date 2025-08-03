@@ -13,7 +13,8 @@ export class ArticleService extends BaseContentService<PracticeCard> {
         'core-workflow': async () => (await import('../content/core-workflow.md')).default,
         'context-management': async () => (await import('../content/context-management.md')).default,
         'automation-batch': async () => (await import('../content/automation-batch.md')).default,
-        'concurrent-claude': async () => (await import('../content/concurrent-claude.md')).default
+        'concurrent-claude': async () => (await import('../content/concurrent-claude.md')).default,
+        'intelligent-undo': async () => (await import('../content/intelligent-undo.md')).default
       };
 
       const contentLoader = contentMap[cardId];
@@ -44,7 +45,8 @@ export class ArticleService extends BaseContentService<PracticeCard> {
       'core-workflow': '核心工作流程',
       'context-management': '上下文管理',
       'automation-batch': '自动化与批处理',
-      'concurrent-claude': '多 Claude 并发干活'
+      'concurrent-claude': '多 Claude 并发干活',
+      'intelligent-undo': '智能撤销工具'
     };
 
     return titles[cardId] || cardId;
