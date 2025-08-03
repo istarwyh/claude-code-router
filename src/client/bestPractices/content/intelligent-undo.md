@@ -158,27 +158,28 @@ ccundo redo  # 恢复方案 A
 ### 5.1 与 Git 的协作
 
 **最佳实践**：
-```bash
-# 1. Git 管理大的里程碑
+
+```sh
+##1. Git 管理大的里程碑
 git commit -m "feature: user authentication complete"
 
-# 2. ccundo 管理细粒度实验
+##2. ccundo 管理细粒度实验
 # 在 commit 之间的多次尝试用 ccundo 管理
 
-# 3. 重要节点双重保护
+##3. 重要节点双重保护,然后放心让 CC 大胆重构
 git commit -m "checkpoint: before major refactor"
-# 然后放心让 Claude 大胆重构
 ```
+
 
 ### 5.2 多语言团队支持
 
 ccundo 支持多语言界面：
 
 ```bash
-# 切换到中文界面
+#切换到中文界面
 ccundo language zh
 
-# 查看支持的语言
+#查看支持的语言
 ccundo language
 ```
 
@@ -187,10 +188,10 @@ ccundo language
 **跨项目开发**：
 
 ```bash
-# 查看所有会话
+#查看所有会话
 ccundo sessions
 
-# 切换到特定项目的会话
+#切换到特定项目的会话
 ccundo session <session-id>
 ```
 
@@ -214,19 +215,20 @@ git commit -m "checkpoint: before auth API refactor"
 3. **检查修改**
 ```bash
 ccundo list
-# 显示：5个文件被修改，2个新文件被创建
+#显示：5个文件被修改，2个新文件被创建
 ```
 
 4. **发现问题后精确回退**
 ```bash
 ccundo preview
-# 查看具体会被撤销的内容
+#查看具体会被撤销的内容
 
 ccundo undo
-# 一键恢复到重构前状态
+#一键恢复到重构前状态
 ```
 
 5. **调整策略后重新实施**
+
 ```bash
 "请采用更保守的方式重构，一次只重构一个模块"
 ```
@@ -236,22 +238,18 @@ ccundo undo
 **背景**：尝试多种性能优化方案
 
 ```bash
-# 方案1：数据库查询优化
+#case1：数据库查询优化
 "优化用户查询，添加索引和缓存"
 ccundo list  # 记录操作ID: opt_v1
 
-# 测试性能，不理想，尝试方案2
+#测试性能，不理想，尝试方案2
+
 ccundo undo
 
-# 方案2：算法优化  
+#case2：算法优化  
 "重写排序算法，使用更高效的实现"
-ccundo list  # 记录操作ID: opt_v2
 
-# 测试性能，很好，但想比较具体差异
-ccundo undo
-ccundo redo opt_v1  # 恢复方案1测试
-ccundo undo  
-ccundo redo opt_v2  # 最终选择方案2
+ccundo list  # 记录操作ID: opt_v2
 ```
 
 ## 7. 最佳实践总结
@@ -260,20 +258,20 @@ ccundo redo opt_v2  # 最终选择方案2
 
 1. **定期检查操作历史**
 ```bash
-# 每次大的开发阶段后
+#每次大的开发阶段后
 ccundo list
 ```
 
 2. **预览先于执行**
 ```bash
-# 永远先预览再撤销
+#永远先预览再撤销
 ccundo preview
 ccundo undo
 ```
 
 3. **合理使用 Git 检查点**
 ```bash
-# 重要节点用 Git，细节调整用 ccundo
+#重要节点用 Git，细节调整用 ccundo
 git commit -m "milestone: core feature complete"
 ```
 
@@ -294,7 +292,7 @@ git commit -m "milestone: core feature complete"
 ### 8.1 自动化集成
 
 ```bash
-# 在 package.json 中添加脚本
+#在 package.json 中添加脚本
 {
   "scripts": {
     "safe-experiment": "git commit -m 'checkpoint' && echo 'Ready for experiment'",
@@ -307,7 +305,7 @@ git commit -m "milestone: core feature complete"
 ### 8.2 CI/CD 集成
 
 ```bash
-# 在 CI 流程中使用 ccundo 做快速回退
+#在 CI 流程中使用 ccundo 做快速回退
 if [ "$TEST_FAILED" = "true" ]; then
   ccundo undo --yes
   echo "Reverted changes due to test failure"
@@ -319,33 +317,35 @@ fi
 ### 9.1 常见问题
 
 **Q: ccundo 找不到会话文件**
+
 ```bash
-# 确保在正确的项目目录下
+#确保在正确的项目目录下
 cd /path/to/your/project
 ccundo list
 ```
 
 **Q: 撤销操作失败**
+
 ```bash
-# 检查文件权限
+#检查文件权限
 ls -la ~/.ccundo/
-# 手动清理损坏的状态
+#手动清理损坏的状态
 rm ~/.ccundo/undone-operations.json
 ```
 
 **Q: 操作记录太多**
 ```bash
-# 清理旧的操作记录
+#清理旧的操作记录
 ccundo clean --older-than 7d
 ```
 
 ### 9.2 备份恢复
 
 ```bash
-# 查看备份位置
+#查看备份位置
 ls ~/.ccundo/backups/
 
-# 手动恢复特定备份
+#手动恢复特定备份
 cp ~/.ccundo/backups/toolu_xxx-current /path/to/original/file
 ```
 
