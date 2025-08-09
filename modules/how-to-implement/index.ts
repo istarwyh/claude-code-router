@@ -14,8 +14,8 @@ export const implementationModule = `
     <!-- 文章内容将根据导航动态加载 -->
   </div>
 </section>
+`;
 
-<script>
 var HowToImplementApp = (() => {
   var __create = Object.create;
   var __defProp = Object.defineProperty;
@@ -1708,5 +1708,3 @@ var HowToImplementApp = (() => {
   }
   return __toCommonJS(howToImplement_exports);
 })();
-
-</script>`;

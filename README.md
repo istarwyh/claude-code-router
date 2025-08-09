@@ -172,18 +172,34 @@ curl -X POST https://cc.xiaohui.cool/v1/messages \
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### File Structure
+### File Structure & Frontend Architecture
 ```
 claude-code-router/
 ├── 📁 src/
-│   ├── 📁 client/              # Frontend & documentation system
-│   │   └── 📁 bestPractices/    # Markdown-based docs with TypeScript
+│   ├── 📁 client/              # Frontend & documentation system (TypeScript source)
+│   │   ├── 📁 bestPractices/    # Best practices module (development source)
+│   │   │   ├── 📁 core/          # Manager & business logic
+│   │   │   ├── 📁 data/          # Card data & configuration
+│   │   │   ├── 📁 renderers/     # UI rendering components
+│   │   │   ├── 📁 services/      # Content & markdown services
+│   │   │   └── 📁 index.ts       # Module entry point
+│   │   └── 📁 howToImplement/   # Implementation guide module (development source)
+│   │       ├── 📁 core/          # HowToImplementManager
+│   │       ├── 📁 data/          # Card data & configuration
+│   │       ├── 📁 handlers/      # Event handling
+│   │       ├── 📁 renderers/     # UI rendering components
+│   │       ├── 📁 services/      # Content services
+│   │       └── 📁 index.ts       # Module entry point
 │   └── 📁 server/              # Worker runtime logic
+├── 📁 modules/                 # Static HTML templates + compiled JavaScript
+│   ├── 📁 best-practices/      # HTML template + bundled client code
+│   ├── 📁 how-to-implement/    # HTML template + bundled client code
+│   └── 📁 get-started/         # Static module components
 ├── 📁 shared/                  # Cross-platform utilities
-│   ├── 📁 components/          # Reusable UI components
+│   ├── 📁 scripts/             # Generated bundles for runtime
+│   │   └── 📁 generated/        # Auto-generated from src/client/*
 │   └── 📁 utils/               # Helper functions
-├── 📁 modules/                 # Static HTML templates
-├── 📁 scripts/                 # Build automation
+├── 📁 scripts/                 # Build automation & bundling
 ├── 🔧 index.ts                 # Worker entry point (fetch handler)
 ├── 🔧 formatRequest.ts         # Anthropic → OpenAI transformer
 ├── 🔧 formatResponse.ts        # OpenAI → Anthropic transformer
@@ -191,6 +207,37 @@ claude-code-router/
 ├── 🔧 types.ts                 # TypeScript definitions
 └── ⚙️ wrangler.toml            # Worker configuration & bindings
 ```
+
+### Frontend Build Architecture
+The project uses a **dual-layer frontend architecture**:
+
+#### Development Layer (`src/client/`)
+- **Purpose**: Modern TypeScript development with full module structure
+- **Architecture**: Modular design (core, data, handlers, renderers, services)
+- **Benefits**: Type safety, code organization, maintainability
+- **Build Target**: Gets compiled and bundled by `scripts/build-client.js`
+
+#### Runtime Layer (`modules/`)  
+- **Purpose**: Production-ready HTML templates + compiled JavaScript
+- **Architecture**: Static HTML containers + bundled client code
+- **Benefits**: Single-file deployment, optimized for Cloudflare Workers
+- **Source**: Generated from development layer through build process
+
+#### Build Process Flow
+```mermaid
+graph LR
+    A[src/client/*/index.ts] -->|esbuild| B[Bundled JavaScript]
+    B -->|Inject| C[modules/*/index.ts]
+    C -->|Runtime| D[HTML + JS Module]
+    E[scripts/build-client.js] -->|Orchestrates| A
+    
+    style A fill:#e3f2fd
+    style B fill:#fff3e0  
+    style C fill:#e8f5e8
+    style D fill:#fce4ec
+```
+
+This approach ensures **clean separation** between development complexity and runtime efficiency.
 
 ### Key Design Principles
 - **🌐 Edge-First**: Optimized for Cloudflare's global network

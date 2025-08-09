@@ -20,6 +20,7 @@ export const getStartedModule = `
                 <a href="javascript:void(0)" class="badge" data-provider="siliconflow" onclick="scrollToProvider('siliconflow')">SiliconFlow</a>
                 <a href="javascript:void(0)" class="badge" data-provider="qwen3-coder" onclick="scrollToProvider('qwen3-coder')">Qwen3-Coder</a>
                 <a href="javascript:void(0)" class="badge" data-provider="aicodewith" onclick="scrollToProvider('aicodewith')">AICodeWith</a>
+                <a href="javascript:void(0)" class="badge" data-provider="claude-code" onclick="scrollToProvider('claude-code')">Claude-Code</a>
             </div>
         </div>
     </div>
@@ -177,6 +178,28 @@ var ProviderDetailsApp = (() => {
           "ANTHROPIC_BASE_URL": "https://api.aicodewith.com"
         },
         notes: "\u{1F381} Get 2000 free credits (~10 conversations) upon registration"
+      }
+    },
+    {
+      id: "claude-code",
+      name: "Claude-Code",
+      displayName: "Claude-Code",
+      icon: "CC",
+      color: "linear-gradient(45deg, #FF6B35, #F7931E)",
+      description: "Professional Claude Code API service with stable access and excellent performance. Get 4000 free credits (~20 conversations) upon registration!",
+      isDirectlyUsable: true,
+      proxyUrl: "https://api.claude-code.top/api/claudecode",
+      originalUrl: "https://api.claude-code.top",
+      aliasCommand: 'alias cc-cc="ANTHROPIC_AUTH_TOKEN=xxx ANTHROPIC_API_KEY=xxx ANTHROPIC_BASE_URL=https://api.claude-code.top/api/claudecode claude --dangerously-skip-permissions"',
+      apiKeyUrl: "https://www.claude-code.top/register?inviteCode=5GTISY",
+      features: ["4000 free credits", "Professional service", "Stable access", "Premium experience"],
+      specialConfig: {
+        envVars: {
+          "ANTHROPIC_AUTH_TOKEN": "xxx",
+          "ANTHROPIC_API_KEY": "xxx",
+          "ANTHROPIC_BASE_URL": "https://api.claude-code.top/api/claudecode"
+        },
+        notes: "\u{1F381} Get 4000 free credits (~20 conversations) upon registration with invitation code <strong>5GTISY</strong>"
       }
     },
     {
