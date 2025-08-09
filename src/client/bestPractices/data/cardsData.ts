@@ -128,5 +128,27 @@ export const bestPracticesCards: PracticeCard[] = [
     tips: [{ type: 'expert', title: '专家级技巧', content: '合理的多实例使用可以将开发效率提升 3-5 倍' }],
     lastUpdated: '2024-07-23',
     version: '1.0.0'
+  },
+  {
+    id: 'intelligent-undo',
+    title: '智能撤销工具',
+    description: '基于 ccundo 工具的智能撤销管理，精确回退和恢复 Claude Code 操作',
+    category: 'tools',
+    difficulty: 'intermediate',
+    readTime: '22 分钟',
+    tags: ['ccundo', 'undo', 'safety', 'backup', 'recovery'],
+    overview: '掌握 ccundo 智能撤销工具，为 Claude Code 开发提供精确的操作回退和恢复能力，让快速迭代更加安全。',
+    sections: [
+      { title: '为什么需要智能撤销', content: 'AI 开发面临的新挑战和 ccundo 的价值', type: 'text' },
+      { title: '核心功能详解', content: '精确操作追踪、智能预览、级联撤销机制', type: 'list' },
+      { title: '实战应用场景', content: '特性开发实验、重构试验、多版本方案比较', type: 'code' },
+      { title: '高级技巧和最佳实践', content: '与 Git 协作、团队使用、自动化集成', type: 'text' }
+    ],
+    tips: [
+      { type: 'success', title: '安全保障', content: '有了可靠的撤销机制，可以更大胆地尝试复杂重构和实验性功能' },
+      { type: 'tip', title: '级联安全', content: 'ccundo 的级联撤销机制确保项目状态始终保持一致性' }
+    ],
+    lastUpdated: '2024-08-03',
+    version: '1.0.0'
   }
 ];

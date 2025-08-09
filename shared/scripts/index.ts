@@ -2,6 +2,7 @@ import { sidebarScript } from './sidebar';
 import { navigationScript } from './navigation';
 import { codeExamplesScript } from './codeExamples';
 import { bestPracticesClientScript } from './generated/bestPracticesBundle';
+import { howToImplementClientScript } from './generated/howToImplementBundle';
 import { providerScripts } from './providers';
 
 export const allScripts = `
@@ -10,4 +11,5 @@ ${sidebarScript}
 ${navigationScript}
 ${codeExamplesScript}
 ${bestPracticesClientScript}
+${howToImplementClientScript}
 `;

@@ -1,8 +1,8 @@
 import { BaseCardRenderer } from '../../shared/renderers/BaseCardRenderer';
-import type { PracticeCard } from '../types/PracticeCard';
+import type { ImplementCard } from '../../shared/types/ContentCard';
 import { categoryIcons } from '../data/categoryConfig';
 
-export class CardRenderer extends BaseCardRenderer<PracticeCard> {
+export class HowToImplementCardRenderer extends BaseCardRenderer<ImplementCard> {
   constructor() {
     super(categoryIcons);
   }

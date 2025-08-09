@@ -1,38 +1,35 @@
-import { ArticleService } from '../services/ArticleService';
-import { ArticleRenderer } from '../renderers/ArticleRenderer';
-import { MarkdownViewer } from '../../../../shared/components/markdownViewer';
+import { ArticleRenderer } from '../../bestPractices/renderers/ArticleRenderer';
+import { HowToImplementService } from '../services/HowToImplementService';
+import { MarkdownParser } from '../../bestPractices/services/MarkdownParser';
 import { SafeMarkdownRenderer } from '../../../../shared/utils/markdownRenderer';
-import { injectMarkdownStyles } from '../styles/markdownStyles';
+import { injectMarkdownStyles } from '../../bestPractices/styles/markdownStyles';
 
-export class EventHandler {
+export class HowToImplementEventHandler {
   private containerId: string;
   private boundClickHandler: (e: Event) => void;
-  private articleService: ArticleService;
+  private contentService: HowToImplementService;
   private articleRenderer: ArticleRenderer;
 
-  constructor(containerId: string) {
+  constructor(
+    containerId: string,
+    contentService: HowToImplementService,
+    articleRenderer: ArticleRenderer
+  ) {
     this.containerId = containerId;
     this.boundClickHandler = this.handleCardClick.bind(this);
-    const markdownParser = new SafeMarkdownRenderer();
-    this.articleService = new ArticleService(markdownParser);
-    this.articleRenderer = new ArticleRenderer();
+    this.contentService = contentService;
+    this.articleRenderer = articleRenderer;
   }
 
   public bindEventListeners(): void {
-    console.log('开始绑定事件监听器');
-    
     const container = document.getElementById(this.containerId);
     if (!container) {
       console.error(`未找到容器元素: ${this.containerId}`);
       return;
     }
     
-    console.log('找到容器元素:', container);
-    
     this.removeExistingListeners(container);
     this.addEventListeners(container);
-    
-    console.log('事件委托绑定完成');
   }
 
   private removeExistingListeners(container: HTMLElement): void {
@@ -40,40 +37,24 @@ export class EventHandler {
   }
 
   private addEventListeners(container: HTMLElement): void {
-    // 添加事件委托监听器
     container.addEventListener('click', this.boundClickHandler);
-    
-    // 添加通用点击监听器用于调试  
-    container.addEventListener('click', function(e) {
-      console.log('容器收到点击事件:', {
-        target: e.target,
-        targetClass: (e.target as HTMLElement).className,
-        targetTag: (e.target as HTMLElement).tagName
-      });
-    }, true);
   }
 
   private handleCardClick(e: Event): void {
     const event = e as MouseEvent;
     const target = event.target as HTMLElement;
     
-    console.log('handleCardClick被调用:', target);
-    
     // 检查当前是否在文章详情页面
     const isInArticleView = document.querySelector('.practice-article');
     if (isInArticleView) {
-      console.log('当前在文章详情页面，忽略点击事件');
       return;
     }
     
     // 查找按钮元素
     const button = target.closest('.overview-card__action-btn') as HTMLElement;
     if (!button) {
-      console.log('点击的不是操作按钮');
       return;
     }
-    
-    console.log('找到操作按钮:', button);
     
     const cardId = button.getAttribute('data-card-id');
     if (!cardId) {
@@ -81,7 +62,6 @@ export class EventHandler {
       return;
     }
     
-    console.log('准备显示详细内容:', cardId);
     this.showDetailedContent(cardId);
   }
 
@@ -100,24 +80,21 @@ export class EventHandler {
       container.innerHTML = this.articleRenderer.renderLoadingState();
       
       // 获取文章内容
-      const article = await this.articleService.getArticle(cardId);
+      const article = await this.contentService.getArticle(cardId);
       
-      // 渲染文章的 HTML 结构（不包含内容）
+      // 渲染文章的 HTML 结构
       const articleHtml = this.articleRenderer.renderArticle(article.title, article.content);
       container.innerHTML = articleHtml;
       
-      // 使用 MarkdownViewer 渲染 Markdown 内容
+      // 使用 SafeMarkdownRenderer 渲染 Markdown 内容
       const markdownContainer = document.getElementById('markdown-content-container');
       if (markdownContainer) {
-        // 创建一个临时的 SafeMarkdownRenderer 实例
         const renderer = new SafeMarkdownRenderer();
-        console.log('About to render raw markdown with SafeMarkdownRenderer');
         const renderedHtml = renderer.render(article.rawMarkdown);
         
-        // 渲染并应用样式
         markdownContainer.innerHTML = `<div class="markdown-content">${renderedHtml}</div>`;
         
-        // 应用代码高亮和 Mermaid 渲染
+        // 应用代码高亮
         renderer.highlightCode(markdownContainer);
         
         // 添加增强功能
@@ -126,29 +103,23 @@ export class EventHandler {
       
       // 暴露返回函数到全局作用域
       (window as any).showOverviewCards = () => {
-        // 重新初始化概览卡片
-        (window as any).initializeBestPractices();
+        // 重新初始化 How to Implement 概览卡片
+        (window as any).initializeHowToImplement();
       };
       
     } catch (error) {
-      console.error('加载文章失败:', error);
+      console.error('加载 How to Implement 文章失败:', error);
       const errorHtml = this.articleRenderer.renderErrorState(error.message);
       container.innerHTML = errorHtml;
     }
   }
 
-  /**
-   * 添加增强功能
-   */
   private addEnhancedFeatures(container: HTMLElement): void {
     this.addCopyButtonsToCodeBlocks(container);
     this.addReadingProgress();
     this.addBackToTopButton();
   }
 
-  /**
-   * 为代码块添加复制按钮
-   */
   private addCopyButtonsToCodeBlocks(container: HTMLElement): void {
     const codeBlocks = container.querySelectorAll('pre');
     codeBlocks.forEach((block) => {
@@ -162,9 +133,6 @@ export class EventHandler {
     });
   }
 
-  /**
-   * 复制代码块内容
-   */
   private copyCodeBlock(block: HTMLElement, button: HTMLElement): void {
     const code = block.querySelector('code');
     if (code) {
@@ -184,22 +152,16 @@ export class EventHandler {
     }
   }
 
-  /**
-   * 添加阅读进度条
-   */
   private addReadingProgress(): void {
-    // 移除已存在的进度条
     const existingProgress = document.querySelector('.reading-progress');
     if (existingProgress) {
       existingProgress.remove();
     }
 
-    // 创建新的进度条
     const progressBar = document.createElement('div');
     progressBar.className = 'reading-progress';
     document.body.appendChild(progressBar);
 
-    // 监听滚动事件
     const updateProgress = () => {
       const scrollTop = window.pageYOffset;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
@@ -208,20 +170,15 @@ export class EventHandler {
     };
 
     window.addEventListener('scroll', updateProgress);
-    updateProgress(); // 初始化
+    updateProgress();
   }
 
-  /**
-   * 添加返回顶部按钮
-   */
   private addBackToTopButton(): void {
-    // 移除已存在的按钮
     const existingButton = document.querySelector('.back-to-top');
     if (existingButton) {
       existingButton.remove();
     }
 
-    // 创建返回顶部按钮
     const backToTopButton = document.createElement('button');
     backToTopButton.className = 'back-to-top';
     backToTopButton.innerHTML = '↑';
@@ -230,7 +187,6 @@ export class EventHandler {
     };
     document.body.appendChild(backToTopButton);
 
-    // 监听滚动显示/隐藏按钮
     const toggleBackToTop = () => {
       if (window.pageYOffset > 300) {
         backToTopButton.classList.add('visible');
@@ -240,6 +196,6 @@ export class EventHandler {
     };
 
     window.addEventListener('scroll', toggleBackToTop);
-    toggleBackToTop(); // 初始化
+    toggleBackToTop();
   }
 }

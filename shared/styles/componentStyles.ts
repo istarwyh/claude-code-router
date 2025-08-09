@@ -1964,8 +1964,8 @@ export const componentStyles = `
 }
 
 .code-block {
-    background: var(--color-text-primary);
-    color: var(--color-text-inverse);
+    background: #f8fafc;
+    color: #334155;
     padding: var(--space-4);
     border-radius: var(--radius-lg);
     font-family: var(--font-family-mono);
@@ -1973,7 +1973,7 @@ export const componentStyles = `
     overflow-x: auto;
     font-size: var(--font-size-sm);
     position: relative;
-    border: 1px solid var(--color-border-medium);
+    border: 1px solid #e2e8f0;
 }
 
 .code-block::before {
@@ -1983,7 +1983,7 @@ export const componentStyles = `
     left: 0;
     right: 0;
     height: 100%;
-    background: linear-gradient(90deg, transparent 0%, rgba(59, 130, 246, 0.1) 50%, transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, rgba(59, 130, 246, 0.02) 50%, transparent 100%);
     pointer-events: none;
 }
 
