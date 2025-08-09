@@ -275,10 +275,16 @@ ${scriptContent}
     
     let howToImplementContent = fs.readFileSync(howToImplementFile, 'utf8');
     
-    // 替换占位符
+    // 检查是否需要注入脚本
     if (!howToImplementContent.includes('// HOW_TO_IMPLEMENT_SCRIPT_PLACEHOLDER')) {
-      console.warn('⚠️ How to Implement 模块中未找到脚本占位符');
-      return;
+      // 检查是否已经注入过脚本
+      if (howToImplementContent.includes('var HowToImplementApp = (() => {')) {
+        console.log('✅ How to Implement 脚本已存在，跳过注入');
+        return;
+      } else {
+        console.warn('⚠️ How to Implement 模块中未找到脚本占位符，且没有已注入的脚本');
+        return;
+      }
     }
     
     howToImplementContent = howToImplementContent.replace(
