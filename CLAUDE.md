@@ -117,6 +117,7 @@ This project implements a **dual-layer frontend architecture** that separates de
 - ❌ 为了"快速实现"而牺牲代码质量和架构一致性
 
 ## 质量标准
+- ✅ npm run build:client 通过
 - ✅ 保持现有的TypeScript类型安全
 - ✅ 遵循现有的命名约定和代码风格
 - ✅ 维护现有的模块化结构
