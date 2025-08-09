@@ -260,6 +260,12 @@ async function injectHowToImplementScript() {
     // 解析脚本内容
     const scriptContent = JSON.parse(`"${scriptMatch[1]}"`);
     
+    // 将脚本内容包装在注释块中，避免语法冲突
+    const wrappedScript = `
+/*
+${scriptContent}
+*/`;
+    
     // 读取 how-to-implement 模块文件
     const howToImplementFile = path.resolve(__dirname, '../modules/how-to-implement/index.ts');
     
@@ -277,7 +283,7 @@ async function injectHowToImplementScript() {
     
     howToImplementContent = howToImplementContent.replace(
       '// HOW_TO_IMPLEMENT_SCRIPT_PLACEHOLDER',
-      scriptContent
+      wrappedScript
     );
     
     // 写回文件
