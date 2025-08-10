@@ -19,9 +19,13 @@ function getStatusBadge(isDirectlyUsable: boolean, providerId: string): string {
   const specialBadge = providerId === 'anyrouter' ? 
     '<span class="bonus-badge">🎁 $100</span>' : '';
   
-    const specialAiCodeWithBadge = providerId === 'aicodewith' ? 
+  const specialAiCodeWithBadge = providerId === 'aicodewith' ? 
     '<span class="bonus-badge">🎁 2000 Free Credits</span>' : '';
-  return `${statusBadge}${specialBadge}${specialAiCodeWithBadge}`;
+    
+  const specialClaudeCodeBadge = providerId === 'claude-code' ? 
+    '<span class="bonus-badge">🎁 4000 积分</span>' : '';
+    
+  return `${statusBadge}${specialBadge}${specialAiCodeWithBadge}${specialClaudeCodeBadge}`;
 }
 
 // 工具函数：获取provider颜色（优先使用自定义颜色，否则自动生成）

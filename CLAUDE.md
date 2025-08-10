@@ -50,6 +50,42 @@ This is a Cloudflare Worker that acts as a **transparent proxy service** between
 
 The worker includes static HTML pages for the homepage (`indexHtml.ts`), terms (`termsHtml.ts`), and privacy policy (`privacyHtml.ts`).
 
+### Frontend Architecture & Build System
+
+This project implements a **dual-layer frontend architecture** that separates development and runtime concerns:
+
+#### Development Layer (`src/client/`)
+- **Location**: `src/client/[moduleName]/`
+- **Purpose**: Modern TypeScript development environment with full modular architecture
+- **Structure**: Each module follows a consistent pattern:
+  ```
+  src/client/[moduleName]/
+  ├── core/           # Business logic managers (e.g., BestPracticesManager)
+  ├── data/           # Static data and configuration (cardsData, categoryConfig)
+  ├── handlers/       # Event handling logic
+  ├── renderers/      # UI rendering components
+  ├── services/       # Data services and API layers
+  └── index.ts        # Module initialization entry point
+  ```
+- **Benefits**: Type safety, code organization, maintainability, testing support
+
+#### Runtime Layer (`modules/`)
+- **Location**: `modules/[module-name]/`
+- **Purpose**: Production-ready HTML templates with embedded compiled JavaScript
+- **Structure**: Static HTML containers + bundled client code
+- **Benefits**: Single-file deployment, optimized for Cloudflare Workers edge execution
+
+#### Build Process
+1. **Source Compilation**: `src/client/[moduleName]/index.ts` → bundled JavaScript via esbuild
+2. **Code Injection**: Build script (`scripts/build-client.js`) injects compiled code into `modules/[module-name]/index.ts`
+3. **Runtime Execution**: Final modules contain both HTML structure and embedded logic
+
+#### File Relationship Examples
+- `src/client/howToImplement/index.ts` ← **Development source**
+- `modules/how-to-implement/index.ts` ← **Runtime module** (HTML + bundled JS)
+
+**Key Principle**: These files are **complementary, not duplicates**. The src/ version is the development source, while the modules/ version is the production artifact.
+
 # 开发指导原则
 
 ## 核心要求
@@ -81,6 +117,7 @@ The worker includes static HTML pages for the homepage (`indexHtml.ts`), terms (
 - ❌ 为了"快速实现"而牺牲代码质量和架构一致性
 
 ## 质量标准
+- ✅ npm run build:client 通过
 - ✅ 保持现有的TypeScript类型安全
 - ✅ 遵循现有的命名约定和代码风格
 - ✅ 维护现有的模块化结构

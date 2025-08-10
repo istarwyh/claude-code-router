@@ -139,6 +139,28 @@ export const providers: Provider[] = [
     }
   },
   {
+    id: 'claude-code',
+    name: 'Claude-Code',
+    displayName: 'Claude-Code',
+    icon: 'CC',
+    color: 'linear-gradient(45deg, #FF6B35, #F7931E)',
+    description: 'Professional Claude Code API service with stable access and excellent performance. Get 4000 free credits (~20 conversations) upon registration!',
+    isDirectlyUsable: true,
+    proxyUrl: 'https://api.claude-code.top/api/claudecode',
+    originalUrl: 'https://api.claude-code.top',
+    aliasCommand: 'alias cc-cc="ANTHROPIC_AUTH_TOKEN=xxx ANTHROPIC_API_KEY=xxx ANTHROPIC_BASE_URL=https://api.claude-code.top/api/claudecode claude --dangerously-skip-permissions"',
+    apiKeyUrl: 'https://www.claude-code.top/register?inviteCode=5GTISY',
+    features: ['4000 free credits', 'Professional service', 'Stable access', 'Premium experience'],
+    specialConfig: {
+      envVars: {
+        'ANTHROPIC_AUTH_TOKEN': 'xxx',
+        'ANTHROPIC_API_KEY': 'xxx',
+        'ANTHROPIC_BASE_URL': 'https://api.claude-code.top/api/claudecode'
+      },
+      notes: '🎁 Get **6000** free credits (~30 conversations) upon registration with invitation code <strong>5GTISY</strong>, which gives you an additional **2000** credits. '
+    }
+  },
+  {
     id: 'openrouter',
     name: 'OpenRouter',
     displayName: 'OpenRouter',
