@@ -3,6 +3,7 @@
  * 目标：更完整的 Markdown 支持 + Mermaid + 语法高亮（highlight.js）
  */
 import MarkdownIt from 'markdown-it';
+import DOMPurify from 'isomorphic-dompurify';
 // 使用按需注册的 highlight.js，减少体积并避免运行时从 CDN 加载 JS
 import hljs from 'highlight.js/lib/core';
 import javascript from 'highlight.js/lib/languages/javascript';
@@ -68,7 +69,7 @@ export class SafeMarkdownRenderer {
 
         // 初始化 markdown-it
         this.md = new MarkdownIt({
-            html: true,      // 当前阶段不做 XSS 严格限制
+            html: false,     // 禁用 HTML 以防止 XSS 攻击
             linkify: true,
             breaks: true,
             // 使用 highlight.js 在渲染阶段生成高亮后的 HTML
@@ -81,7 +82,9 @@ export class SafeMarkdownRenderer {
                             ignoreIllegals: true,
                         });
                         return `<pre class="code-block"><code class="hljs language-${language}">${value}</code></pre>`;
-                    } catch {}
+                    } catch (e) {
+                        console.error(`Error highlighting code block with language ${language}:`, e);
+                    }
                 }
                 // 未知语言或异常：转义原文，保留基本结构
                 const escaped = this.escapeHtml(str);
@@ -123,7 +126,19 @@ export class SafeMarkdownRenderer {
         }
         // 使用 markdown-it 渲染（内部已处理代码块与 mermaid 占位）
         const html = this.md.render(markdown);
-        return html;
+        
+        // 使用 DOMPurify 进行 HTML 安全清理
+        const sanitizedHtml = DOMPurify.sanitize(html, {
+            ALLOWED_TAGS: [
+                'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+                'p', 'br', 'strong', 'em', 'code', 'pre',
+                'ul', 'ol', 'li', 'a', 'blockquote', 'div'
+            ],
+            ALLOWED_ATTR: ['class', 'id', 'href', 'target', 'rel'],
+            ALLOW_DATA_ATTR: false
+        });
+        
+        return sanitizedHtml;
     }
 
     /**
@@ -393,15 +408,20 @@ export class SafeMarkdownRenderer {
     }
 
     /**
-     * 确保注入 highlight.js 主题样式
+     * 确保高亮样式已加载（已移除 CDN 依赖）
      */
     private ensureHighlightCss(): void {
-        if (!document.getElementById('hljs-style')) {
-            const link = document.createElement('link');
-            link.id = 'hljs-style';
-            link.rel = 'stylesheet';
-            link.href = 'https://cdn.jsdelivr.net/npm/highlight.js@11/styles/github.min.css';
-            document.head.appendChild(link);
+        // 注意：highlight.js 的 CSS 应该在构建时打包到项目中，而不是动态从 CDN 加载
+        // 建议在项目的 CSS 入口文件中导入：
+        // @import 'highlight.js/styles/github.css';
+        // 或者在构建配置中包含相关样式文件
+        
+        if (!document.getElementById('hljs-style-note')) {
+            // 添加一个占位符提醒开发者需要包含样式
+            const note = document.createElement('style');
+            note.id = 'hljs-style-note';
+            note.textContent = '/* highlight.js styles should be bundled locally */';
+            document.head.appendChild(note);
         }
     }
 
