@@ -4,6 +4,9 @@ import { MarkdownViewer } from '../../../../shared/components/markdownViewer';
 import { SafeMarkdownRenderer } from '../../../../shared/utils/markdownRenderer';
 import { injectMarkdownStyles } from '../styles/markdownStyles';
 
+// 动画时长常量
+const EXIT_ANIMATION_DURATION = 230; // 匹配 CSS 中的动画时长
+
 export class EventHandler {
   private containerId: string;
   private boundClickHandler: (e: Event) => void;
@@ -95,8 +98,7 @@ export class EventHandler {
       const grid = container.querySelector('.overview-cards-grid') as HTMLElement | null;
       if (grid) {
         grid.classList.add('is-exiting');
-        grid.style.pointerEvents = 'none';
-        await new Promise((resolve) => setTimeout(resolve, 230)); // 匹配 CSS 退出时长
+        await new Promise((resolve) => setTimeout(resolve, EXIT_ANIMATION_DURATION));
       }
 
       // 注入 Markdown 样式
@@ -143,7 +145,7 @@ export class EventHandler {
           setTimeout(() => {
             (window as any).initializeBestPractices();
             window.scrollTo({ top: 0, behavior: 'smooth' });
-          }, 230);
+          }, EXIT_ANIMATION_DURATION);
         } else {
           (window as any).initializeBestPractices();
         }

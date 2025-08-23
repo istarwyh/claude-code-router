@@ -40,22 +40,13 @@ export const bestPracticesOverviewCardStyles = `
     content-visibility: auto;
     contain: layout paint;
     will-change: transform;
-    /* 入场动画 */
+    /* 入场动画 - 使用动态延迟 */
     opacity: 0;
     animation: cardFadeInUp 0.35s ease forwards;
+    animation-delay: var(--card-index, 0s);
   }
 
-  /* 简单的级联延迟，营造瀑布流节奏感 */
-  .overview-card:nth-child(1) { animation-delay: 0.02s; }
-  .overview-card:nth-child(2) { animation-delay: 0.04s; }
-  .overview-card:nth-child(3) { animation-delay: 0.06s; }
-  .overview-card:nth-child(4) { animation-delay: 0.08s; }
-  .overview-card:nth-child(5) { animation-delay: 0.10s; }
-  .overview-card:nth-child(6) { animation-delay: 0.12s; }
-  .overview-card:nth-child(7) { animation-delay: 0.14s; }
-  .overview-card:nth-child(8) { animation-delay: 0.16s; }
-  .overview-card:nth-child(9) { animation-delay: 0.18s; }
-  .overview-card:nth-child(10) { animation-delay: 0.20s; }
+  /* 移除硬编码的 nth-child 延迟，现在使用 CSS 自定义属性 */
 
   /* 退出动画状态（切换到详情前） */
   .overview-cards-grid.is-exiting .overview-card {
