@@ -1,4 +1,4 @@
-export type Provider = 'openrouter' | 'deepseek' | 'openai' | 'kimi' | 'siliconflow' ;
+export type Provider = 'openrouter' | 'deepseek' | 'openai' ;
 
 export interface ModelMapping {
   [key: string]: string;
@@ -41,29 +41,5 @@ export const PROVIDER_CONFIGS = {
       'opus': 'gpt-4o',
     } as ModelMapping,
     commonModels: ['gpt-4o', 'gpt-4o-mini', 'gpt-3.5-turbo'],
-  },
-  kimi: {
-    defaultBaseUrl: 'https://api.moonshot.cn/v1',
-    modelMappings: {
-      'claude-3-5-haiku-20241022': 'moonshot-v1-8k',
-      'claude-3-5-sonnet-20241022': 'moonshot-v1-32k',
-      'claude-3-opus-20240229': 'moonshot-v1-128k',
-      'haiku': 'moonshot-v1-8k',
-      'sonnet': 'moonshot-v1-32k',
-      'opus': 'moonshot-v1-128k',
-    } as ModelMapping,
-    commonModels: ['moonshot-v1-8k', 'moonshot-v1-32k', 'moonshot-v1-128k'],
-  },
-  siliconflow: {
-    defaultBaseUrl: 'https://api.siliconflow.cn/v1',
-    modelMappings: {
-      'claude-3-5-haiku-20241022': 'deepseek-ai/deepseek-chat',
-      'claude-3-5-sonnet-20241022': 'deepseek-ai/deepseek-chat',
-      'claude-3-opus-20240229': 'deepseek-ai/deepseek-reasoner',
-      'haiku': 'deepseek-ai/deepseek-chat',
-      'sonnet': 'deepseek-ai/deepseek-chat',
-      'opus': 'deepseek-ai/deepseek-reasoner',
-    } as ModelMapping,
-    commonModels: ['deepseek-ai/deepseek-chat', 'deepseek-ai/deepseek-reasoner'],
   },
 } as const;

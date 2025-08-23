@@ -27,6 +27,31 @@ export const designTokens = `
     --color-border-medium: #cbd5e1;
     --color-border-dark: #94a3b8;
     
+    /* Best Practices Page Specific Colors - BEM命名规范 */
+    --color-practices-page-bg: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    --color-practices-text-primary: #0f172a;
+    --color-practices-text-secondary: #475569;
+    --color-practices-bg-primary: #ffffff;
+    --color-practices-bg-secondary: #f8fafc;
+    --color-practices-bg-hover: #f1f5f9;
+    --color-practices-border-color: #e2e8f0;
+    --color-practices-border-hover: #cbd5e1;
+    --color-practices-accent: #06b6d4;
+    --color-practices-primary: #2563eb;
+    --color-practices-secondary: #6366f1;
+    
+    /* 简化的CSS变量别名，用于最佳实践卡片 */
+    --bp-bg-primary: var(--color-practices-bg-primary);
+    --bp-bg-secondary: var(--color-practices-bg-secondary);
+    --bp-text-primary: var(--color-practices-text-primary);
+    --bp-text-secondary: var(--color-practices-text-secondary);
+    --bp-border-color: var(--color-practices-border-color);
+    --bp-border-hover: var(--color-practices-border-hover);
+    --bp-accent: var(--color-practices-accent);
+    --bp-primary: var(--color-practices-primary);
+    --bp-primary-dark: var(--color-primary-dark);
+    --bp-secondary: var(--color-practices-secondary);
+    
     /* Typography */
     --font-family-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     --font-family-mono: 'JetBrains Mono', 'SF Mono', Monaco, Inconsolata, 'Roboto Mono', Consolas, 'Courier New', monospace;

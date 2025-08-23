@@ -3,11 +3,22 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "build:client": "node scripts/build-client.js",
+    "dev": "npm run build:client && wrangler dev",
+    "deploy": "npm run build:client && wrangler deploy"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "description": "Universal Claude API Proxy for Multiple AI Providers"
+  "description": "Universal Claude API Proxy for Multiple AI Providers",
+  "devDependencies": {
+    "@types/markdown-it": "^14.1.2",
+    "esbuild": "^0.19.0",
+    "highlight.js": "^11.9.0",
+    "markdown-it": "^13.0.2",
+    "punycode": "^2.3.1"
+  },
+  "dependencies": {
+    "isomorphic-dompurify": "^2.26.0"
+  }
 }

@@ -5,7 +5,17 @@ routes = [
   { pattern = "cc.xiaohui.cool", custom_domain = true }
 ]
 
+# Build configuration for client scripts
+[build]
+command = "npm run build:client"
+watch_dir = "src/client"
+
 # Enable logging
 [observability]
 enabled = true
 head_sampling_rate = 1
+
+# Assets configuration for static files (disabled - using new modular system)
+# [assets]
+# directory = "./static"
+# binding = "ASSETS"
