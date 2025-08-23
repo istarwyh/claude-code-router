@@ -11,33 +11,72 @@ export const markdownStyles = `
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transform: translateY(8px);
+  animation: articleFadeInUp 0.28s ease forwards;
 }
 
 .practice-article__header {
-  margin-bottom: 24px;
-  padding-bottom: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: #ffffff;
+  margin: -20px -20px 24px -20px; /* extend sticky area full width of card */
+  padding: 12px 20px 12px 20px;
   border-bottom: 1px solid #e5e7eb;
+  backdrop-filter: saturate(1.1) blur(4px);
 }
 
 .practice-article__back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   background: #f3f4f6;
   border: 1px solid #d1d5db;
-  color: #374151;
-  padding: 8px 16px;
-  border-radius: 6px;
+  color: #111827;
+  padding: 8px 14px;
+  border-radius: 999px;
   cursor: pointer;
   font-size: 14px;
-  transition: all 0.2s ease;
+  line-height: 1;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.12s ease;
+  box-shadow: 0 1px 0 rgba(17, 24, 39, 0.03);
 }
 
 .practice-article__back-btn:hover {
   background: #e5e7eb;
   border-color: #9ca3af;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.practice-article__back-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.practice-article__back-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35);
 }
 
 .practice-article__content {
   line-height: 1.7;
   color: #374151;
+}
+
+/* 文章进入/退出动画 */
+@keyframes articleFadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes articleFadeOutDown {
+  to { opacity: 0; transform: translateY(8px); }
+}
+
+.practice-article.is-exiting {
+  animation: articleFadeOutDown 0.22s ease forwards;
 }
 
 /* Markdown 内容样式 */
@@ -445,6 +484,13 @@ export const markdownStyles = `
   .practice-article {
     margin: 10px;
     padding: 16px;
+  }
+  .practice-article__header {
+    margin: -16px -16px 20px -16px;
+    padding: 10px 16px;
+  }
+  .practice-article__back-btn {
+    padding: 10px 14px;
   }
   
   .markdown-content h1 {

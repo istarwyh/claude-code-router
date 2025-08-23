@@ -4,7 +4,7 @@ export const bestPracticesCards: PracticeCard[] = [
   {
     id: 'workflow-overview',
     title: '我现在的工作流',
-    imageUrl: 'https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202507201501277.png',
+    imageUrl: 'https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202508232133560.png',
     description: '基于 Claude Code 的完整开发工作流，从需求到部署的全流程最佳实践',
     category: 'workflow',
     tips: [{ type: 'success', title: '效率提升', content: '整个过程开发者只需要提出需求和Review，大大提升开发效率' }]
