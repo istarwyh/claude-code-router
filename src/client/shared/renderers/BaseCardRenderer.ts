@@ -28,44 +28,42 @@ export class BaseCardRenderer<T extends BaseContentCard> {
       : undefined;
 
     const sectionsHtml = this.renderSections(card.sections);
-    const tipsHtml = this.renderTips(card.tips);
-    const tagsHtml = this.renderTags(card.tags);
 
     const difficultyHtml = difficultyLabel
-      ? `<span class="overview-card__difficulty"${difficultyColor ? ` style=\"--difficulty-color: ${difficultyColor}\"` : ''}>
+      ? `<span class="overview-card__difficulty"${difficultyColor ? ` style="--difficulty-color: ${difficultyColor}"` : ''}>
               ${difficultyLabel}
             </span>`
       : '';
 
     const readTimeHtml = card.readTime
-      ? `<span class=\"overview-card__read-time\">📖 ${card.readTime}</span>`
+      ? `<span class="overview-card__read-time">📖 ${card.readTime}</span>`
       : '';
 
     const overviewHtml = card.overview
-      ? `<div class=\"overview-card__overview\">${card.overview}</div>`
+      ? `<div class="overview-card__overview">${card.overview}</div>`
       : '';
 
     const sectionsBlockHtml = sectionsHtml
-      ? `<div class=\"overview-card__sections\">
-            <h4 class=\"overview-card__sections-title\">主要内容：</h4>
-            <ul class=\"overview-card__sections-list\">
+      ? `<div class="overview-card__sections">
+            <h4 class="overview-card__sections-title">主要内容：</h4>
+            <ul class="overview-card__sections-list">
               ${sectionsHtml}
             </ul>
           </div>`
       : '';
 
     const descriptionHtml = card.description
-      ? `<p class=\"overview-card__description\">${card.description}</p>`
+      ? `<p class="overview-card__description">${card.description}</p>`
       : '';
 
     const versionHtml = card.version
-      ? `<span class=\"overview-card__version\">v${card.version}</span>`
+      ? `<span class="overview-card__version">v${card.version}</span>`
       : '';
     const updatedHtml = card.lastUpdated
-      ? `<span class=\"overview-card__updated\">更新于 ${card.lastUpdated}</span>`
+      ? `<span class="overview-card__updated">更新于 ${card.lastUpdated}</span>`
       : '';
     const metaInfoHtml = versionHtml || updatedHtml
-      ? `<div class=\"overview-card__meta-info\">${versionHtml}${updatedHtml}</div>`
+      ? `<div class="overview-card__meta-info">${versionHtml}${updatedHtml}</div>`
       : '';
 
     const coverHtml = card.imageUrl
@@ -91,9 +89,9 @@ export class BaseCardRenderer<T extends BaseContentCard> {
           ${overviewHtml}
           ${sectionsBlockHtml}
 
-          ${tipsHtml ? `<div class="overview-card__tips">${tipsHtml}</div>` : ''}
+          ${this.renderTipsBlock(card.tips)}
           
-          ${tagsHtml ? `<div class="overview-card__tags">${tagsHtml}</div>` : ''}
+          ${this.renderTagsBlock(card.tags)}
         </div>
         
         ${metaInfoHtml ? `<div class="overview-card__footer">${metaInfoHtml}</div>` : ''}
@@ -123,10 +121,20 @@ export class BaseCardRenderer<T extends BaseContentCard> {
     `).join('');
   }
 
+  protected renderTipsBlock(tips?: ContentTip[]): string {
+    const tipsHtml = this.renderTips(tips);
+    return tipsHtml ? `<div class="overview-card__tips">${tipsHtml}</div>` : '';
+  }
+
   protected renderTags(tags?: string[]): string {
     if (!tags || tags.length === 0) return '';
     return tags.map(tag => `
       <span class="overview-card__tag">${tag}</span>
     `).join('');
+  }
+
+  protected renderTagsBlock(tags?: string[]): string {
+    const tagsHtml = this.renderTags(tags);
+    return tagsHtml ? `<div class="overview-card__tags">${tagsHtml}</div>` : '';
   }
 }
