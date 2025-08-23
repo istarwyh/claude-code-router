@@ -20,13 +20,54 @@ export class BaseCardRenderer<T extends BaseContentCard> {
 
   public renderCard(card: T): string {
     const icon = this.categoryIcons[card.category] || '📋';
-    const difficultyColor = this.difficultyConfig.colors[card.difficulty];
-    const difficultyLabel = this.difficultyConfig.labels[card.difficulty];
-    
+    const difficultyColor = card.difficulty
+      ? this.difficultyConfig.colors[card.difficulty]
+      : undefined;
+    const difficultyLabel = card.difficulty
+      ? this.difficultyConfig.labels[card.difficulty]
+      : undefined;
+
     const sectionsHtml = this.renderSections(card.sections);
     const tipsHtml = this.renderTips(card.tips);
     const tagsHtml = this.renderTags(card.tags);
-    
+
+    const difficultyHtml = difficultyLabel
+      ? `<span class="overview-card__difficulty"${difficultyColor ? ` style=\"--difficulty-color: ${difficultyColor}\"` : ''}>
+              ${difficultyLabel}
+            </span>`
+      : '';
+
+    const readTimeHtml = card.readTime
+      ? `<span class=\"overview-card__read-time\">📖 ${card.readTime}</span>`
+      : '';
+
+    const overviewHtml = card.overview
+      ? `<div class=\"overview-card__overview\">${card.overview}</div>`
+      : '';
+
+    const sectionsBlockHtml = sectionsHtml
+      ? `<div class=\"overview-card__sections\">
+            <h4 class=\"overview-card__sections-title\">主要内容：</h4>
+            <ul class=\"overview-card__sections-list\">
+              ${sectionsHtml}
+            </ul>
+          </div>`
+      : '';
+
+    const descriptionHtml = card.description
+      ? `<p class=\"overview-card__description\">${card.description}</p>`
+      : '';
+
+    const versionHtml = card.version
+      ? `<span class=\"overview-card__version\">v${card.version}</span>`
+      : '';
+    const updatedHtml = card.lastUpdated
+      ? `<span class=\"overview-card__updated\">更新于 ${card.lastUpdated}</span>`
+      : '';
+    const metaInfoHtml = versionHtml || updatedHtml
+      ? `<div class=\"overview-card__meta-info\">${versionHtml}${updatedHtml}</div>`
+      : '';
+
     return `
       <div class="content-card overview-card" data-card-id="${card.id}">
         <div class="overview-card__header">
@@ -35,45 +76,33 @@ export class BaseCardRenderer<T extends BaseContentCard> {
             <h3 class="overview-card__title">${card.title}</h3>
           </div>
           <div class="overview-card__meta">
-            <span class="overview-card__difficulty" style="--difficulty-color: ${difficultyColor}">
-              ${difficultyLabel}
-            </span>
-            <span class="overview-card__read-time">📖 ${card.readTime}</span>
+            ${difficultyHtml}
+            ${readTimeHtml}
           </div>
         </div>
         
         <div class="overview-card__content">
-          <p class="overview-card__description">${card.description}</p>
-          <div class="overview-card__overview">${card.overview}</div>
-          
-          <div class="overview-card__sections">
-            <h4 class="overview-card__sections-title">主要内容：</h4>
-            <ul class="overview-card__sections-list">
-              ${sectionsHtml}
-            </ul>
-          </div>
+          ${descriptionHtml}
+          ${overviewHtml}
+          ${sectionsBlockHtml}
 
           ${tipsHtml ? `<div class="overview-card__tips">${tipsHtml}</div>` : ''}
           
-          <div class="overview-card__tags">
-            ${tagsHtml}
-          </div>
+          ${tagsHtml ? `<div class="overview-card__tags">${tagsHtml}</div>` : ''}
         </div>
         
         <div class="overview-card__footer">
           <button class="overview-card__action-btn" data-card-id="${card.id}">
             查看详细内容 →
           </button>
-          <div class="overview-card__meta-info">
-            <span class="overview-card__version">v${card.version}</span>
-            <span class="overview-card__updated">更新于 ${card.lastUpdated}</span>
-          </div>
+          ${metaInfoHtml}
         </div>
       </div>
     `;
   }
 
-  protected renderSections(sections: ContentSection[]): string {
+  protected renderSections(sections?: ContentSection[]): string {
+    if (!sections || sections.length === 0) return '';
     return sections.map(section => `
       <li class="overview-card__section-item">
         <span class="overview-card__section-title">${section.title}</span>
@@ -82,7 +111,7 @@ export class BaseCardRenderer<T extends BaseContentCard> {
     `).join('');
   }
 
-  protected renderTips(tips: ContentTip[]): string {
+  protected renderTips(tips?: ContentTip[]): string {
     if (!tips || tips.length === 0) return '';
     
     return tips.map(tip => `
@@ -93,7 +122,8 @@ export class BaseCardRenderer<T extends BaseContentCard> {
     `).join('');
   }
 
-  protected renderTags(tags: string[]): string {
+  protected renderTags(tags?: string[]): string {
+    if (!tags || tags.length === 0) return '';
     return tags.map(tag => `
       <span class="overview-card__tag">${tag}</span>
     `).join('');

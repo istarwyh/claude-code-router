@@ -2,16 +2,16 @@
 export interface BaseContentCard {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   category: string;
-  difficulty: 'beginner' | 'intermediate' | 'advanced' | 'expert';
-  readTime: string;
-  tags: string[];
-  overview: string;
-  sections: ContentSection[];
-  tips: ContentTip[];
-  lastUpdated: string;
-  version: string;
+  tags?: string[];
+  tips?: ContentTip[];
+  difficulty?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+  readTime?: string;
+  overview?: string;
+  sections?: ContentSection[];
+  lastUpdated?: string;
+  version?: string;
 }
 
 export interface ContentSection {

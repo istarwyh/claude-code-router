@@ -32,9 +32,9 @@ export class ArticleService extends BaseContentService<PracticeCard> {
   protected getDefaultContent(cardId: string): string {
     return `# ${this.getTitleFromCardId(cardId)}
 
-内容正在开发中...
+        内容正在开发中...
 
-请稍后查看完整内容。`;
+        请稍后查看完整内容。`;
   }
 
   protected getTitleFromCardId(cardId: string): string {
