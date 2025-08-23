@@ -2,6 +2,7 @@
 export interface BaseContentCard {
   id: string;
   title: string;
+  imageUrl?: string;
   description?: string;
   category: string;
   tags?: string[];

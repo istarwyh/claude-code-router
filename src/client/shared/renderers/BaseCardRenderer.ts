@@ -68,6 +68,10 @@ export class BaseCardRenderer<T extends BaseContentCard> {
       ? `<div class=\"overview-card__meta-info\">${versionHtml}${updatedHtml}</div>`
       : '';
 
+    const coverHtml = card.imageUrl
+      ? `<div class="overview-card__cover"><img src="${card.imageUrl}" alt="${card.title}" loading="lazy" /></div>`
+      : '';
+
     return `
       <div class="content-card overview-card" data-card-id="${card.id}">
         <div class="overview-card__header">
@@ -80,7 +84,8 @@ export class BaseCardRenderer<T extends BaseContentCard> {
             ${readTimeHtml}
           </div>
         </div>
-        
+                ${coverHtml}
+
         <div class="overview-card__content">
           ${descriptionHtml}
           ${overviewHtml}
@@ -91,12 +96,8 @@ export class BaseCardRenderer<T extends BaseContentCard> {
           ${tagsHtml ? `<div class="overview-card__tags">${tagsHtml}</div>` : ''}
         </div>
         
-        <div class="overview-card__footer">
-          <button class="overview-card__action-btn" data-card-id="${card.id}">
-            查看详细内容 →
-          </button>
-          ${metaInfoHtml}
-        </div>
+        ${metaInfoHtml ? `<div class="overview-card__footer">${metaInfoHtml}</div>` : ''}
+        
       </div>
     `;
   }

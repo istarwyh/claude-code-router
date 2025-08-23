@@ -4,6 +4,7 @@ export const bestPracticesCards: PracticeCard[] = [
   {
     id: 'workflow-overview',
     title: '我现在的工作流',
+    imageUrl: 'https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202507201501277.png',
     description: '基于 Claude Code 的完整开发工作流，从需求到部署的全流程最佳实践',
     category: 'workflow',
     tips: [{ type: 'success', title: '效率提升', content: '整个过程开发者只需要提出需求和Review，大大提升开发效率' }]
@@ -46,7 +47,6 @@ export const bestPracticesCards: PracticeCard[] = [
     description: '无头模式、自动化脚本、Pre-Commit Hooks 和 Claude Code Hooks',
     category: 'automation',
     tags: ['automation', 'batch', 'hooks', 'ci-cd'],
-    overview: '学习如何将 Claude Code 集成到自动化工作流中，包括 CI/CD 流程和批处理任务。',
     tips: [{ type: 'warning', title: '安全提醒', content: '在自动化环境中使用时，注意 API 密钥的安全管理' }]
   },
   {
