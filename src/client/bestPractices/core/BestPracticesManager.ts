@@ -12,10 +12,14 @@ export class BestPracticesManager extends BaseContentManager<PracticeCard> {
   constructor() {
     const cardRenderer = new CardRenderer();
     const articleRenderer = new ArticleRenderer();
-    const eventHandler = new EventHandler('best-practices-overview-cards');
-    const navigationHandler = new NavigationHandler();
     const markdownParser = new MarkdownParser();
     const articleService = new ArticleService(markdownParser);
+    const eventHandler = new EventHandler(
+      'best-practices-overview-cards',
+      articleService,
+      articleRenderer
+    );
+    const navigationHandler = new NavigationHandler();
     
     super(
       cardRenderer,
