@@ -62,7 +62,7 @@ export abstract class BaseContentManager<T extends BaseContentCard> {
 
     const cards = this.getCards();
     const cardsHtml = this.cardRenderer.renderCards(cards);
-    container.innerHTML = cardsHtml;
+    container.innerHTML = `<div class="overview-cards-grid">${cardsHtml}</div>`;
   }
 
   protected bindEventListeners(): void {

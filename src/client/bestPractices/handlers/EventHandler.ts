@@ -66,18 +66,16 @@ export class EventHandler {
       return;
     }
     
-    // 查找按钮元素
-    const button = target.closest('.overview-card__action-btn') as HTMLElement;
-    if (!button) {
-      console.log('点击的不是操作按钮');
+    // 查找卡片容器元素（整卡点击）
+    const cardEl = target.closest('.overview-card') as HTMLElement | null;
+    if (!cardEl) {
+      // 不是点击在卡片区域内
       return;
     }
-    
-    console.log('找到操作按钮:', button);
-    
-    const cardId = button.getAttribute('data-card-id');
+
+    const cardId = cardEl.getAttribute('data-card-id');
     if (!cardId) {
-      console.error('按钮缺少 data-card-id 属性');
+      console.error('卡片缺少 data-card-id 属性');
       return;
     }
     

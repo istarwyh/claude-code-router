@@ -2,8 +2,8 @@ export const bestPracticesOverviewCardStyles = `
   /* 概览卡片网格布局 */
   .overview-cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
     padding: 2rem 0;
   }
 
@@ -12,10 +12,11 @@ export const bestPracticesOverviewCardStyles = `
     background: var(--bp-bg-primary);
     border: 1px solid var(--bp-border-color);
     border-radius: 16px;
-    padding: 2rem;
+    padding: 1rem 1rem 1.25rem 1rem;
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    cursor: pointer;
   }
 
   .overview-card::before {
@@ -54,17 +55,38 @@ export const bestPracticesOverviewCardStyles = `
     margin-bottom: 1rem;
   }
 
+  /* 封面图 */
+  .overview-card__cover {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+    background: var(--bp-bg-secondary);
+  }
+
+  .overview-card__cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
   .overview-card__icon {
     font-size: 2rem;
     line-height: 1;
   }
 
   .overview-card__title {
-    font-size: 1.5rem;
-    font-weight: 700;
+    font-size: 1rem;
+    font-weight: 600;
     color: var(--bp-text-primary);
     margin: 0;
-    line-height: 1.3;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .overview-card__meta {
@@ -242,7 +264,7 @@ export const bestPracticesOverviewCardStyles = `
   @media (max-width: 768px) {
     .overview-cards-grid {
       grid-template-columns: 1fr;
-      gap: 1.5rem;
+      gap: 0.75rem;
       padding: 1rem 0;
     }
 
@@ -270,15 +292,15 @@ export const bestPracticesOverviewCardStyles = `
     }
   }
 
-  @media (min-width: 1200px) {
+  @media (max-width: 1600px) {
     .overview-cards-grid {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 
-  @media (min-width: 1600px) {
+  @media (max-width: 1200px) {
     .overview-cards-grid {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 `;
