@@ -1,10 +1,21 @@
 export const bestPracticesOverviewCardStyles = `
   /* 概览卡片网格布局 */
   .overview-cards-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
+    column-count: 4;
+    column-gap: 1rem;
+    column-fill: balance;
+    column-width: 360px; /* fluid columns; browser will pick optimal count */
     padding: 2rem 0;
+  }
+
+  /* 进入/退出动画 - 卡片 */
+  @keyframes cardFadeInUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes cardFadeOutDown {
+    to { opacity: 0; transform: translateY(8px); }
   }
 
   /* 基础卡片样式 */
@@ -13,11 +24,44 @@ export const bestPracticesOverviewCardStyles = `
     border: 1px solid var(--bp-border-color);
     border-radius: 16px;
     padding: 1rem 1rem 1.25rem 1rem;
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
     position: relative;
     overflow: hidden;
     cursor: pointer;
+    /* Masonry item settings */
+    display: inline-block;
+    width: 100%;
+    margin: 0 0 1rem 0; /* vertical spacing between items */
+    break-inside: avoid;
+    break-inside: avoid-column;
+    -webkit-column-break-inside: avoid;
+    -moz-column-break-inside: avoid;
+    page-break-inside: avoid;
+    content-visibility: auto;
+    contain: layout paint;
+    will-change: transform;
+    /* 入场动画 */
+    opacity: 0;
+    animation: cardFadeInUp 0.35s ease forwards;
   }
+
+  /* 简单的级联延迟，营造瀑布流节奏感 */
+  .overview-card:nth-child(1) { animation-delay: 0.02s; }
+  .overview-card:nth-child(2) { animation-delay: 0.04s; }
+  .overview-card:nth-child(3) { animation-delay: 0.06s; }
+  .overview-card:nth-child(4) { animation-delay: 0.08s; }
+  .overview-card:nth-child(5) { animation-delay: 0.10s; }
+  .overview-card:nth-child(6) { animation-delay: 0.12s; }
+  .overview-card:nth-child(7) { animation-delay: 0.14s; }
+  .overview-card:nth-child(8) { animation-delay: 0.16s; }
+  .overview-card:nth-child(9) { animation-delay: 0.18s; }
+  .overview-card:nth-child(10) { animation-delay: 0.20s; }
+
+  /* 退出动画状态（切换到详情前） */
+  .overview-cards-grid.is-exiting .overview-card {
+    animation: cardFadeOutDown 0.22s ease forwards;
+  }
+  .overview-cards-grid.is-exiting { pointer-events: none; }
 
   .overview-card::before {
     content: '';
@@ -41,6 +85,7 @@ export const bestPracticesOverviewCardStyles = `
     transform: translateY(-4px);
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
     border-color: var(--bp-border-hover);
+    z-index: 2; /* ensure raised card overlays neighbors in columns */
   }
 
   /* 卡片头部 */
@@ -58,7 +103,6 @@ export const bestPracticesOverviewCardStyles = `
   /* 封面图 */
   .overview-card__cover {
     width: 100%;
-    aspect-ratio: 16 / 9;
     border-radius: 12px;
     overflow: hidden;
     margin-bottom: 0.75rem;
@@ -67,8 +111,7 @@ export const bestPracticesOverviewCardStyles = `
 
   .overview-card__cover img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
     display: block;
   }
 
@@ -263,8 +306,8 @@ export const bestPracticesOverviewCardStyles = `
   /* 响应式设计 */
   @media (max-width: 768px) {
     .overview-cards-grid {
-      grid-template-columns: 1fr;
-      gap: 0.75rem;
+      column-count: 1;
+      column-gap: 0.75rem;
       padding: 1rem 0;
     }
 
@@ -294,13 +337,13 @@ export const bestPracticesOverviewCardStyles = `
 
   @media (max-width: 1600px) {
     .overview-cards-grid {
-      grid-template-columns: repeat(3, 1fr);
+      column-count: 3;
     }
   }
 
   @media (max-width: 1200px) {
     .overview-cards-grid {
-      grid-template-columns: repeat(2, 1fr);
+      column-count: 2;
     }
   }
 `;

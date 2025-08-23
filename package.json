@@ -12,6 +12,13 @@
   "license": "MIT",
   "description": "Universal Claude API Proxy for Multiple AI Providers",
   "devDependencies": {
-    "esbuild": "^0.19.0"
+    "@types/markdown-it": "^14.1.2",
+    "esbuild": "^0.19.0",
+    "highlight.js": "^11.9.0",
+    "markdown-it": "^13.0.2",
+    "punycode": "^2.3.1"
+  },
+  "dependencies": {
+    "isomorphic-dompurify": "^2.26.0"
   }
 }

@@ -91,10 +91,18 @@ export class EventHandler {
     }
 
     try {
+      // 先为概览卡片添加退出动画
+      const grid = container.querySelector('.overview-cards-grid') as HTMLElement | null;
+      if (grid) {
+        grid.classList.add('is-exiting');
+        grid.style.pointerEvents = 'none';
+        await new Promise((resolve) => setTimeout(resolve, 230)); // 匹配 CSS 退出时长
+      }
+
       // 注入 Markdown 样式
       injectMarkdownStyles();
-      
-      // 显示加载状态
+
+      // 显示加载状态（进入文章视图前的占位）
       container.innerHTML = this.articleRenderer.renderLoadingState();
       
       // 获取文章内容
@@ -122,10 +130,23 @@ export class EventHandler {
         this.addEnhancedFeatures(markdownContainer);
       }
       
-      // 暴露返回函数到全局作用域
+      // 暴露返回函数到全局作用域（带退出动画）
       (window as any).showOverviewCards = () => {
-        // 重新初始化概览卡片
-        (window as any).initializeBestPractices();
+        const containerEl = document.getElementById(this.containerId);
+        if (!containerEl) {
+          (window as any).initializeBestPractices();
+          return;
+        }
+        const articleEl = containerEl.querySelector('.practice-article') as HTMLElement | null;
+        if (articleEl) {
+          articleEl.classList.add('is-exiting');
+          setTimeout(() => {
+            (window as any).initializeBestPractices();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }, 230);
+        } else {
+          (window as any).initializeBestPractices();
+        }
       };
       
     } catch (error) {

@@ -67,7 +67,7 @@ export class BaseCardRenderer<T extends BaseContentCard> {
       : '';
 
     const coverHtml = card.imageUrl
-      ? `<div class="overview-card__cover"><img src="${card.imageUrl}" alt="${card.title}" loading="lazy" /></div>`
+      ? `<div class="overview-card__cover"><img src="${card.imageUrl}" alt="${card.title}" loading="lazy" decoding="async" fetchpriority="low" /></div>`
       : '';
 
     return `

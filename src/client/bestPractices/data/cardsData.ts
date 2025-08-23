@@ -4,8 +4,7 @@ export const bestPracticesCards: PracticeCard[] = [
   {
     id: 'workflow-overview',
     title: '我现在的工作流',
-    imageUrl: 'https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202507201501277.png',
-    description: '基于 Claude Code 的完整开发工作流，从需求到部署的全流程最佳实践',
+    imageUrl: 'https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202508232133560.png',
     category: 'workflow',
     tips: [{ type: 'success', title: '效率提升', content: '整个过程开发者只需要提出需求和Review，大大提升开发效率' }]
   },
@@ -21,14 +20,13 @@ export const bestPracticesCards: PracticeCard[] = [
   {
     id: 'mcp-commands',
     title: 'MCP 与常用命令',
-    description: 'MCP 服务器集成、常用命令参数和自定义 Slash 命令',
+    imageUrl: 'https://xiaohui-zhangjiakou.oss-cn-zhangjiakou.aliyuncs.com/image/202507202037009.png',
     category: 'mcp-commands',
     tips: [{ type: 'info', title: '扩展性', content: 'MCP 服务器让 Claude Code 具备无限扩展的可能性' }],
   },
   {
     id: 'core-workflow',
-    title: '核心工作流程',
-    description: '代码生成、调试、重构和测试的核心工作流程',
+    title: '代码生成、调试、重构和测试的核心工作流程',
     category: 'workflow',
     tags: ['coding', 'debugging', 'refactoring', 'testing'],
     tips: [{ type: 'warning', title: '注意事项', content: '始终保持代码审查的习惯，AI 生成的代码也需要人工验证' }],
@@ -52,15 +50,13 @@ export const bestPracticesCards: PracticeCard[] = [
   {
     id: 'concurrent-claude',
     title: '多 Claude 并发干活',
-    description: '多实例管理、任务分配和并发优化策略',
     category: 'concurrency',
     tags: ['concurrency', 'multi-instance', 'optimization', 'scaling'],
     tips: [{ type: 'expert', title: '专家级技巧', content: '合理的多实例使用可以将开发效率提升 3-5 倍' }]
   },
   {
     id: 'intelligent-undo',
-    title: '智能撤销工具',
-    description: '基于 ccundo 工具的智能撤销管理，精确回退和恢复 Claude Code 操作',
+    title: 'ccundo --开源 checkpointor',
     category: 'tools',
     tags: ['ccundo', 'undo', 'safety', 'backup', 'recovery'],
     tips: [
