@@ -1,5 +1,8 @@
 import { BaseArticleEventHandler, IArticleRenderer, IContentService } from '../../shared/handlers/BaseArticleEventHandler';
 
+// Animation duration constant
+const EXIT_ANIMATION_DURATION = 230; // 匹配 CSS 中的动画时长
+
 export class EventHandler extends BaseArticleEventHandler {
   constructor(
     containerId: string,
@@ -34,8 +37,7 @@ export class EventHandler extends BaseArticleEventHandler {
     ) as HTMLElement | null;
     if (grid) {
       grid.classList.add('is-exiting');
-      grid.style.pointerEvents = 'none';
-      await new Promise((resolve) => setTimeout(resolve, 230));
+      await new Promise((resolve) => setTimeout(resolve, EXIT_ANIMATION_DURATION));
     }
   }
 }

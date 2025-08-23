@@ -5,7 +5,7 @@ export class ArticleRenderer {
     return `
       <div class="practice-article">
         <div class="practice-article__header">
-          <button class="practice-article__back-btn" onclick="showOverviewCards()">
+          <button class="practice-article__back-btn" data-action="back-to-overview">
             ← 返回概览
           </button>
         </div>
@@ -21,7 +21,7 @@ export class ArticleRenderer {
     return `
       <div class="practice-article">
         <div class="practice-article__header">
-          <button class="practice-article__back-btn" onclick="showOverviewCards()">
+          <button class="practice-article__back-btn" data-action="back-to-overview">
             ← 返回概览
           </button>
         </div>
@@ -44,7 +44,7 @@ export class ArticleRenderer {
     return `
       <div class="practice-article">
         <div class="practice-article__header">
-          <button class="practice-article__back-btn" onclick="showOverviewCards()">
+          <button class="practice-article__back-btn" data-action="back-to-overview">
             ← 返回概览
           </button>
           <h2 class="practice-article__title">加载失败</h2>

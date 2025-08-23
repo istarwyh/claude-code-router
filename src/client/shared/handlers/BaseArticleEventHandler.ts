@@ -1,6 +1,9 @@
 import { injectMarkdownStyles } from '../../bestPractices/styles/markdownStyles';
 import { SafeMarkdownRenderer } from '../../../../shared/utils/markdownRenderer';
 
+// Animation duration constant
+const EXIT_ANIMATION_DURATION = 230; // 匹配 CSS 中的动画时长
+
 // Minimal service and renderer contracts used by the handlers
 export interface IContentService {
   getArticle(id: string): Promise<{
@@ -155,9 +158,10 @@ export abstract class BaseArticleEventHandler {
 
       // Back navigation wiring
       this.configureBackNavigation();
-    } catch (error: any) {
+    } catch (error) {
       console.error('加载文章失败:', error);
-      const errorHtml = this.articleRenderer.renderErrorState(error.message);
+      const message = error instanceof Error ? error.message : String(error);
+      const errorHtml = this.articleRenderer.renderErrorState(message);
       container.innerHTML = errorHtml;
     }
   }
@@ -168,27 +172,39 @@ export abstract class BaseArticleEventHandler {
     // default no-op
   }
 
-  // Default back-navigation wiring using provided callback
+  // Back navigation using direct DOM event listeners instead of global window functions
   protected configureBackNavigation(): void {
-    const cb = this.onBackToOverview;
-    (window as any).showOverviewCards = () => {
-      if (!cb) return;
-      const containerEl = document.getElementById(this.containerId);
-      if (containerEl) {
-        const articleEl = containerEl.querySelector(
-          '.practice-article'
-        ) as HTMLElement | null;
-        if (articleEl) {
-          articleEl.classList.add('is-exiting');
-          setTimeout(() => {
-            cb();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }, 230);
-          return;
-        }
+    const backButton = document.querySelector('[data-action="back-to-overview"]') as HTMLButtonElement;
+    if (backButton && this.onBackToOverview) {
+      // Remove any existing event listeners to avoid duplicates
+      const existingHandler = (backButton as any)._backHandler;
+      if (existingHandler) {
+        backButton.removeEventListener('click', existingHandler);
       }
-      cb();
-    };
+      
+      // Create new handler and store reference for cleanup
+      const backHandler = this.handleBackToOverview.bind(this);
+      (backButton as any)._backHandler = backHandler;
+      backButton.addEventListener('click', backHandler);
+    }
+  }
+
+  protected handleBackToOverview(): void {
+    if (!this.onBackToOverview) return;
+    
+    const containerEl = document.getElementById(this.containerId);
+    if (containerEl) {
+      const articleEl = containerEl.querySelector('.practice-article') as HTMLElement | null;
+      if (articleEl) {
+        articleEl.classList.add('is-exiting');
+        setTimeout(() => {
+          this.onBackToOverview!();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, EXIT_ANIMATION_DURATION);
+        return;
+      }
+    }
+    this.onBackToOverview();
   }
 
   // Shared enhancements below
