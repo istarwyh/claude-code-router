@@ -15,10 +15,10 @@ export class BaseCardRenderer<T extends BaseContentCard> {
   }
 
   public renderCards(cards: T[]): string {
-    return cards.map(card => this.renderCard(card)).join('');
+    return cards.map((card, index) => this.renderCard(card, index)).join('');
   }
 
-  public renderCard(card: T): string {
+  public renderCard(card: T, index?: number): string {
     const icon = this.categoryIcons[card.category] || '📋';
     const difficultyColor = card.difficulty
       ? this.difficultyConfig.colors[card.difficulty]
@@ -70,8 +70,12 @@ export class BaseCardRenderer<T extends BaseContentCard> {
       ? `<div class="overview-card__cover"><img src="${card.imageUrl}" alt="${card.title}" loading="lazy" decoding="async" fetchpriority="low" /></div>`
       : '';
 
+    // 动态设置动画延迟
+    const animationDelay = typeof index === 'number' ? index * 0.02 : 0;
+    const styleAttr = `style="--card-index: ${animationDelay}s"`;
+
     return `
-      <div class="content-card overview-card" data-card-id="${card.id}">
+      <div class="content-card overview-card" data-card-id="${card.id}" ${styleAttr}>
         <div class="overview-card__header">
           <div class="overview-card__title-section">
             <div class="overview-card__icon">${icon}</div>
