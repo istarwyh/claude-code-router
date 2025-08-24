@@ -11,8 +11,8 @@ export interface BaseContentCard {
   readTime?: string;
   overview?: string;
   sections?: ContentSection[];
-  lastUpdated?: string;
-  version?: string;
+  // lastUpdated?: string;
+  // version?: string;
 }
 
 export interface ContentSection {

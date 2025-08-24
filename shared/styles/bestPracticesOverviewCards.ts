@@ -245,6 +245,18 @@ export const bestPracticesOverviewCardStyles = `
     color: var(--bp-text-primary);
   }
 
+  .overview-card__tip--tip {
+    background: rgba(6, 182, 212, 0.1); /* cyan-500 @ 10% */
+    border-left: 4px solid #06b6d4; /* cyan-500 */
+    color: var(--bp-text-primary);
+  }
+
+  .overview-card__tip--expert {
+    background: rgba(168, 85, 247, 0.1); /* purple-500 @ 10% */
+    border-left: 4px solid #a855f7; /* purple-500 */
+    color: var(--bp-text-primary);
+  }
+
   /* 标签 */
   .overview-card__tags {
     display: flex;
