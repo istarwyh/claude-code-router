@@ -14,7 +14,9 @@ export class ArticleService extends BaseContentService<PracticeCard> {
         'context-management': async () => (await import('../content/context-management.md')).default,
         'automation-batch': async () => (await import('../content/automation-batch.md')).default,
         'concurrent-claude': async () => (await import('../content/concurrent-claude.md')).default,
-        'intelligent-undo': async () => (await import('../content/intelligent-undo.md')).default
+        'software-engineering-with-claude': async () => (await import('../content/software-engineering-with-claude.md')).default,
+        'intelligent-undo': async () => (await import('../content/intelligent-undo.md')).default,
+        'agent-linus-torvalds': async () => (await import('../content/agent-Linus-Torvalds.md')).default
       };
 
       const contentLoader = contentMap[cardId];
@@ -46,7 +48,9 @@ export class ArticleService extends BaseContentService<PracticeCard> {
       'context-management': '上下文管理',
       'automation-batch': '自动化与批处理',
       'concurrent-claude': '多 Claude 并发干活',
-      'intelligent-undo': '智能撤销工具'
+      'software-engineering-with-claude': '软件工程与 Claude',
+      'intelligent-undo': '智能撤销工具',
+      'agent-linus-torvalds': 'Linus Torvalds Agent'
     };
 
     return titles[cardId] || cardId;

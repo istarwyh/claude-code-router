@@ -55,6 +55,27 @@ export const bestPracticesCards: PracticeCard[] = [
     tips: [{ type: 'expert', title: '专家级技巧', content: '合理的多实例使用可以将开发效率提升 3-5 倍' }]
   },
   {
+    id: 'software-engineering-with-claude',
+    title: '软件工程与 Claude',
+    description: '用软件工程方法驯服 AI：Brief、KISS、YAGNI、DRY、SOLID 的落地指南',
+    category: 'workflow',
+    difficulty: 'intermediate',
+    readTime: '10 分钟',
+    imageUrl: 'https://miro.medium.com/v2/resize:fit:4800/format:webp/1*tLFdzFI5tHrMRwYLoYZGBw.jpeg',
+    tags: ['KISS', 'YAGNI', 'DRY', 'SOLID', 'Brief'],
+    tips: [
+      { type: 'info', title: '流程先行', content: '先定义数据与边界，再写代码' },
+      { type: 'success', title: '减复杂', content: '消除特殊分支，代码自然变短' }
+    ],
+    sections: [
+      { title: 'Brief', content: '函数短小、参数精简、纯函数优先', type: 'text' },
+      { title: 'KISS', content: '能直不绕，优先简单方案', type: 'text' },
+      { title: 'YAGNI', content: '不为未来的假想需求提前设计', type: 'text' },
+      { title: 'DRY', content: '消除重复，抽象在恰当层次', type: 'text' },
+      { title: 'SOLID', content: '以可维护性为核心的 OO 原则', type: 'text' }
+    ]
+  },
+  {
     id: 'intelligent-undo',
     title: 'ccundo --开源 checkpointor',
     category: 'tools',
@@ -62,6 +83,20 @@ export const bestPracticesCards: PracticeCard[] = [
     tips: [
       { type: 'success', title: '安全保障', content: '有了可靠的撤销机制，可以更大胆地尝试复杂重构和实验性功能' },
       { type: 'info', title: '级联安全', content: 'ccundo 的级联撤销机制确保项目状态始终保持一致性' }
+    ]
+  },
+  {
+    id: 'agent-linus-torvalds',
+    title: 'Linus Torvalds Agent',
+    category: 'workflow',
+    difficulty: 'expert',
+    readTime: '15 分钟',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/LinuxCon_Europe_Linus_Torvalds_03_%28cropped%29.jpg/256px-LinuxCon_Europe_Linus_Torvalds_03_%28cropped%29.jpg',
+    tags: ['Linus', 'Linux', '代码品味', '实用主义', '工程质量'],
+    tips: [
+      { type: 'expert', title: '好品味', content: '复杂性是万恶之源，3层缩进是极限' },
+      { type: 'warning', title: 'Never break userspace', content: '向后兼容性是神圣不可侵犯的' },
+      { type: 'info', title: '实用主义', content: '为现实服务，不为论文服务' }
     ]
   }
 ];
