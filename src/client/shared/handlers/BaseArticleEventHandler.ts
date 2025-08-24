@@ -77,8 +77,9 @@ export abstract class BaseArticleEventHandler {
     const event = e as MouseEvent;
     const target = event.target as HTMLElement;
 
-    // Avoid interactions when already in article view
-    const isInArticleView = document.querySelector('.practice-article');
+    // Avoid interactions when this container is already in article view
+    const containerEl = event.currentTarget as HTMLElement | null;
+    const isInArticleView = containerEl?.querySelector('.practice-article');
     if (isInArticleView) {
       return;
     }
@@ -142,10 +143,10 @@ export abstract class BaseArticleEventHandler {
       );
       container.innerHTML = articleHtml;
 
-      // Render Markdown safely with bundled hljs
-      const markdownContainer = document.getElementById(
-        'markdown-content-container'
-      );
+      // Render Markdown safely scoped to this container to avoid cross-module ID collisions
+      const markdownContainer = container.querySelector(
+        '#markdown-content-container'
+      ) as HTMLElement | null;
       if (markdownContainer) {
         const renderer = new SafeMarkdownRenderer();
         const renderedHtml = renderer.render(article.rawMarkdown);
@@ -174,19 +175,28 @@ export abstract class BaseArticleEventHandler {
 
   // Back navigation using direct DOM event listeners instead of global window functions
   protected configureBackNavigation(): void {
-    const backButton = document.querySelector('[data-action="back-to-overview"]') as HTMLButtonElement;
-    if (backButton && this.onBackToOverview) {
-      // Remove any existing event listeners to avoid duplicates
-      const existingHandler = (backButton as any)._backHandler;
-      if (existingHandler) {
-        backButton.removeEventListener('click', existingHandler);
-      }
-      
-      // Create new handler and store reference for cleanup
-      const backHandler = this.handleBackToOverview.bind(this);
-      (backButton as any)._backHandler = backHandler;
-      backButton.addEventListener('click', backHandler);
+    const containerEl = document.getElementById(this.containerId);
+    if (!containerEl || !this.onBackToOverview) return;
+
+    const backButton = containerEl.querySelector(
+      '[data-action="back-to-overview"]'
+    ) as HTMLButtonElement | null;
+
+    if (!backButton) return;
+
+    // Remove any existing event listeners to avoid duplicates
+    const existingHandler = (backButton as any)._backHandler;
+    if (existingHandler) {
+      backButton.removeEventListener('click', existingHandler);
     }
+
+    // Remove any inline onclick to avoid invoking global handlers from other modules
+    backButton.removeAttribute('onclick');
+
+    // Create new handler and store reference for cleanup
+    const backHandler = this.handleBackToOverview.bind(this);
+    (backButton as any)._backHandler = backHandler;
+    backButton.addEventListener('click', backHandler);
   }
 
   protected handleBackToOverview(): void {

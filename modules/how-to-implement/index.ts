@@ -255,7 +255,7 @@ var HowToImplementApp = (() => {
       return `
       <div class="practice-article">
         <div class="practice-article__header">
-          <button class="practice-article__back-btn" onclick="showOverviewCards()">
+          <button class="practice-article__back-btn" data-action="back-to-overview">
             \u2190 \u8FD4\u56DE\u6982\u89C8
           </button>
         </div>
@@ -270,7 +270,7 @@ var HowToImplementApp = (() => {
       return `
       <div class="practice-article">
         <div class="practice-article__header">
-          <button class="practice-article__back-btn" onclick="showOverviewCards()">
+          <button class="practice-article__back-btn" data-action="back-to-overview">
             \u2190 \u8FD4\u56DE\u6982\u89C8
           </button>
         </div>
@@ -292,7 +292,7 @@ var HowToImplementApp = (() => {
       return `
       <div class="practice-article">
         <div class="practice-article__header">
-          <button class="practice-article__back-btn" onclick="showOverviewCards()">
+          <button class="practice-article__back-btn" data-action="back-to-overview">
             \u2190 \u8FD4\u56DE\u6982\u89C8
           </button>
           <h2 class="practice-article__title">\u52A0\u8F7D\u5931\u8D25</h2>
@@ -1250,7 +1250,7 @@ var HowToImplementApp = (() => {
         const article = await this.contentService.getArticle(cardId);
         const articleHtml = this.articleRenderer.renderArticle(article.title, article.content);
         container.innerHTML = articleHtml;
-        const markdownContainer = document.getElementById("markdown-content-container");
+        const markdownContainer = container.querySelector('#markdown-content-container');
         if (markdownContainer) {
           const renderer = new SafeMarkdownRenderer();
           const renderedHtml = renderer.render(article.rawMarkdown);
@@ -1258,9 +1258,22 @@ var HowToImplementApp = (() => {
           renderer.highlightCode(markdownContainer);
           this.addEnhancedFeatures(markdownContainer);
         }
-        window.showOverviewCards = () => {
-          window.initializeHowToImplement();
-        };
+        const backButton = container.querySelector('[data-action="back-to-overview"]');
+        if (backButton) {
+          backButton.removeAttribute('onclick');
+          backButton.addEventListener('click', () => {
+            const articleEl = container.querySelector('.practice-article');
+            if (articleEl) {
+              articleEl.classList.add('is-exiting');
+              setTimeout(() => {
+                window.initializeHowToImplement();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }, 230);
+            } else {
+              window.initializeHowToImplement();
+            }
+          });
+        }
       } catch (error) {
         console.error("\u52A0\u8F7D How to Implement \u6587\u7AE0\u5931\u8D25:", error);
         const errorHtml = this.articleRenderer.renderErrorState(error.message);
