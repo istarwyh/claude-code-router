@@ -14,40 +14,42 @@ export const markdownStyles = `
   opacity: 0;
   transform: translateY(8px);
   animation: articleFadeInUp 0.28s ease forwards;
+  position: relative;
 }
 
 .practice-article__header {
-  position: sticky;
-  top: 0;
+  position: absolute;
+  top: 12px;
+  right: 12px;
   z-index: 5;
-  background: #ffffff;
-  margin: -20px -20px 24px -20px; /* extend sticky area full width of card */
-  padding: 12px 20px 12px 20px;
-  border-bottom: 1px solid #e5e7eb;
-  backdrop-filter: saturate(1.1) blur(4px);
+  background: transparent;
+  margin: 0;
+  padding: 0;
+  border-bottom: none;
 }
 
 .practice-article__back-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: #f3f4f6;
-  border: 1px solid #d1d5db;
-  color: #111827;
-  padding: 8px 14px;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid #e5e7eb;
+  color: #374151;
+  padding: 6px 12px;
   border-radius: 999px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1;
   transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.12s ease;
-  box-shadow: 0 1px 0 rgba(17, 24, 39, 0.03);
+  box-shadow: 0 1px 4px rgba(17, 24, 39, 0.06);
+  backdrop-filter: saturate(1.2) blur(2px);
 }
 
 .practice-article__back-btn:hover {
-  background: #e5e7eb;
-  border-color: #9ca3af;
+  background: #ffffff;
+  border-color: #d1d5db;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 12px rgba(17, 24, 39, 0.08);
 }
 
 .practice-article__back-btn:active {
@@ -161,7 +163,7 @@ export const markdownStyles = `
 }
 
 /* 代码块样式 - 匹配 SafeMarkdownRenderer 生成的结构 */
-.markdown-content .code-block {
+.markdown-content pre.code-block {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
@@ -171,24 +173,30 @@ export const markdownStyles = `
   position: relative;
 }
 
-.markdown-content .code-block pre {
-  background: none;
-  border: none;
-  padding: 0;
-  margin: 0;
+.markdown-content pre.code-block {
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
   font-size: 0.875rem;
   line-height: 1.5;
 }
 
-.markdown-content .code-block pre code {
+.markdown-content pre.code-block code {
   background: none;
-  color: #334155;
+  /* 不强制设置颜色，交给 highlight.js 主题处理 */
   padding: 0;
   border: none;
   border-radius: 0;
   display: block;
   white-space: pre;
+}
+
+/* 当未启用 hljs 时提供一个温和的回退颜色 */
+.markdown-content pre.code-block code:not(.hljs) {
+  color: #334155;
+}
+
+/* 当应用 hljs 时，避免行内 code 规则将其渲染为红色 */
+.markdown-content pre.code-block code.hljs {
+  color: inherit;
 }
 
 /* 骨架屏加载动画 */
@@ -349,7 +357,7 @@ export const markdownStyles = `
 }
 
 /* 复制按钮样式 - 适配新的代码块结构 */
-.markdown-content .code-block:hover .copy-button {
+.markdown-content pre.code-block:hover .copy-button {
   opacity: 1;
 }
 
@@ -486,11 +494,14 @@ export const markdownStyles = `
     padding: 16px;
   }
   .practice-article__header {
-    margin: -16px -16px 20px -16px;
-    padding: 10px 16px;
+    top: 10px;
+    right: 10px;
+    margin: 0;
+    padding: 0;
   }
   .practice-article__back-btn {
-    padding: 10px 14px;
+    padding: 8px 12px;
+    font-size: 14px;
   }
   
   .markdown-content h1 {

@@ -22,6 +22,7 @@ import rust from 'highlight.js/lib/languages/rust';
 import sql from 'highlight.js/lib/languages/sql';
 import diff from 'highlight.js/lib/languages/diff';
 import dockerfile from 'highlight.js/lib/languages/dockerfile';
+import { loadHighlightJsStyle } from './highlight';
 
 // 注册常用语言（可按需增减）
 hljs.registerLanguage('javascript', javascript);
@@ -411,18 +412,16 @@ export class SafeMarkdownRenderer {
      * 确保高亮样式已加载（已移除 CDN 依赖）
      */
     private ensureHighlightCss(): void {
-        // 注意：highlight.js 的 CSS 应该在构建时打包到项目中，而不是动态从 CDN 加载
-        // 建议在项目的 CSS 入口文件中导入：
-        // @import 'highlight.js/styles/github.css';
-        // 或者在构建配置中包含相关样式文件
-        
-        if (!document.getElementById('hljs-style-note')) {
-            // 添加一个占位符提醒开发者需要包含样式
-            const note = document.createElement('style');
-            note.id = 'hljs-style-note';
-            note.textContent = '/* highlight.js styles should be bundled locally */';
-            document.head.appendChild(note);
-        }
+        // 优先确保主题样式可用（当前使用 CDN 注入方式，后续可切换为本地打包）
+        loadHighlightJsStyle().catch(() => {
+            // 降级：若样式加载失败，则保留占位提示，避免静默失败
+            if (!document.getElementById('hljs-style-note')) {
+                const note = document.createElement('style');
+                note.id = 'hljs-style-note';
+                note.textContent = '/* highlight.js styles should be bundled locally */';
+                document.head.appendChild(note);
+            }
+        });
     }
 
     /**

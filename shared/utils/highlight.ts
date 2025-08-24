@@ -91,12 +91,14 @@ function escapeHtml(unsafe: string): string {
  * 异步加载highlight.js样式
  */
 export async function loadHighlightJsStyle(): Promise<void> {
-    try {
+  try {
+        if (document.getElementById('hljs-theme-style')) return;
         const link = document.createElement('link');
+        link.id = 'hljs-theme-style';
         link.rel = 'stylesheet';
         link.href = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css';
         document.head.appendChild(link);
-    } catch (error) {
+  } catch (error) {
         console.error('Failed to load highlight.js styles:', error);
-    }
+  }
 }

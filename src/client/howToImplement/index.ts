@@ -1,7 +1,10 @@
 import { HowToImplementManager } from './core/HowToImplementManager';
+import { loadHighlightJsStyle } from '../../../shared/utils/highlight';
 
 export function initializeHowToImplement(): void {
   console.log('初始化 How to Implement 模块...');
+  // 注入高亮主题样式（异步，不阻塞）
+  try { loadHighlightJsStyle(); } catch {}
   
   const manager = new HowToImplementManager();
   manager.initialize();
