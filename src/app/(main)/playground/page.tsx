@@ -7,6 +7,7 @@ import { UI_TEXTS } from '@/config/ui-texts';
 
 type ApiType = 'openai' | 'anthropic' | 'openai-responses';
 type PlaygroundMode = 'agnes' | 'custom';
+type RequestTransport = 'server' | 'browser';
 
 interface TestResult {
   status: number;
@@ -35,9 +36,19 @@ const API_TYPE_OPTIONS: { value: ApiType; label: string }[] = [
   { value: 'anthropic', label: 'Anthropic' },
 ];
 
+const REQUEST_TRANSPORT_OPTIONS: { value: RequestTransport; label: string; description: string }[] = [
+  { value: 'server', label: 'Server proxy', description: 'Best for public APIs; localhost stays blocked server-side.' },
+  {
+    value: 'browser',
+    label: 'Browser direct',
+    description: 'Calls the URL from this browser for localhost/private APIs.',
+  },
+];
+
 export default function PlaygroundPage() {
   const [mode, setMode] = useState<PlaygroundMode>('agnes');
   const [apiType, setApiType] = useState<ApiType>('openai');
+  const [requestTransport, setRequestTransport] = useState<RequestTransport>('server');
   const [url, setUrl] = useState(DEFAULT_URL);
   const [model, setModel] = useState('');
   const [key, setKey] = useState('');
@@ -75,6 +86,196 @@ export default function PlaygroundPage() {
     setModelsHint('');
   };
 
+  const getBlockedDirectTargetMessage = () => {
+    if (isAgnesMode || requestTransport !== 'browser') {
+      return '';
+    }
+
+    let targetUrl: URL;
+    try {
+      targetUrl = new URL(url.trim());
+    } catch {
+      return '';
+    }
+
+    const hostname = targetUrl.hostname.toLowerCase();
+    const defaultOrigin = new URL(DEFAULT_URL).origin;
+    if (
+      targetUrl.origin === window.location.origin ||
+      targetUrl.origin === defaultOrigin ||
+      hostname === 'aispeeds.me'
+    ) {
+      return 'Browser direct will not send API keys to this app origin. Use Browser direct only for localhost/private or another non-app endpoint, or switch back to Server proxy for aispeeds.me/public API testing.';
+    }
+
+    return '';
+  };
+
+  const buildDirectRequest = (useStream: boolean) => {
+    const baseUrl = url.trim().replace(/\/$/, '');
+    const testMessage = message || 'Say hello in one sentence.';
+
+    if (apiType === 'anthropic') {
+      return {
+        targetUrl: `${baseUrl}/v1/messages`,
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': key,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify({
+          model,
+          max_tokens: 1024,
+          stream: useStream,
+          messages: [{ role: 'user', content: testMessage }],
+        }),
+      };
+    }
+
+    if (apiType === 'openai-responses') {
+      return {
+        targetUrl: `${baseUrl}/v1/responses`,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${key}`,
+        },
+        body: JSON.stringify({
+          model,
+          stream: useStream,
+          input: [{ role: 'user', content: testMessage }],
+        }),
+      };
+    }
+
+    return {
+      targetUrl: `${baseUrl}/chat/completions`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${key}`,
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: 1024,
+        stream: useStream,
+        messages: [{ role: 'user', content: testMessage }],
+      }),
+    };
+  };
+
+  const readPlaygroundResponse = async (res: Response, start: number) => {
+    const serverLatency = res.headers.get('X-Playground-Latency');
+    const serverStatus = res.headers.get('X-Playground-Status');
+    const contentType = res.headers.get('content-type') ?? '';
+
+    if (contentType.includes('text/event-stream') && res.body) {
+      const status = serverStatus ? Number(serverStatus) : res.status;
+      setStreamLatency(serverLatency ? Number(serverLatency) : Date.now() - start);
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let text = '';
+      let pendingEvent = '';
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) {
+            break;
+          }
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() ?? '';
+
+          for (const line of lines) {
+            if (line.startsWith('event:')) {
+              pendingEvent = line.slice(6).trim();
+              continue;
+            }
+            if (!line.startsWith('data:')) {
+              continue;
+            }
+            const payload = line.slice(5).trim();
+            const rawLine: RawSseLine = pendingEvent ? { event: pendingEvent, data: payload } : { data: payload };
+            setRawLines(prev => [...prev, rawLine]);
+            pendingEvent = '';
+
+            if (!payload || payload === '[DONE]') {
+              continue;
+            }
+
+            try {
+              const json = JSON.parse(payload) as Record<string, unknown>;
+              const choices = json['choices'] as Array<{ delta?: { content?: string } }> | undefined;
+              if (choices?.[0]?.delta?.content) {
+                text += choices[0].delta.content;
+                setStreamText(text);
+                continue;
+              }
+
+              const eventType = json['type'] as string | undefined;
+              if (eventType === 'response.output_text.delta') {
+                const delta = json['delta'] as string | undefined;
+                if (delta) {
+                  text += delta;
+                  setStreamText(text);
+                }
+                continue;
+              }
+
+              const deltaObj = json['delta'] as { text?: string; type?: string } | undefined;
+              if (deltaObj?.type === 'content_block_delta' && deltaObj.text) {
+                text += deltaObj.text;
+                setStreamText(text);
+                continue;
+              }
+              if (json['type'] === 'content_block_delta') {
+                const d = json['delta'] as { text?: string } | undefined;
+                if (d?.text) {
+                  text += d.text;
+                  setStreamText(text);
+                }
+              }
+            } catch {
+              // skip malformed lines
+            }
+          }
+        }
+      } finally {
+        reader.releaseLock();
+      }
+
+      const latency = Date.now() - start;
+      setStreamDone(true);
+      setStreamLatency(latency);
+      setResult({
+        status,
+        statusText: res.statusText || (status >= 200 && status < 300 ? 'OK' : 'Error'),
+        latency,
+        data: { content: text },
+      });
+      return;
+    }
+
+    const data = await res.json().catch(() => null);
+    const serverResult = data as TestResult | { error?: string } | null;
+    if (!res.ok && serverResult && 'error' in serverResult && serverResult.error) {
+      setError(serverResult.error);
+      return;
+    }
+    if (serverResult && 'status' in serverResult && 'latency' in serverResult && 'data' in serverResult) {
+      setResult(serverResult);
+      return;
+    }
+    setResult({
+      status: res.status,
+      statusText: res.statusText,
+      latency: Date.now() - start,
+      data,
+    });
+  };
+
   const handleApiTypeChange = (nextApiType: ApiType) => {
     abortRef.current?.abort();
     setLoading(false);
@@ -95,142 +296,61 @@ export default function PlaygroundPage() {
     }
 
     abortRef.current?.abort();
-    const controller = new AbortController();
-    abortRef.current = controller;
-
     setLoading(true);
     resetOutput();
 
+    const blockedDirectTargetMessage = getBlockedDirectTargetMessage();
+    if (blockedDirectTargetMessage) {
+      setError(blockedDirectTargetMessage);
+      setLoading(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     const start = Date.now();
+    let didTimeout = false;
+    const timeoutId = window.setTimeout(() => {
+      didTimeout = true;
+      controller.abort();
+    }, timeout * 1000);
 
     try {
-      const res = await fetch('/api/playground', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(
-          isAgnesMode
-            ? { mode: requestMode, message: message || undefined, timeout }
-            : { mode: requestMode, url, model, key, apiType, message: message || undefined, timeout },
-        ),
-        signal: controller.signal,
-      });
+      const directRequest = !isAgnesMode && requestTransport === 'browser' ? buildDirectRequest(true) : null;
+      const res = directRequest
+        ? await fetch(directRequest.targetUrl, {
+            method: 'POST',
+            headers: directRequest.headers,
+            body: directRequest.body,
+            signal: controller.signal,
+          })
+        : await fetch('/api/playground', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(
+              isAgnesMode
+                ? { mode: requestMode, message: message || undefined, timeout }
+                : { mode: requestMode, url, model, key, apiType, message: message || undefined, timeout },
+            ),
+            signal: controller.signal,
+          });
 
-      const serverLatency = res.headers.get('X-Playground-Latency');
-      const serverStatus = res.headers.get('X-Playground-Status');
-
-      const contentType = res.headers.get('content-type') ?? '';
-
-      if (contentType.includes('text/event-stream') && res.body) {
-        // Streaming mode — read SSE and render progressively
-        const status = serverStatus ? Number(serverStatus) : res.status;
-        setStreamLatency(serverLatency ? Number(serverLatency) : Date.now() - start);
-
-        const reader = res.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = '';
-        let text = '';
-        let pendingEvent = '';
-
-        try {
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) {
-              break;
-            }
-
-            buffer += decoder.decode(value, { stream: true });
-            const lines = buffer.split('\n');
-            buffer = lines.pop() ?? '';
-
-            for (const line of lines) {
-              // SSE event type line
-              if (line.startsWith('event:')) {
-                pendingEvent = line.slice(6).trim();
-                continue;
-              }
-              // Skip empty lines and comments
-              if (!line.startsWith('data:')) {
-                continue;
-              }
-              const payload = line.slice(5).trim();
-
-              // Collect raw line paired with event type
-              const rawLine: RawSseLine = pendingEvent ? { event: pendingEvent, data: payload } : { data: payload };
-              setRawLines(prev => [...prev, rawLine]);
-              pendingEvent = '';
-
-              if (!payload || payload === '[DONE]') {
-                continue;
-              }
-
-              try {
-                const json = JSON.parse(payload) as Record<string, unknown>;
-
-                // ── OpenAI Chat Completions: choices[0].delta.content ──
-                const choices = json['choices'] as Array<{ delta?: { content?: string } }> | undefined;
-                if (choices?.[0]?.delta?.content) {
-                  text += choices[0].delta.content;
-                  setStreamText(text);
-                  continue;
-                }
-
-                // ── OpenAI Responses API: response.output_text.delta ──
-                const eventType = json['type'] as string | undefined;
-                if (eventType === 'response.output_text.delta') {
-                  const delta = json['delta'] as string | undefined;
-                  if (delta) {
-                    text += delta;
-                    setStreamText(text);
-                  }
-                  continue;
-                }
-
-                // ── Anthropic: content_block_delta with delta.text ──
-                const deltaObj = json['delta'] as { text?: string; type?: string } | undefined;
-                if (deltaObj?.type === 'content_block_delta' && deltaObj.text) {
-                  text += deltaObj.text;
-                  setStreamText(text);
-                  continue;
-                }
-                if (json['type'] === 'content_block_delta') {
-                  const d = json['delta'] as { text?: string } | undefined;
-                  if (d?.text) {
-                    text += d.text;
-                    setStreamText(text);
-                  }
-                }
-              } catch {
-                // skip malformed lines
-              }
-            }
-          }
-        } finally {
-          reader.releaseLock();
-        }
-
-        setStreamDone(true);
-        setStreamLatency(Date.now() - start);
-        setResult({
-          status,
-          statusText: status >= 200 && status < 300 ? 'OK' : 'Error',
-          latency: Date.now() - start,
-          data: { content: text },
-        });
-      } else {
-        // Non-streaming fallback
-        const data = await res.json();
-        if (!res.ok) {
-          setError(data.error || `Request failed (${res.status})`);
-        } else {
-          setResult(data);
-        }
-      }
+      await readPlaygroundResponse(res, start);
     } catch (err) {
+      const directHint =
+        !isAgnesMode && requestTransport === 'browser'
+          ? ' Browser direct requests also require CORS; Chrome Private Network Access may require OPTIONS to return Access-Control-Allow-Private-Network: true.'
+          : '';
       if (err instanceof DOMException && err.name === 'AbortError') {
+        if (didTimeout) {
+          setError(`Request timed out after ${timeout} seconds.${directHint}`);
+        }
         return;
       }
-      setError(err instanceof Error ? err.message : 'Network error');
+      setError(`${err instanceof Error ? err.message : 'Network error'}${directHint}`);
     } finally {
+      window.clearTimeout(timeoutId);
       setLoading(false);
     }
   };
@@ -250,13 +370,45 @@ export default function PlaygroundPage() {
     setModels([]);
     setModelsHint('');
 
+    const blockedDirectTargetMessage = getBlockedDirectTargetMessage();
+    if (blockedDirectTargetMessage) {
+      setModelsHint(blockedDirectTargetMessage);
+      setModelsLoading(false);
+      return;
+    }
+
     try {
+      if (!isAgnesMode && requestTransport === 'browser') {
+        const headers =
+          apiType === 'anthropic'
+            ? { 'x-api-key': key, 'anthropic-version': '2023-06-01' }
+            : { Authorization: `Bearer ${key}` };
+        const res = await fetch(`${url.trim().replace(/\/$/, '')}/models`, { method: 'GET', headers });
+        const data = (await res.json().catch(() => null)) as {
+          data?: Array<{ id?: string }>;
+          models?: string[];
+        } | null;
+        const nextModels =
+          data?.models ?? data?.data?.map(item => item.id).filter((id): id is string => Boolean(id)) ?? [];
+
+        if (!res.ok) {
+          setModelsHint(`Failed to fetch models (${res.status}). Please enter the model ID manually.`);
+          return;
+        }
+        if (nextModels.length > 0) {
+          setModels([...nextModels].sort());
+        } else {
+          setModelsHint('No models returned by this endpoint. Please enter the model ID manually.');
+        }
+        return;
+      }
+
       const res = await fetch('/api/playground/models', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(isAgnesMode ? { mode: requestMode } : { mode: requestMode, url, key, apiType }),
       });
-      const data = await res.json();
+      const data = (await res.json()) as { models?: string[]; hint?: string };
       if (data.models?.length) {
         setModels(data.models);
       }
@@ -264,7 +416,11 @@ export default function PlaygroundPage() {
         setModelsHint(data.hint);
       }
     } catch (err) {
-      setModelsHint(err instanceof Error ? err.message : 'Failed to fetch models');
+      const directHint =
+        !isAgnesMode && requestTransport === 'browser'
+          ? ' Browser direct model fetching requires CORS; Chrome Private Network Access may require OPTIONS to return Access-Control-Allow-Private-Network: true.'
+          : '';
+      setModelsHint(`${err instanceof Error ? err.message : 'Failed to fetch models'}${directHint}`);
     } finally {
       setModelsLoading(false);
     }
@@ -322,6 +478,36 @@ export default function PlaygroundPage() {
                     }`}
                   >
                     {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {!isAgnesMode && (
+            <div className='rounded-xl border border-border-light bg-bg-primary p-4 shadow-sm space-y-3'>
+              <div>
+                <p className='text-sm font-medium text-text-primary'>Request transport</p>
+                <p className='mt-1 text-xs text-text-muted'>
+                  Browser direct can reach localhost/private URLs from your browser, but the target service must enable
+                  CORS. Chrome Private Network Access may also require OPTIONS to return
+                  Access-Control-Allow-Private-Network: true.
+                </p>
+              </div>
+              <div className='grid gap-2 sm:grid-cols-2'>
+                {REQUEST_TRANSPORT_OPTIONS.map(({ value, label, description }) => (
+                  <button
+                    key={value}
+                    type='button'
+                    onClick={() => setRequestTransport(value)}
+                    className={`rounded-lg border px-3 py-2 text-left transition-colors ${
+                      requestTransport === value
+                        ? 'border-teal-500 bg-teal-500/10 text-teal-700 ring-1 ring-teal-500/30'
+                        : 'border-border-light text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'
+                    }`}
+                  >
+                    <span className='block text-sm font-medium'>{label}</span>
+                    <span className='mt-1 block text-xs text-text-muted'>{description}</span>
                   </button>
                 ))}
               </div>
