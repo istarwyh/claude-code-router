@@ -1,8 +1,13 @@
 const BLOCKED_HOSTS = new Set(['localhost', '127.0.0.1', '0.0.0.0', '[::1]']);
 
+function normalizeHostname(hostname: string): string {
+  return hostname.startsWith('[') && hostname.endsWith(']') ? hostname.slice(1, -1) : hostname;
+}
+
 function isPrivateIp(hostname: string): boolean {
+  const normalizedHostname = normalizeHostname(hostname);
   // IPv4 private ranges
-  const parts = hostname.split('.').map(Number);
+  const parts = normalizedHostname.split('.').map(Number);
   if (parts.length === 4 && parts.every(n => !isNaN(n))) {
     const a = parts[0] as number;
     const b = parts[1] as number;
@@ -27,7 +32,7 @@ function isPrivateIp(hostname: string): boolean {
   }
 
   // IPv6 loopback and private prefixes
-  const h = hostname.toLowerCase();
+  const h = normalizedHostname.toLowerCase();
   if (h === '::1' || h.startsWith('fc') || h.startsWith('fd') || h.startsWith('fe80')) {
     return true;
   }
