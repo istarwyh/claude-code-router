@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
+import {
+  AGNES_MODEL,
+  AGNES_URL,
+  DEFAULT_MESSAGE,
+  buildDirectRequest,
+  type ApiType,
+  type PlaygroundMode,
+} from '@/app/(main)/playground/_lib/playgroundRequest';
 import { validateProxyUrl } from '@/lib/url-validation';
 
 export const runtime = 'nodejs';
-
-type ApiType = 'openai' | 'anthropic' | 'openai-responses';
-type PlaygroundMode = 'agnes' | 'custom';
-
-const AGNES_BASE_URL = 'https://apihub.agnes-ai.com/v1';
-const AGNES_MODEL = 'agnes-2.0-flash';
 
 interface PlaygroundRequest {
   mode?: PlaygroundMode;
@@ -39,7 +41,7 @@ export async function POST(request: NextRequest) {
 
       model = AGNES_MODEL;
       apiType = 'openai';
-      baseUrl = AGNES_BASE_URL;
+      baseUrl = AGNES_URL;
     } else {
       if (!body.url || !body.model || !body.key) {
         return NextResponse.json({ error: 'url, model, and key are required' }, { status: 400 });
@@ -56,57 +58,23 @@ export async function POST(request: NextRequest) {
       baseUrl = validation.url.href.replace(/\/$/, '');
     }
 
-    const testMessage = message || 'Say hello in one sentence.';
     const timeoutMs = Math.min(Math.max((timeout ?? 60) * 1000, 10_000), 120_000);
     const useStream = stream !== false;
-
-    let targetUrl: string;
-    let headers: Record<string, string>;
-    let requestBody: string;
-
-    if (apiType === 'anthropic') {
-      targetUrl = `${baseUrl}/v1/messages`;
-      headers = {
-        'Content-Type': 'application/json',
-        'x-api-key': key,
-        'anthropic-version': '2023-06-01',
-      };
-      requestBody = JSON.stringify({
-        model,
-        max_tokens: 1024,
-        stream: useStream,
-        messages: [{ role: 'user', content: testMessage }],
-      });
-    } else if (apiType === 'openai-responses') {
-      targetUrl = `${baseUrl}/v1/responses`;
-      headers = {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${key}`,
-      };
-      requestBody = JSON.stringify({
-        model,
-        stream: useStream,
-        input: [{ role: 'user', content: testMessage }],
-      });
-    } else {
-      targetUrl = `${baseUrl}/chat/completions`;
-      headers = {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${key}`,
-      };
-      requestBody = JSON.stringify({
-        model,
-        max_tokens: 1024,
-        stream: useStream,
-        messages: [{ role: 'user', content: testMessage }],
-      });
-    }
+    const directRequest = buildDirectRequest({
+      apiType,
+      baseUrl,
+      model,
+      key,
+      message: message || DEFAULT_MESSAGE,
+      stream: useStream,
+      includeAuthorization: true,
+    });
 
     const start = Date.now();
-    const response = await fetch(targetUrl, {
+    const response = await fetch(directRequest.targetUrl, {
       method: 'POST',
-      headers,
-      body: requestBody,
+      headers: directRequest.headers,
+      body: directRequest.body,
       signal: AbortSignal.timeout(timeoutMs),
     });
 
