@@ -113,6 +113,25 @@ function getMenuPlacement(position: MenuPosition | null): MenuPlacement {
   };
 }
 
+function getMenuMaxHeight(
+  position: MenuPosition | null,
+  placement: MenuPlacement,
+  buttonElement: HTMLButtonElement | null,
+): number | undefined {
+  if (typeof window === 'undefined' || !position) {
+    return undefined;
+  }
+
+  const buttonHeight = buttonElement?.offsetHeight ?? 44;
+  const menuSpacing = MENU_HOVER_PADDING + 4 + MENU_EDGE_PADDING;
+  const availableHeight =
+    placement.vertical === 'bottom'
+      ? window.innerHeight - position.y - buttonHeight - menuSpacing
+      : position.y - menuSpacing;
+
+  return Math.max(0, availableHeight);
+}
+
 function storeMenuPosition(position: MenuPosition) {
   try {
     window.localStorage.setItem(MENU_STORAGE_KEY, JSON.stringify(position));
@@ -133,6 +152,7 @@ export function HomePageWithNav() {
   const hoverCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const ignoreClickAfterDragRef = useRef(false);
   const menuPlacement = getMenuPlacement(menuPosition);
+  const menuMaxHeight = getMenuMaxHeight(menuPosition, menuPlacement, menuButtonRef.current);
   const menuShellStyle: CSSProperties | undefined = menuPosition
     ? {
         left: menuPosition.x - MENU_HOVER_PADDING,
@@ -370,9 +390,10 @@ export function HomePageWithNav() {
           <nav
             id='homepage-menu'
             aria-label={UI_TEXTS.MENU.NAVIGATION_ARIA}
-            className={`absolute w-[min(24rem,calc(100vw-2rem))] rounded-3xl border border-floating-border bg-floating-surface-strong p-4 shadow-floating-strong backdrop-blur-floating ${
+            className={`absolute w-[min(24rem,calc(100vw-2rem))] overflow-y-auto overscroll-contain rounded-3xl border border-floating-border bg-floating-surface-strong p-4 shadow-floating-strong backdrop-blur-floating ${
               menuPlacement.horizontal === 'right' ? 'right-3' : 'left-3'
             } ${menuPlacement.vertical === 'bottom' ? 'top-full mt-1' : 'bottom-full mb-1'}`}
+            style={{ maxHeight: menuMaxHeight }}
           >
             <div className='flex items-center justify-between gap-4'>
               <BrandLogo size='medium' />

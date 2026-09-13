@@ -56,11 +56,17 @@ jobs:
           }
           NODE
 
-      - name: Typecheck
-        run: pnpm run typecheck
+      - name: Lint without changes
+        run: pnpm run lint:check
+
+      - name: Validate Share registry
+        run: pnpm run shares:validate -- --registry-only
 
       - name: Build client bundles
         run: pnpm run build
+
+      - name: Typecheck
+        run: pnpm run typecheck
 
       - name: Build for Cloudflare Workers
         run: pnpm run cf:build

@@ -1,5 +1,7 @@
 import { headers } from 'next/headers';
 
+export const CANONICAL_SITE_URL = 'https://aispeeds.me';
+
 const DEFAULT_SITE_URL = 'http://localhost:3000';
 
 export async function getSiteUrl(): Promise<string> {

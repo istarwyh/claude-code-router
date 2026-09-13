@@ -1,6 +1,7 @@
 import { defineCloudflareConfig } from '@opennextjs/cloudflare';
+import staticAssetsIncrementalCache from '@opennextjs/cloudflare/overrides/incremental-cache/static-assets-incremental-cache';
 
 export default defineCloudflareConfig({
-  // 可选: 启用 R2 缓存
-  // incrementalCache: r2IncrementalCache,
+  incrementalCache: staticAssetsIncrementalCache,
+  enableCacheInterception: true,
 });

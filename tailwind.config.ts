@@ -14,6 +14,7 @@ const config: Config = {
         primary: {
           DEFAULT: 'var(--color-primary)',
           dark: 'var(--color-primary-dark)',
+          ink: 'var(--color-primary-ink)',
           light: 'var(--color-primary-light)',
           foreground: 'var(--color-primary-foreground)',
           'dark-foreground': 'var(--color-primary-dark-foreground)',

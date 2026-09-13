@@ -1,19 +1,33 @@
 import type { Metadata } from 'next';
 import Script from 'next/script';
 import type { ReactNode } from 'react';
+import { CANONICAL_SITE_URL } from '@/config/site-url';
 import './globals.css';
 
 export const metadata: Metadata = {
+  metadataBase: new URL(CANONICAL_SITE_URL),
   title: 'AI Speeds - Make AI Speeds Us',
   description: 'Make AI Speeds Us',
   icons: {
     icon: '/favicon.svg',
   },
+  openGraph: {
+    type: 'website',
+    siteName: 'AI Speeds',
+    locale: 'zh_CN',
+    title: 'AI Speeds - Make AI Speeds Us',
+    description: 'Make AI Speeds Us',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'AI Speeds - Make AI Speeds Us',
+    description: 'Make AI Speeds Us',
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang='en' suppressHydrationWarning>
+    <html lang='zh-CN' suppressHydrationWarning>
       <head>
         <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
       </head>

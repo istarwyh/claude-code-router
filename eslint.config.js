@@ -5,6 +5,25 @@ import prettier from 'eslint-plugin-prettier';
 import security from 'eslint-plugin-security';
 
 export default [
+  {
+    ignores: [
+      'node_modules/**',
+      '.next/**',
+      '.open-next/**',
+      '.wrangler/**',
+      'dist/**',
+      'build/**',
+      'coverage/**',
+      '.cache/**',
+      'src/scripts/generated/**',
+      '**/*.min.js',
+      '**/*.min.css',
+      '**/*Bundle.ts',
+      '**/bundle-*/**',
+      'scripts/*.cjs',
+      'fix-eslint-issues.js',
+    ],
+  },
   js.configs.recommended,
   {
     files: ['**/*.{js,jsx,ts,tsx}'],

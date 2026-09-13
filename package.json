@@ -7,12 +7,16 @@
     "prepare:homepage": "node scripts/prepare-cc4pm-homepage.mjs",
     "build": "pnpm run prepare:homepage && next build",
     "dev": "pnpm run prepare:homepage && cross-env NODE_NO_WARNINGS=1 next dev --turbopack # Next.js 开发服务器（带 Turbopack 加速）",
-    "cf:build": "opennextjs-cloudflare build # 构建 Cloudflare Workers 版本",
+    "cf:build": "pnpm run prepare:homepage && opennextjs-cloudflare build # 构建 Cloudflare Workers 版本",
     "cf:preview": "pnpm cf:build && opennextjs-cloudflare preview # 预览 Cloudflare 构建结果",
     "cf:deploy": "pnpm cf:build && opennextjs-cloudflare deploy # 部署到 Cloudflare Workers",
     "prepare": "husky # 安装 Git hooks（自动设置 husky）",
     "lint": "eslint . --fix # ESLint 检查并自动修复代码问题",
+    "lint:check": "eslint .",
     "format": "prettier --write . # Prettier 格式化所有代码文件",
+    "shares:prepare": "node scripts/prepare-share-assets.mjs",
+    "shares:validate": "node --experimental-strip-types scripts/validate-share-assets.ts",
+    "shares:publish": "node scripts/publish-share-assets.mjs",
     "typecheck": "tsc --noEmit # TypeScript 类型检查（不生成文件）",
     "audit": "pnpm audit --audit-level=moderate # 安全审计：检查依赖漏洞"
   },
@@ -21,6 +25,7 @@
   "license": "MIT",
   "description": "Make AI Speeds Us and Provide Universal Claude API Proxy",
   "devDependencies": {
+    "@aws-sdk/client-s3": "3.1131.0",
     "@commitlint/cli": "^20.5.3",
     "@commitlint/config-conventional": "^20.5.3",
     "@eslint/js": "^10.0.1",
@@ -47,7 +52,8 @@
     "prettier": "^3.8.3",
     "punycode": "^2.3.1",
     "tailwindcss": "^3.4.19",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "wrangler": "4.131.1"
   },
   "dependencies": {
     "@cc4pm/homepage": "^1.0.13",

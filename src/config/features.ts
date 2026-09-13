@@ -77,6 +77,16 @@ export const featurePages: readonly FeaturePage[] = [
     sitemapChangeFrequency: 'monthly',
   },
   {
+    id: 'shares',
+    title: UI_TEXTS.NAVIGATION.SHARES,
+    href: '/shares',
+    kind: 'route',
+    isPublic: true,
+    showInHomeMenu: true,
+    sitemapPriority: 0.8,
+    sitemapChangeFrequency: 'monthly',
+  },
+  {
     id: 'brand',
     title: UI_TEXTS.NAVIGATION.BRAND,
     href: '/brand',
