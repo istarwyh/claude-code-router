@@ -27,6 +27,14 @@ export const colorTokenGroups = {
       usage: '按钮 hover、强调状态',
     },
     {
+      name: '主品牌文字色',
+      cls: 'bg-primary-ink',
+      hex: '#b24b37',
+      cssVar: '--color-primary-ink',
+      text: 'text-text-inverse',
+      usage: '浅色背景上的品牌文字、小号标签',
+    },
+    {
       name: '主品牌浅色',
       cls: 'bg-primary-light',
       hex: '#f08b6d',
